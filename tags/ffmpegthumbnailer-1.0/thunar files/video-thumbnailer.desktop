@@ -1,0 +1,7 @@
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Type=X-Thumbnailer
+Name=Video Thumbnailer
+MimeType=video/jpeg;video/mp4;video/mpeg;video/quicktime;video/x-ms-asf;video/x-ms-wm;video/x-ms-wmv;video/x-msvideo;video/x-flv;
+X-Thumbnailer-Exec=/usr/local/bin/ffmpegthumbnailer %i %o %s
