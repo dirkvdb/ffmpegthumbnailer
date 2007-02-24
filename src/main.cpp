@@ -7,8 +7,17 @@ using namespace std;
 
 int main(int argc, char** argv)
 {
-	if (argc != 4)
+	if (argc == 2)
 	{
+		if (0 == strcmp(argv[1], "-h"))
+		{
+			cout << "Usage: ffmpegthumbnailer: infile outfile size" << endl;
+			return 0;
+		}
+	}
+	else if (argc != 4)
+	{
+		cout << "Usage: ffmpegthumbnailer: infile outfile size" << endl;
 		return -1;
 	}
 	
@@ -21,7 +30,11 @@ int main(int argc, char** argv)
 	{
 		cerr << "Error: " << e.getMessage() << endl;
 		return -1;
-	}		
+	}
+	catch (...)
+	{
+		return -1;
+	}
 	
 	return 0;
 }
