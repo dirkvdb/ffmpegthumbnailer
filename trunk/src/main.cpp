@@ -1,41 +1,62 @@
 #include <iostream>
+#include <unistd.h>
 
 #include "videothumbnailer.h"
 #include "exception.h"
 
 using namespace std;
 
+void printUsage();
+
 int main(int argc, char** argv)
 {
-	try
-	{
+	int 	option;
+	int 	seekPercentage = 10;
+	int 	thumbnailSize = 128;
+	bool 	filmStripOverlay = false;
+	char* 	inputFile = NULL;
+	char* 	outputFile = NULL;
 	
-	if (argc == 2)
+	while ((option = getopt (argc, argv, "i:o:s:t:fh")) != -1)
 	{
-		if (0 == strcmp(argv[1], "-h"))
+		switch (option)
 		{
-			cout << "Usage: ffmpegthumbnailer: infile outfile size [overlayfilmstrip seekpercentage]" << endl;
-			return 0;
+			case 'i':
+				inputFile = optarg;
+				break;
+			case 'o':
+				outputFile = optarg;
+				break;
+			case 's':
+				thumbnailSize = atoi(optarg);
+				break;
+			case 'f':
+				filmStripOverlay = true;
+				break;
+			case 't':
+				seekPercentage = atoi(optarg);
+				break;
+			case 'h':
+				printUsage();
+				return 0;
+			case '?':
+			default:
+				cerr << "invalid arguments" << endl;
+				printUsage();
+				return -1;
 		}
 	}
-	else if (argc == 4)
-	{
-		VideoThumbnailer videoThumbailer(argv[1]);
-		videoThumbailer.generateThumbnail(argv[2], atoi(argv[3]), 1, 10);
-	}
-	else if (argc == 6)
-	{
-		VideoThumbnailer videoThumbailer(argv[1]);
-		videoThumbailer.generateThumbnail(argv[2], atoi(argv[3]), atoi(argv[4]), atoi(argv[5]));
-	}
-	else
-	{
-		cout << "Usage: ffmpegthumbnailer: infile outfile size [overlayfilmstrip seekpercentage]" << endl;
-		return -1;
-	}
 	
-	
-		
+	if (!inputFile || !outputFile)
+	{
+		cerr << "invalid arguments" << endl;
+		printUsage();
+	}
+		   
+	try
+	{
+		VideoThumbnailer videoThumbailer(inputFile);
+		videoThumbailer.generateThumbnail(outputFile, thumbnailSize, filmStripOverlay, seekPercentage);
 	}
 	catch (Exception& e)
 	{
@@ -48,4 +69,16 @@ int main(int argc, char** argv)
 	}
 	
 	return 0;
+}
+
+void printUsage()
+{
+	cout << "Usage: ffmpegvideothumbnailer [options]" << endl << endl
+		 << "Options:" << endl
+		 << "  -i<s>  : input file" << endl
+		 << "  -o<s>  : output file" << endl
+		 << "  -s<n>  : thumbnail size (default: 128)" << endl
+		 << "  -t<n>  : time to seek to (percentage) (default: 10)" << endl
+		 << "  -m     : create a movie strip overlay" << endl
+		 << "  -h     : display this help" << endl;
 }

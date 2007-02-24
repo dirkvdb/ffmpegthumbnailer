@@ -56,7 +56,8 @@ void VideoThumbnailer::generateThumbnail(const string& outputFile, int thumbnail
 	}
 	
 	m_MovieDecoder.getScaledVideoFrame(thumbnailSize, videoFrame);
-	if (filmStripOverlay)
+	cout << videoFrame.width << " " << FILMHOLE_WIDTH  << endl;
+	if (filmStripOverlay && (videoFrame.width > FILMHOLE_WIDTH * 2))
 	{
 		overlayFilmStrip(videoFrame);
 	}
