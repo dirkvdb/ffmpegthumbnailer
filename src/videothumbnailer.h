@@ -17,7 +17,7 @@ class VideoThumbnailer
 public:
 	VideoThumbnailer(const std::string& videoFile);
 	~VideoThumbnailer();
-	void generateThumbnail(const std::string& outputFile, int thumbnailSize);
+	void generateThumbnail(const std::string& outputFile, int thumbnailSize, bool filmStripOverlay, unsigned short seekPercentage);
 	
 private:
 	void writePng(const std::string& outputFile, const VideoFrame& videoFrame, std::vector<byte*>& rowPointers);
@@ -26,6 +26,7 @@ private:
 
 	void generateHistogram(const VideoFrame& videoFrame, Histogram& histogram);
 	bool isDarkImage(const int numPixels, const Histogram& histogram);
+	void overlayFilmStrip(VideoFrame& videoFrame);
 
 private:
 	MovieDecoder 	m_MovieDecoder;
