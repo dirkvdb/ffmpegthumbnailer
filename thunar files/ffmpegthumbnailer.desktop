@@ -3,5 +3,5 @@ Version=1.0
 Encoding=UTF-8
 Type=X-Thumbnailer
 Name=FFmpegThumbnailer
-MimeType=video/jpeg;video/mp4;video/mpeg;video/quicktime;video/x-ms-asf;video/x-ms-wm;video/x-ms-wmv;video/x-msvideo;video/x-flv;
+MimeType=video/jpeg;video/mp4;video/mpeg;video/quicktime;video/x-ms-asf;video/x-ms-wm;video/x-ms-wmv;video/x-msvideo;video/x-flv;video/x-matroska;
 X-Thumbnailer-Exec=ffmpegthumbnailer -i %i -o %o -s %s -f
