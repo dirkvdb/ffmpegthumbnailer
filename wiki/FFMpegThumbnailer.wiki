@@ -1,4 +1,4 @@
-#summary One-sentence summary of this page.
+#summary A lightweight video thumbnailer
 
 = Introduction =
 
@@ -6,4 +6,3 @@ FFMpeg Thumbnailer is a lightweight video thumbnailer that can be used by file m
 The thumbnailer is based on ffmpeg so it supports al the video formats that ffmpeg supports.
 
 = Usage = 
-
