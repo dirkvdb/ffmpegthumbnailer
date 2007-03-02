@@ -1,0 +1,9 @@
+#summary One-sentence summary of this page.
+
+= Introduction =
+
+FFMpeg Thumbnailer is a lightweight video thumbnailer that can be used by file managers.
+The thumbnailer is based on ffmpeg so it supports al the video formats that ffmpeg supports.
+
+= Usage = 
+
