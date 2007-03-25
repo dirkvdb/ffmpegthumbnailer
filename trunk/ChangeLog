@@ -1,4 +1,8 @@
 FFmpegThumbnailer
 
+version 1.1
+- Updated command line argument parser
+- Possibility to add a movie strip overlay
+
 version 1.0
-Initial release of the FFmpegThumbnailer.
+- Initial release of the FFmpegThumbnailer
