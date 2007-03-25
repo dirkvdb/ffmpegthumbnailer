@@ -79,6 +79,6 @@ void printUsage()
 		 << "  -o<s>  : output file" << endl
 		 << "  -s<n>  : thumbnail size (default: 128)" << endl
 		 << "  -t<n>  : time to seek to (percentage) (default: 10)" << endl
-		 << "  -m     : create a movie strip overlay" << endl
+		 << "  -f     : create a movie strip overlay" << endl
 		 << "  -h     : display this help" << endl;
 }
