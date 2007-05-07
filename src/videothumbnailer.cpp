@@ -47,13 +47,17 @@ void VideoThumbnailer::generateThumbnail(const string& outputFile, int thumbnail
 	
 	VideoFrame 	videoFrame;
 	m_MovieDecoder.decodeVideoFrame(); //before seeking, a frame has to be decoded
-	try
+
+	if (m_MovieDecoder.getCodec() != "h264") //workaround for bug in ffmpeg (100% cpu usage when seeking in h264 files)
 	{
-		m_MovieDecoder.seek(m_MovieDecoder.getDuration() * seekPercentage / 100);
-	}
-	catch (Exception& e)
-	{
-		cout << e.getMessage() << endl;
+		try
+		{
+			m_MovieDecoder.seek(m_MovieDecoder.getDuration() * seekPercentage / 100);
+		}
+		catch (Exception& e)
+		{
+			cout << e.getMessage() << endl;
+		}
 	}
 	
 	m_MovieDecoder.getScaledVideoFrame(thumbnailSize, videoFrame);

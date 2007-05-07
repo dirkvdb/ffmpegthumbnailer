@@ -165,7 +165,7 @@ void MovieDecoder::seek(int timeInSeconds)
 		bool gotFrame = 0;
 		AVPacket packet;
 
-		while (!gotFrame)
+		while (!gotFrame && count < 20)
 		{
 			getVideoPacket(packet);
 			try
@@ -173,6 +173,7 @@ void MovieDecoder::seek(int timeInSeconds)
 				gotFrame = decodeVideoPacket(packet);
 			}
 			catch(Exception&) {}
+			++count;
 		}
 
 		++count;
