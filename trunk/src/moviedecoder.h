@@ -1,7 +1,9 @@
 #ifndef MOVIEDECODER_H
 #define MOVIEDECODER_H
 
-#define EMULATE_INTTYPES
+#define __STDC_CONSTANT_MACROS
+#define INT64_C
+#include <inttypes.h>
 
 #include <string>
 #include <vector>
