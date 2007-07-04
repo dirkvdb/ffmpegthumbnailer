@@ -7,4 +7,4 @@ ffmpegthumbnailer_SOURCES = main.cpp \
 							pngwriter.h pngwriter.cpp \
 							stringoperations.h stringoperations.cpp
 
-ffmpegthumbnailer_LDADD = -lavutil -lavcodec -lavformat -lpng
+ffmpegthumbnailer_LDADD = $(FFMPEG_LIBS) -lpng
