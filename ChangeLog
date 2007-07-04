@@ -1,5 +1,8 @@
 FFmpegThumbnailer
 
+version 1.1.2
+- Fixed compilation error when using latest ffmpeg (thanks to Samuli Suominen)
+
 version 1.1.1
 - Fixed compilation error when using latest ffmpeg
 - Disabled seeking in h264 files, because this causes 100% CPU usage in ffmpeglib (workaround)
