@@ -1,0 +1,2 @@
+SUBDIRS = src
+AM_CXXFLAGS = -Wall
