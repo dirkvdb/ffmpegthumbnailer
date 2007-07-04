@@ -3,7 +3,10 @@
 
 #include <assert.h>
 #include <iostream>
+
+extern "C" {
 #include <ffmpeg/swscale.h>
+}
 
 using namespace std;
 

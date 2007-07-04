@@ -7,8 +7,11 @@
 
 #include <string>
 #include <vector>
+
+extern "C" {
 #include <ffmpeg/avcodec.h>
 #include <ffmpeg/avformat.h>
+}
 
 typedef unsigned char byte;
 
