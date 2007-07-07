@@ -10,7 +10,12 @@ PKG_CHECK_MODULES(	FFMPEG, libavutil libavformat libavcodec libswscale, HAVE_FFM
 					AC_MSG_ERROR([ +Could not find ffmpeg. Please update PKG_CONFIG_PATH to point at location of ffmpeg pkgconfig files directory.])
 )
 
+PKG_CHECK_MODULES(	PNG, libpng, HAVE_PNG=yes, AC_MSG_ERROR([ +Could not find libpng])
+)
+
 AC_SUBST(FFMPEG_LIBS)
+AC_SUBST(PNG_LIBS)
+
 AC_OUTPUT([
 	Makefile
 	src/Makefile
