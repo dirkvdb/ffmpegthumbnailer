@@ -1,10 +1,26 @@
+//    Copyright (C) 2007 Dirk Vanden Boer <dirk.vdb@gmail.com>
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
 #include "videothumbnailer.h"
 #include "pngwriter.h"
-#include "exception.h"
 #include "stringoperations.h"
 
 #include <iostream>
 #include <sstream>
+#include <stdexcept>
 #include <assert.h>
 #include <algorithm>
 #include <sys/stat.h>
@@ -54,9 +70,9 @@ void VideoThumbnailer::generateThumbnail(const string& outputFile, int thumbnail
 		{
 			m_MovieDecoder.seek(m_MovieDecoder.getDuration() * seekPercentage / 100);
 		}
-		catch (Exception& e)
+		catch (exception& e)
 		{
-			cout << e.getMessage() << endl;
+			cout << e.what() << endl;
 		}
 	}
 	
@@ -88,7 +104,7 @@ void VideoThumbnailer::writePng(const string& outputFile, const VideoFrame& vide
     }
     else
     {
-    	throw Exception("Could not stat file");
+    	throw logic_error("Could not stat file");
     } 
     
     string mimeType = getMimeType();

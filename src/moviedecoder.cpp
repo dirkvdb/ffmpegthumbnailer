@@ -1,5 +1,21 @@
+//    Copyright (C) 2007 Dirk Vanden Boer <dirk.vdb@gmail.com>
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
 #include "moviedecoder.h"
-#include "exception.h"
+#include <stdexcept>
 
 #include <assert.h>
 #include <iostream>
@@ -55,12 +71,12 @@ void MovieDecoder::initialize(const string& filename)
 
 	if (av_open_input_file(&m_pFormatContext, filename.c_str(), NULL, 0, NULL) != 0)
 	{
-		throw Exception(string("Could not open input file: ") + filename);
+		throw logic_error(string("Could not open input file: ") + filename);
 	}
 
 	if (av_find_stream_info(m_pFormatContext) < 0)
 	{
-		throw Exception(string("Could not find stream information"));
+		throw logic_error(string("Could not find stream information"));
 	}
 
 	initializeVideo();
@@ -91,7 +107,7 @@ void MovieDecoder::initializeVideo()
 
 	if (m_VideoStream == -1)
 	{
-		throw Exception(string("Could not find video stream"));
+		throw logic_error("Could not find video stream");
 	}
 
 	m_pVideoCodecContext = m_pFormatContext->streams[m_VideoStream]->codec;
@@ -101,7 +117,7 @@ void MovieDecoder::initializeVideo()
 	{
 		// set to NULL, otherwise avcodec_close(m_pVideoCodecContext) crashes
 		m_pVideoCodecContext = NULL;
-		throw Exception(string("Video Codec not found"));
+		throw logic_error("Video Codec not found");
 	}
 
 	m_pVideoCodecContext->workaround_bugs = 1;
@@ -109,7 +125,7 @@ void MovieDecoder::initializeVideo()
 
 	if (avcodec_open(m_pVideoCodecContext, m_pVideoCodec) < 0)
 	{
-		throw Exception(string("Could not open video codec"));
+		throw logic_error("Could not open video codec");
 	}
 }
 
@@ -159,7 +175,7 @@ void MovieDecoder::seek(int timeInSeconds)
 	}
 	else
 	{
-		throw Exception("Seeking in video failed");
+		throw logic_error("Seeking in video failed");
 	}
 	
 	int count = 0;
@@ -175,7 +191,7 @@ void MovieDecoder::seek(int timeInSeconds)
 			{
 				gotFrame = decodeVideoPacket(packet);
 			}
-			catch(Exception&) {}
+			catch(logic_error&) {}
 			++count;
 		}
 
@@ -196,7 +212,7 @@ void MovieDecoder::decodeVideoFrame()
 
 	if (!frameFinished)
 	{
-		throw Exception("decodeVideoFrame() failed: frame not finished");
+		throw logic_error("decodeVideoFrame() failed: frame not finished");
 	}
 }
 
@@ -210,7 +226,7 @@ bool MovieDecoder::decodeVideoPacket(AVPacket& packet)
 	if (bytesDecoded < 0)
 	{
 		av_free_packet(&packet);
-		throw Exception("Failed to decode video frame: bytesDecoded < 0");
+		throw logic_error("Failed to decode video frame: bytesDecoded < 0");
 	}
 	
 	av_free_packet(&packet);
@@ -274,14 +290,17 @@ void MovieDecoder::convertAndScaleFrame(int format, int scaledSize, int& scaledW
 	if (NULL == scaleContext)
 	{
 		sws_freeContext(scaleContext);
-		throw Exception("Failed to create resize context");
+		throw logic_error("Failed to create resize context");
 	}
 	
 	AVFrame* convertedFrame = NULL;
 	
 	createAVFrame(&convertedFrame, scaledWidth, scaledHeight, format);
 
-	sws_scale(scaleContext, m_pFrame->data, m_pFrame->linesize, 0, m_pVideoCodecContext->width,
+	cout << "linesize " << m_pFrame->linesize[0] << endl;
+    m_pFrame->linesize[0] *= -1;
+    cout << "linesize " << m_pFrame->linesize[0] << endl;
+    sws_scale(scaleContext, m_pFrame->data, m_pFrame->linesize, 0, m_pVideoCodecContext->width,
 			  convertedFrame->data, convertedFrame->linesize);
 	sws_freeContext(scaleContext);
 
