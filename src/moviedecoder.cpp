@@ -237,23 +237,20 @@ bool MovieDecoder::getVideoPacket(AVPacket& packet)
 {
 	bool framesAvailable = true;
 	bool frameDecoded = false;
-
-	while (framesAvailable && !frameDecoded)
+    
+    int attempts = 0;
+    
+	while (framesAvailable && !frameDecoded && attempts++ < 250)
 	{
-		if (av_read_frame(m_pFormatContext, &packet) >= 0)
+		framesAvailable = av_read_frame(m_pFormatContext, &packet) >= 0;
+        
+        if (framesAvailable)
 		{
-			if (packet.stream_index == m_VideoStream)
-			{
-				frameDecoded = true;
-			}
-			else
-			{
-				av_free_packet(&packet);
-			}
-		}
-		else
-		{
-			framesAvailable = false;
+			frameDecoded = packet.stream_index == m_VideoStream;
+            if (!frameDecoded)
+            {
+                av_free_packet(&packet);
+            }
 		}
 	}
 	
@@ -297,9 +294,6 @@ void MovieDecoder::convertAndScaleFrame(int format, int scaledSize, int& scaledW
 	
 	createAVFrame(&convertedFrame, scaledWidth, scaledHeight, format);
 
-	cout << "linesize " << m_pFrame->linesize[0] << endl;
-    m_pFrame->linesize[0] *= -1;
-    cout << "linesize " << m_pFrame->linesize[0] << endl;
     sws_scale(scaleContext, m_pFrame->data, m_pFrame->linesize, 0, m_pVideoCodecContext->width,
 			  convertedFrame->data, convertedFrame->linesize);
 	sws_freeContext(scaleContext);

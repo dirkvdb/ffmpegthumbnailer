@@ -54,17 +54,17 @@ VideoThumbnailer::~VideoThumbnailer()
 {
 }
 
-void VideoThumbnailer::generateThumbnail(const string& outputFile, int thumbnailSize, bool filmStripOverlay, unsigned short seekPercentage)
+void VideoThumbnailer::generateThumbnail(const string& outputFile, int thumbnailSize, bool filmStripOverlay, unsigned short seekPercentage, bool workaroundIssues)
 {
 	if (seekPercentage > 95)
 	{
 		seekPercentage = 95;
 	}
-	
+    
 	VideoFrame 	videoFrame;
 	m_MovieDecoder.decodeVideoFrame(); //before seeking, a frame has to be decoded
-
-	if (m_MovieDecoder.getCodec() != "h264") //workaround for bug in ffmpeg (100% cpu usage when seeking in h264 files)
+    
+	if ((!workaroundIssues) || (m_MovieDecoder.getCodec() != "h264")) //workaround for bug in older ffmpeg (100% cpu usage when seeking in h264 files)
 	{
 		try
 		{
@@ -75,14 +75,14 @@ void VideoThumbnailer::generateThumbnail(const string& outputFile, int thumbnail
 			cout << e.what() << endl;
 		}
 	}
-	
+    
 	m_MovieDecoder.getScaledVideoFrame(thumbnailSize, videoFrame);
 	cout << videoFrame.width << " " << FILMHOLE_WIDTH  << endl;
 	if (filmStripOverlay && (videoFrame.width > FILMHOLE_WIDTH * 2))
 	{
 		overlayFilmStrip(videoFrame);
 	}
-	
+    
 	vector<byte*> rowPointers;
 	for (int i = 0; i < videoFrame.height; ++i)
 	{
@@ -104,6 +104,7 @@ void VideoThumbnailer::writePng(const string& outputFile, const VideoFrame& vide
     }
     else
     {
+        perror("Could not stat file");
     	throw logic_error("Could not stat file");
     } 
     

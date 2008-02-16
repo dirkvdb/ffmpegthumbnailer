@@ -33,7 +33,7 @@ class VideoThumbnailer
 public:
 	VideoThumbnailer(const std::string& videoFile);
 	~VideoThumbnailer();
-	void generateThumbnail(const std::string& outputFile, int thumbnailSize, bool filmStripOverlay, unsigned short seekPercentage);
+	void generateThumbnail(const std::string& outputFile, int thumbnailSize, bool filmStripOverlay, unsigned short seekPercentage, bool workaroundIssues);
 	
 private:
 	void writePng(const std::string& outputFile, const VideoFrame& videoFrame, std::vector<byte*>& rowPointers);
