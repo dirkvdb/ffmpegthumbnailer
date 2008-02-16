@@ -1,5 +1,10 @@
 FFmpegThumbnailer
 
+version 1.1.5
+- Support for large files (files larger than 2Gb)
+- Seeking in h264 files is enabled again, use -w option from commandline to disable this if you have 100% cpu usage (using older versions of ffmpeg)
+- Give up reading packets from a file after a number of attempts to avoid a hanging ffmpegthumbnailer for certain file types (noticed on h264 and ac3 in vob container)
+
 version 1.1.4
 - License information added to source files
 
