@@ -5,4 +5,24 @@
 FFMpeg Thumbnailer is a lightweight video thumbnailer that can be used by file managers.
 The thumbnailer is based on ffmpeg so it supports al the video formats that ffmpeg supports.
 
-= Usage = 
+= News =
+== Version 1.1.5 has been released ==
+I finally looked at some problems I was still experiencing and managed to fixed them.
+Changelog:
+  * Support for large files (files larger than 2Gb)
+  * Seeking in h264 files is enabled again, use -w option from commandline to disable this if you have 100% cpu usage (using older versions of ffmpeg)
+  * Give up reading packets from a file after a number of attempts to avoid a hanging ffmpegthumbnailer for certain file types (noticed on h264 and ac3 in vob container)
+
+= Usage =
+ffmpegthumbnailer is called from the command line
+
+Available command line arguments:
+  * -i: input video filename
+  * -o: output filename of the generated png file
+  * -s: size of the generated thumbnail in pixels (optional, default value: 128)
+  * -t: time to seek to in the movie (percentage) (optional, default: 10)
+  * -f: use this option to overlay a movie strip on the generated thumbnail
+  * -w: workaround some issues in older versions of ffmpeg (only use if you experience problems like 100% cpu usage on certain files)
+  * -h: display the usage
+
+To use ffmpegthumbnailer in combination with thunar, just install the thunar-thumbnailer packages from your distribution or from http://goodies.xfce.org/projects/thunar-plugins/thunar-thumbnailers. This will properly register ffmpegthumbnailer with thunar.
