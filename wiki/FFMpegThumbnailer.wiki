@@ -7,7 +7,7 @@ The thumbnailer is based on ffmpeg so it supports al the video formats that ffmp
 
 = News =
 == Version 1.1.5 has been released ==
-I finally looked at some problems I was still experiencing and managed to fixed them.
+I finally looked at some problems I was still experiencing and managed to fix them.
 Changelog:
   * Support for large files (files larger than 2Gb)
   * Seeking in h264 files is enabled again, use -w option from commandline to disable this if you have 100% cpu usage (using older versions of ffmpeg)
