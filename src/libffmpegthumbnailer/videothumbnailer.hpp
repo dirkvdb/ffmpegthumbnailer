@@ -22,7 +22,7 @@
 #include <map>
 #include <inttypes.h>
 
-#include "moviedecoder.h"
+#include "moviedecoder.hpp"
 
 typedef std::map<uint8_t, int> Histogram;
 
