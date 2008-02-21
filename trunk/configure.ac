@@ -5,6 +5,7 @@ AM_INIT_AUTOMAKE
 AC_LANG_CPLUSPLUS
 AC_PROG_CXX
 AC_PROG_INSTALL
+AC_PROG_LIBTOOL
 AC_SYS_LARGEFILE 
 
 PKG_CHECK_MODULES(	FFMPEG, libavutil libavformat libavcodec libswscale, HAVE_FFMPEG=yes, 
@@ -20,4 +21,5 @@ AC_SUBST(PNG_LIBS)
 AC_OUTPUT([
 	Makefile
 	src/Makefile
+    src/libffmpegthumbnailer/Makefile
  ])
