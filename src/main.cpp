@@ -18,7 +18,7 @@
 #include <unistd.h>
 #include <stdexcept>
 
-#include "videothumbnailer.h"
+#include "ffmpegthumbnailer/videothumbnailer.h"
 
 using namespace std;
 
