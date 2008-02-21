@@ -30,7 +30,7 @@ using namespace std;
 static const int FILMHOLE_WIDTH = 12;
 static const int FILMHOLE_HEIGHT = 10;
 	
-static const byte filmHole[FILMHOLE_WIDTH * FILMHOLE_HEIGHT * 3] = {
+static const uint8_t filmHole[FILMHOLE_WIDTH * FILMHOLE_HEIGHT * 3] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
@@ -54,7 +54,7 @@ VideoThumbnailer::~VideoThumbnailer()
 {
 }
 
-void VideoThumbnailer::generateThumbnail(const string& outputFile, int thumbnailSize, bool filmStripOverlay, unsigned short seekPercentage, bool workaroundIssues)
+void VideoThumbnailer::generateThumbnail(PngWriter& pngWriter, int thumbnailSize, bool filmStripOverlay, unsigned short seekPercentage, bool workaroundIssues)
 {
 	if (seekPercentage > 95)
 	{
@@ -72,12 +72,11 @@ void VideoThumbnailer::generateThumbnail(const string& outputFile, int thumbnail
 		}
 		catch (exception& e)
 		{
-			cout << e.what() << endl;
+			cerr << e.what() << endl;
 		}
 	}
     
 	m_MovieDecoder.getScaledVideoFrame(thumbnailSize, videoFrame);
-	cout << videoFrame.width << " " << FILMHOLE_WIDTH  << endl;
 	if (filmStripOverlay && (videoFrame.width > FILMHOLE_WIDTH * 2))
 	{
 		overlayFilmStrip(videoFrame);
@@ -89,14 +88,25 @@ void VideoThumbnailer::generateThumbnail(const string& outputFile, int thumbnail
 		rowPointers.push_back(&(videoFrame.frameData[i * videoFrame.lineSize])); 
 	}
 	
-	writePng(outputFile, videoFrame, rowPointers);
+	writePng(pngWriter, videoFrame, rowPointers);
 }
 
-void VideoThumbnailer::writePng(const string& outputFile, const VideoFrame& videoFrame, vector<byte*>& rowPointers)
-{	
-	PngWriter pngWriter(outputFile);
-	
-	struct stat statInfo;
+void VideoThumbnailer::generateThumbnail(const string& outputFile, int thumbnailSize, bool filmStripOverlay, unsigned short seekPercentage, bool workaroundIssues)
+{
+    PngWriter pngWriter(outputFile);
+    generateThumbnail(pngWriter, thumbnailSize, filmStripOverlay, seekPercentage, workaroundIssues);
+}
+
+void VideoThumbnailer::generateThumbnail(std::vector<uint8_t>& buffer, int thumbnailSize, bool filmStripOverlay, unsigned short seekPercentage, bool workaroundIssues)
+{
+    buffer.clear();
+    PngWriter pngWriter(buffer);
+    generateThumbnail(pngWriter, thumbnailSize, filmStripOverlay, seekPercentage, workaroundIssues);
+}
+
+void VideoThumbnailer::writePng(PngWriter& pngWriter, const VideoFrame& videoFrame, vector<uint8_t*>& rowPointers)
+{
+    struct stat statInfo;
     if (stat(m_VideoFileName.c_str(), &statInfo) == 0)
     {
 		pngWriter.setPngText("Thumb::MTime", StringOperations::toString(statInfo.st_mtime));
@@ -104,7 +114,6 @@ void VideoThumbnailer::writePng(const string& outputFile, const VideoFrame& vide
     }
     else
     {
-        perror("Could not stat file");
     	throw logic_error("Could not stat file");
     } 
     
@@ -116,7 +125,7 @@ void VideoThumbnailer::writePng(const string& outputFile, const VideoFrame& vide
 	
 	pngWriter.setPngText("Thumb::URI", m_VideoFileName);
 	pngWriter.setPngText("Thumb::Movie::Length", StringOperations::toString(m_MovieDecoder.getDuration()));
-	pngWriter.writeFrame(&(rowPointers.front()), videoFrame.width, videoFrame.height);
+    pngWriter.writeFrame(&(rowPointers.front()), videoFrame.width, videoFrame.height);
 }
 
 string VideoThumbnailer::getMimeType()

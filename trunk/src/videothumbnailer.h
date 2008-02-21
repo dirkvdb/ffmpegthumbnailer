@@ -20,13 +20,14 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <inttypes.h>
 
 #include "moviedecoder.h"
 
-typedef unsigned char byte;
-typedef std::map<byte, int> Histogram;
+typedef std::map<uint8_t, int> Histogram;
 
 class VideoFrame;
+class PngWriter;
 
 class VideoThumbnailer
 {
@@ -34,10 +35,13 @@ public:
 	VideoThumbnailer(const std::string& videoFile);
 	~VideoThumbnailer();
 	void generateThumbnail(const std::string& outputFile, int thumbnailSize, bool filmStripOverlay, unsigned short seekPercentage, bool workaroundIssues);
+    void generateThumbnail(std::vector<uint8_t>& buffer, int thumbnailSize, bool filmStripOverlay, unsigned short seekPercentage, bool workaroundIssues);
 	
 private:
-	void writePng(const std::string& outputFile, const VideoFrame& videoFrame, std::vector<byte*>& rowPointers);
-	std::string getMimeType();
+    void generateThumbnail(PngWriter& pngWriter, int thumbnailSize, bool filmStripOverlay, unsigned short seekPercentage, bool workaroundIssues);
+    void writePng(PngWriter& pngWriter, const VideoFrame& videoFrame, std::vector<uint8_t*>& rowPointers);
+	
+    std::string getMimeType();
 	std::string getExtension(const std::string& videoFilename);
 
 	void generateHistogram(const VideoFrame& videoFrame, Histogram& histogram);
