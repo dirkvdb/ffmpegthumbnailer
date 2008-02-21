@@ -73,7 +73,7 @@ int main(int argc, char** argv)
 		printUsage();
         return 0;
 	}
-		   
+    
 	try
 	{
 		VideoThumbnailer videoThumbailer(inputFile);

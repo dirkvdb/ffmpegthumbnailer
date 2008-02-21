@@ -18,36 +18,36 @@
 #define PNG_WRITER_H
 
 #include <string>
+#include <vector>
 #include <png.h>
-
-class VideoFrame;
-
-typedef unsigned char byte;
 
 struct RGBData
 {
 	int width;
 	int height;
 	
-	byte** imageData;
+	uint8_t** imageData;
 };
 
 class PngWriter
 {
 public:
 	PngWriter(const std::string& outputFile);
+    PngWriter(std::vector<uint8_t>& outputBuffer);
 	~PngWriter();
 	
 	void setPngText(const std::string& key, const std::string& value);
 	void writeFrame(png_byte** rgbData, int width, int height);
 	
 private:
-	static void writeRowCallback(png_structp, png_uint_32, int);
+    void initPng();
+    static void writeRowCallback(png_structp, png_uint_32, int);
+    static void writeDataCallback(png_structp png_ptr, png_bytep data, png_size_t length);
 	
 private:
-	FILE* 		m_FilePtr;
-	png_structp m_PngPtr;
-	png_infop 	m_InfoPtr;
+	FILE* 		            m_FilePtr;
+	png_structp             m_PngPtr;
+	png_infop 	            m_InfoPtr;
 };
 
 #endif

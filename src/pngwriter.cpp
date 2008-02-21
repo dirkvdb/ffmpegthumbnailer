@@ -16,6 +16,7 @@
 
 #include "pngwriter.h"
 #include <stdexcept>
+#include <assert.h>
 
 using namespace std;
 
@@ -24,6 +25,7 @@ PngWriter::PngWriter(const string& outputFile)
 , m_PngPtr(NULL)
 , m_InfoPtr(NULL)
 {
+    initPng();
 	m_FilePtr = fopen(outputFile.c_str(), "wb");
 	
 	if (!m_FilePtr)
@@ -31,6 +33,29 @@ PngWriter::PngWriter(const string& outputFile)
        throw logic_error(string("Failed to open output file: ") + outputFile);
     }
     
+    png_init_io(m_PngPtr, m_FilePtr);
+}
+
+PngWriter::PngWriter(std::vector<uint8_t>& outputBuffer)
+: m_FilePtr(NULL)
+, m_PngPtr(NULL)
+, m_InfoPtr(NULL)
+{
+    initPng();
+    png_set_write_fn(m_PngPtr, (voidp) &outputBuffer, writeDataCallback, NULL);
+}
+
+PngWriter::~PngWriter()
+{
+    if (m_FilePtr)
+    {
+        fclose(m_FilePtr);
+    }
+	png_destroy_write_struct(&m_PngPtr, &m_InfoPtr);
+}
+
+void PngWriter::initPng()
+{
     m_PngPtr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 	if (!m_PngPtr)
 	{
@@ -43,12 +68,6 @@ PngWriter::PngWriter(const string& outputFile)
 		png_destroy_write_struct(&m_PngPtr, (png_infopp) NULL);
 		throw logic_error("Failed to create png info structure");
 	}
-}
-
-PngWriter::~PngWriter()
-{
-	fclose(m_FilePtr);
-	png_destroy_write_struct(&m_PngPtr, &m_InfoPtr);
 }
 
 void PngWriter::setPngText(const string& key, const string& value)
@@ -64,21 +83,28 @@ void PngWriter::setPngText(const string& key, const string& value)
 
 void PngWriter::writeFrame(png_byte** rgbData, int width, int height)
 {
-	png_init_io(m_PngPtr, m_FilePtr);
     if (setjmp(png_jmpbuf(m_PngPtr)))
 	{
 		throw logic_error("Writing png file failed");
 	}
-		
+ 		
 	png_set_IHDR(m_PngPtr, m_InfoPtr, width, height, 8,
 				 PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE,
 				 PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
 				 
-	png_set_rows(m_PngPtr, m_InfoPtr, rgbData);
-	png_write_png(m_PngPtr, m_InfoPtr, 0, NULL);	
+    png_set_rows(m_PngPtr, m_InfoPtr, rgbData);
+    png_write_png(m_PngPtr, m_InfoPtr, 0, NULL);	
 }
 
 void PngWriter::writeRowCallback(png_structp, png_uint_32, int)
 {
 	// not interested
+}
+
+void PngWriter::writeDataCallback(png_structp png_ptr, png_bytep data, png_size_t length)
+{
+    vector<uint8_t>& outputBuffer = *(reinterpret_cast<vector<uint8_t>* >(png_get_io_ptr(png_ptr)));
+    int prevBufSize = outputBuffer.size();
+    outputBuffer.resize(outputBuffer.size() + length);
+    memcpy(&outputBuffer[prevBufSize], data, length);
 }
