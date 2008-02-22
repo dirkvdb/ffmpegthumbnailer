@@ -19,31 +19,41 @@
 
 #include <vector>
 
-extern "C" void thumbnailer_init(video_thumbnailer* thumbnailer)
+extern "C" video_thumbnailer* create_thumbnailer(void)
 {
-    thumbnailer->thumbnailer        = new VideoThumbnailer();
-    thumbnailer->thumbnail_size     = 128;
-    thumbnailer->seek_percentage    = 10;
-    thumbnailer->overlay_film_strip = 0;
-    thumbnailer->workaround_bugs    = 0;
-    thumbnailer->image_type         = IMAGE_PNG;
+    video_thumbnailer* thumbnailer = new video_thumbnailer_struct();
+
+    thumbnailer->thumbnailer            = new VideoThumbnailer();
+    thumbnailer->thumbnail_size         = 128;
+    thumbnailer->seek_percentage        = 10;
+    thumbnailer->overlay_film_strip     = 0;
+    thumbnailer->workaround_bugs        = 0;
+    thumbnailer->thumbnail_image_type   = IMAGE_PNG;
+    
+    return thumbnailer;
 }
 
-extern "C" void thumbnailer_destroy(video_thumbnailer* thumbnailer)
+extern "C" void destroy_thumbnailer(video_thumbnailer* thumbnailer)
 {
     VideoThumbnailer* videoThumbnailer = reinterpret_cast<VideoThumbnailer*>(thumbnailer->thumbnailer);
     delete videoThumbnailer;
     thumbnailer->thumbnailer = 0;
+    
+    delete thumbnailer;
 }
 
-extern "C" void image_data_init(image_data* data)
+extern "C" image_data* create_image_data(void)
 {
+    image_data* data = new image_data();
+    
     data->image_data_ptr = 0;
     data->image_data_size = 0;
     data->internal_data = new std::vector<uint8_t>();
+    
+    return data;
 }
 
-extern "C" void image_data_destroy(image_data* data)
+extern "C" void destroy_image_data(image_data* data)
 {
     data->image_data_ptr = 0;
     data->image_data_size = 0;
@@ -51,6 +61,8 @@ extern "C" void image_data_destroy(image_data* data)
     std::vector<uint8_t>* dataVector = reinterpret_cast<std::vector<uint8_t>* >(data->internal_data);
     delete dataVector;
     data->internal_data = 0;
+    
+    delete data;
 }
 
 extern "C" void generate_thumbnail_to_buffer(video_thumbnailer* thumbnailer, const char* movie_filename, image_data* generated_image_data)
