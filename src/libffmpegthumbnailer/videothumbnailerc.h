@@ -17,37 +17,42 @@
 #ifndef VIDEO_THUMBNAILERC_H
 #define VIDEO_THUMBNAILERC_H
 
-#include <stdlib.h>
 #include <inttypes.h>
 
+#ifdef __cplusplus
 extern "C"
 {
-    struct video_thumbnailer
-    {
-        int         thumbnail_size;
-        int         seek_percentage;
-        int         overlay_film_strip;
-        int         workaround_bugs;
-        
-        void*       thumbnailer;
-    };
+#endif
     
-    struct png_data
-    {
-        uint8_t*    png_data_ptr;
-        int         png_data_size;
-        
-        void*       internal_data;
-    };
+struct video_thumbnailer
+{
+    int         thumbnail_size;
+    int         seek_percentage;
+    int         overlay_film_strip;
+    int         workaround_bugs;
     
-    void thumbnailer_init(video_thumbnailer* thumbnailer);
-    void thumbnailer_destroy(video_thumbnailer* thumbnailer);
+    void*       thumbnailer;
+};
+
+struct png_data
+{
+    uint8_t*    png_data_ptr;
+    int         png_data_size;
     
-    void png_data_init(png_data* data);
-    void png_data_destroy(png_data* data);
-    
-    void generate_thumbnail_to_buffer(video_thumbnailer* thumbnailer, const char* movie_filename, png_data* generated_png_data);
-    void generate_thumbnail_to_file(video_thumbnailer* thumbnailer, const char* movie_filename, const char* output_fileName);
+    void*       internal_data;
+};
+
+void thumbnailer_init(video_thumbnailer* thumbnailer);
+void thumbnailer_destroy(video_thumbnailer* thumbnailer);
+
+void png_data_init(png_data* data);
+void png_data_destroy(png_data* data);
+
+void generate_thumbnail_to_buffer(video_thumbnailer* thumbnailer, const char* movie_filename, png_data* generated_png_data);
+void generate_thumbnail_to_file(video_thumbnailer* thumbnailer, const char* movie_filename, const char* output_fileName);
+
+#ifdef __cplusplus
 }
+#endif
 
 #endif
