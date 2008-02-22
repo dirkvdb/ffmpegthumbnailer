@@ -26,6 +26,7 @@ extern "C" void thumbnailer_init(video_thumbnailer* thumbnailer)
     thumbnailer->seek_percentage    = 10;
     thumbnailer->overlay_film_strip = 0;
     thumbnailer->workaround_bugs    = 0;
+    thumbnailer->image_type         = IMAGE_PNG;
 }
 
 extern "C" void thumbnailer_destroy(video_thumbnailer* thumbnailer)
@@ -35,27 +36,27 @@ extern "C" void thumbnailer_destroy(video_thumbnailer* thumbnailer)
     thumbnailer->thumbnailer = 0;
 }
 
-extern "C" void png_data_init(png_data* data)
+extern "C" void image_data_init(image_data* data)
 {
-    data->png_data_ptr = 0;
-    data->png_data_size = 0;
+    data->image_data_ptr = 0;
+    data->image_data_size = 0;
     data->internal_data = new std::vector<uint8_t>();
 }
 
-extern "C" void png_data_destroy(png_data* data)
+extern "C" void image_data_destroy(image_data* data)
 {
-    data->png_data_ptr = 0;
-    data->png_data_size = 0;
+    data->image_data_ptr = 0;
+    data->image_data_size = 0;
     
     std::vector<uint8_t>* dataVector = reinterpret_cast<std::vector<uint8_t>* >(data->internal_data);
     delete dataVector;
     data->internal_data = 0;
 }
 
-extern "C" void generate_thumbnail_to_buffer(video_thumbnailer* thumbnailer, const char* movie_filename, png_data* generated_png_data)
+extern "C" void generate_thumbnail_to_buffer(video_thumbnailer* thumbnailer, const char* movie_filename, image_data* generated_image_data)
 {
     VideoThumbnailer* videoThumbnailer  = reinterpret_cast<VideoThumbnailer*>(thumbnailer->thumbnailer);
-    std::vector<uint8_t>* dataVector    = reinterpret_cast<std::vector<uint8_t>* >(generated_png_data->internal_data);
+    std::vector<uint8_t>* dataVector    = reinterpret_cast<std::vector<uint8_t>* >(generated_image_data->internal_data);
     
     videoThumbnailer->setThumbnailSize(thumbnailer->thumbnail_size);
     videoThumbnailer->setSeekPercentage(thumbnailer->seek_percentage);
@@ -63,8 +64,8 @@ extern "C" void generate_thumbnail_to_buffer(video_thumbnailer* thumbnailer, con
     videoThumbnailer->setWorkAroundIssues(thumbnailer->workaround_bugs != 0);
     
     videoThumbnailer->generateThumbnail(movie_filename, *dataVector);
-    generated_png_data->png_data_ptr = &dataVector->front();
-    generated_png_data->png_data_size = dataVector->size();
+    generated_image_data->image_data_ptr = &dataVector->front();
+    generated_image_data->image_data_size = dataVector->size();
 }
 
 extern "C" void generate_thumbnail_to_file(video_thumbnailer* thumbnailer, const char* movie_filename, const char* output_fileName)
