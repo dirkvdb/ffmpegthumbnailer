@@ -18,25 +18,20 @@
 #define VIDEO_THUMBNAILERC_H
 
 #include <inttypes.h>
+#include "imagetypes.h"
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-typedef enum image_type_enum
-{
-    PNG,
-    JPEG
-} image_type;
-    
 typedef struct video_thumbnailer_struct
 {
     int         thumbnail_size;         /* default = 128 */
     int         seek_percentage;        /* default = 10 */
     int         overlay_film_strip;     /* default = 0 */
     int         workaround_bugs;        /* default = 0 */
-    image_type  thumbnail_image_type;   /* default = IMAGE_PNG */
+    ImageType   thumbnail_image_type;   /* default = Png */
     
     void*               thumbnailer;    /* for internal use only */
 } video_thumbnailer;
