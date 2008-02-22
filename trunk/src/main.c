@@ -15,28 +15,32 @@
 //    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <stdlib.h>
+#include <stdio.h>
 
-#include "libffmpegthumbnailer/videothumbnailerc.h"
+#include <libffmpegthumbnailer/videothumbnailerc.h>
 
 int main(int argc, char** argv)
 {
-    struct video_thumbnailer thumbnailer;
-    struct image_data imageData;
+    if (argc != 2)
+    {
+        printf("No moviefile specified\n");
+        return -1;
+    }
     
-    thumbnailer_init(&thumbnailer)
-    image_data_init(&imageData)
+    video_thumbnailer* thumbnailer = create_thumbnailer();
+    image_data* imageData = create_image_data();
     
-    thumbnailer.seek_percentage    = 15;
-    thumbnailer.overlay_film_strip = 1;
+    thumbnailer->seek_percentage    = 15;
+    thumbnailer->overlay_film_strip = 1;
     
-    generate_thumbnail_to_buffer(thumbnailer, "my.movie.avi", &imageData);
+    generate_thumbnail_to_buffer(thumbnailer, argv[1], imageData);
     
     FILE* pngFile = fopen("output.png", "wb");
-    fwrite(imageData.image_data_ptr, 1 , imageData.image_data_size, pngFile);    
+    fwrite(imageData->image_data_ptr, 1 , imageData->image_data_size, pngFile);    
     fclose(pngFile);
             
-    image_data_destroy(&imageData)
-    thumbnailer_destroy(&thumbnailer)
+    destroy_image_data(imageData);
+    destroy_thumbnailer(thumbnailer);
 
 	return 0;
 }

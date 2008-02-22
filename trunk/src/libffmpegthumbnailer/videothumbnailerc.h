@@ -32,13 +32,13 @@ typedef enum image_type_enum
     
 typedef struct video_thumbnailer_struct
 {
-    int         thumbnail_size;     /* default = 128 */
-    int         seek_percentage;    /* default = 10 */
-    int         overlay_film_strip; /* default = 0 */
-    int         workaround_bugs;    /* default = 0 */
-    image_type  image_type;         /* default = IMAGE_PNG */
+    int         thumbnail_size;         /* default = 128 */
+    int         seek_percentage;        /* default = 10 */
+    int         overlay_film_strip;     /* default = 0 */
+    int         workaround_bugs;        /* default = 0 */
+    image_type  thumbnail_image_type;   /* default = IMAGE_PNG */
     
-    void*               thumbnailer;        /* for internal use only */
+    void*               thumbnailer;    /* for internal use only */
 } video_thumbnailer;
 
 typedef struct image_data_struct
@@ -49,15 +49,15 @@ typedef struct image_data_struct
     void*       internal_data;        /* for internal use only */
 } image_data;
 
-/* intitialize video_thumbnailer structure */
-void thumbnailer_init(video_thumbnailer* thumbnailer);
+/* create video_thumbnailer structure */
+video_thumbnailer* create_thumbnailer(void);
 /* destroy video_thumbnailer structure */
-void thumbnailer_destroy(video_thumbnailer* thumbnailer);
+void destroy_thumbnailer(video_thumbnailer* thumbnailer);
 
-/* intitialize image_data structure */
-void image_data_init(image_data* data);
+/* create image_data structure */
+image_data* create_image_data(void);
 /* destroy image_data structure */
-void image_data_destroy(image_data* data);
+void destroy_image_data(image_data* data);
 
 /* generate thumbnail from video file (movie_filename), image data is stored in generated_image_data struct */
 void generate_thumbnail_to_buffer(video_thumbnailer* thumbnailer, const char* movie_filename, image_data* generated_image_data);
