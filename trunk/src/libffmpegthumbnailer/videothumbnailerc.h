@@ -42,14 +42,14 @@ struct png_data
     void*       internal_data;      /* for internal use only */
 };
 
-/* intitialize video_thumbnailer structue */
+/* intitialize video_thumbnailer structure */
 void thumbnailer_init(video_thumbnailer* thumbnailer);
-/* destroy video_thumbnailer structue */
+/* destroy video_thumbnailer structure */
 void thumbnailer_destroy(video_thumbnailer* thumbnailer);
 
-/* intitialize png_data structue */
+/* intitialize png_data structure */
 void png_data_init(png_data* data);
-/* destroy png_data structue */
+/* destroy png_data structure */
 void png_data_destroy(png_data* data);
 
 /* generate thumbnail from video file (movie_filename), png data is stored in generated_png_data struct */
