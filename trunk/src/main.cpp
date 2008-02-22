@@ -18,8 +18,8 @@
 #include <unistd.h>
 #include <stdexcept>
 
-#include "libffmpegthumbnailer/videothumbnailer.hpp"
-#include "libffmpegthumbnailer/stringoperations.hpp"
+#include "libffmpegthumbnailer/videothumbnailer.h"
+#include "libffmpegthumbnailer/stringoperations.h"
 
 using namespace std;
 
