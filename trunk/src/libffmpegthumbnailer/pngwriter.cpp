@@ -21,7 +21,8 @@
 using namespace std;
 
 PngWriter::PngWriter(const string& outputFile)
-: m_FilePtr(NULL)
+: ImageWriter()
+, m_FilePtr(NULL)
 , m_PngPtr(NULL)
 , m_InfoPtr(NULL)
 {
@@ -37,7 +38,8 @@ PngWriter::PngWriter(const string& outputFile)
 }
 
 PngWriter::PngWriter(std::vector<uint8_t>& outputBuffer)
-: m_FilePtr(NULL)
+: ImageWriter()
+, m_FilePtr(NULL)
 , m_PngPtr(NULL)
 , m_InfoPtr(NULL)
 {
@@ -70,7 +72,7 @@ void PngWriter::initPng()
 	}
 }
 
-void PngWriter::setPngText(const string& key, const string& value)
+void PngWriter::setText(const string& key, const string& value)
 {
 	png_text pngText;
 		
