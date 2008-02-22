@@ -14,32 +14,39 @@
 //    along with this program; if not, write to the Free Software
 //    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-#ifndef PNG_WRITER_H
-#define PNG_WRITER_H
+#ifndef IMAGE_WRITER_FACTORY_H
+#define IMAGE_WRITER_FACTORY_H
 
 #include <string>
-#include <vector>
-#include <png.h>
+#include <inttypes.h>
+#include <stdexcept>
 
 #include "imagewriter.hpp"
+#include "pngwriter.hpp"
+#include "jpegwriter.hpp"
 
-class PngWriter : public ImageWriter
+enum ImageType
+{
+    Png,
+    Jpeg
+};
+
+template <typename T>
+class ImageWriterFactory
 {
 public:
-	PngWriter(const std::string& outputFile);
-    PngWriter(std::vector<uint8_t>& outputBuffer);
-	~PngWriter();
-	
-	void setText(const std::string& key, const std::string& value);
-	void writeFrame(uint8_t** rgbData, int width, int height);
-	
-private:
-    void init();
-	
-private:
-	FILE* 		            m_FilePtr;
-	png_structp             m_PngPtr;
-	png_infop 	            m_InfoPtr;
+    static ImageWriter* createImageWriter(ImageType imageType, T output)
+    {
+        switch (imageType)
+        {
+            case Png:
+                return new PngWriter(output);
+            case Jpeg:
+                return new JpegWriter(output);
+            default:
+                throw std::logic_error("ImageWriterFactory::createImageWriter: Invalid image type specified");
+        }
+    }
 };
 
 #endif

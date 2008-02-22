@@ -1,8 +1,9 @@
 lib_LTLIBRARIES = libffmpegthumbnailer.la
 
 libffmpegthumbnailer_la_SOURCES =   moviedecoder.hpp moviedecoder.cpp \
-                                    imagewriter.hpp\
+                                    imagewriter.hpp imagewriterfactory.hpp\
                                     pngwriter.hpp pngwriter.cpp \
+                                    jpegwriter.hpp jpegwriter.cpp \
                                     stringoperations.hpp stringoperations.cpp \
                                     videothumbnailer.cpp videothumbnailerc.cpp
 

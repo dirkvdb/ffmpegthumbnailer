@@ -26,8 +26,8 @@ extern "C"
 
 typedef enum image_type_enum
 {
-    IMAGE_PNG,
-    IMAGE_JPEG
+    PNG,
+    JPEG
 } image_type;
     
 typedef struct video_thumbnailer_struct

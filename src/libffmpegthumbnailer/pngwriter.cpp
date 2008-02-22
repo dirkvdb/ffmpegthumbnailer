@@ -20,13 +20,16 @@
 
 using namespace std;
 
+static void writeRowCallback(png_structp, png_uint_32, int);
+static void writeDataCallback(png_structp png_ptr, png_bytep data, png_size_t length);
+
 PngWriter::PngWriter(const string& outputFile)
 : ImageWriter()
 , m_FilePtr(NULL)
 , m_PngPtr(NULL)
 , m_InfoPtr(NULL)
 {
-    initPng();
+    init();
 	m_FilePtr = fopen(outputFile.c_str(), "wb");
 	
 	if (!m_FilePtr)
@@ -43,7 +46,7 @@ PngWriter::PngWriter(std::vector<uint8_t>& outputBuffer)
 , m_PngPtr(NULL)
 , m_InfoPtr(NULL)
 {
-    initPng();
+    init();
     png_set_write_fn(m_PngPtr, (voidp) &outputBuffer, writeDataCallback, NULL);
 }
 
@@ -56,7 +59,7 @@ PngWriter::~PngWriter()
 	png_destroy_write_struct(&m_PngPtr, &m_InfoPtr);
 }
 
-void PngWriter::initPng()
+void PngWriter::init()
 {
     m_PngPtr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 	if (!m_PngPtr)
@@ -83,7 +86,7 @@ void PngWriter::setText(const string& key, const string& value)
 	png_set_text(m_PngPtr, m_InfoPtr, &pngText, 1);	
 }
 
-void PngWriter::writeFrame(png_byte** rgbData, int width, int height)
+void PngWriter::writeFrame(uint8_t** rgbData, int width, int height)
 {
     if (setjmp(png_jmpbuf(m_PngPtr)))
 	{
@@ -98,12 +101,12 @@ void PngWriter::writeFrame(png_byte** rgbData, int width, int height)
     png_write_png(m_PngPtr, m_InfoPtr, 0, NULL);	
 }
 
-void PngWriter::writeRowCallback(png_structp, png_uint_32, int)
+void writeRowCallback(png_structp, png_uint_32, int)
 {
 	// not interested
 }
 
-void PngWriter::writeDataCallback(png_structp png_ptr, png_bytep data, png_size_t length)
+void writeDataCallback(png_structp png_ptr, png_bytep data, png_size_t length)
 {
     vector<uint8_t>& outputBuffer = *(reinterpret_cast<vector<uint8_t>* >(png_get_io_ptr(png_ptr)));
     int prevBufSize = outputBuffer.size();
