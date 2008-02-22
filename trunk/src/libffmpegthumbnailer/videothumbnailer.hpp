@@ -22,6 +22,8 @@
 #include <map>
 #include <inttypes.h>
 
+#include "imagewriterfactory.hpp"
+
 typedef std::map<uint8_t, int> Histogram;
 
 class VideoFrame;
@@ -34,8 +36,8 @@ public:
 	VideoThumbnailer(int thumbnailSize, uint16_t seekPercentage, bool filmStripOverlay, bool workaroundIssues);
 	~VideoThumbnailer();
 
-	void generateThumbnail(const std::string& videoFile, const std::string& outputFile);
-    void generateThumbnail(const std::string& videoFile, std::vector<uint8_t>& buffer);
+	void generateThumbnail(const std::string& videoFile, ImageType type, const std::string& outputFile);
+    void generateThumbnail(const std::string& videoFile, ImageType type, std::vector<uint8_t>& buffer);
 
     void setThumbnailSize(int size);
     void setSeekPercentage(int percentage);

@@ -19,10 +19,12 @@
 #include <stdexcept>
 
 #include "libffmpegthumbnailer/videothumbnailer.hpp"
+#include "libffmpegthumbnailer/stringoperations.hpp"
 
 using namespace std;
 
 void printUsage();
+ImageType determineImageType(const std::string& filename);
 
 int main(int argc, char** argv)
 {
@@ -76,9 +78,9 @@ int main(int argc, char** argv)
     
 	try
 	{
-		VideoThumbnailer videoThumbnailer(thumbnailSize, seekPercentage, filmStripOverlay, workaroundIssues);
-		videoThumbnailer.generateThumbnail(inputFile, outputFile);
-	}
+        VideoThumbnailer videoThumbnailer(thumbnailSize, seekPercentage, filmStripOverlay, workaroundIssues);
+		videoThumbnailer.generateThumbnail(inputFile, determineImageType(outputFile), outputFile);
+    }
 	catch (exception& e)
 	{
 		cerr << "Error: " << e.what() << endl;
@@ -103,4 +105,18 @@ void printUsage()
 		 << "  -f     : create a movie strip overlay" << endl
          << "  -w     : workaround issues in old versions of ffmpeg" << endl
          << "  -h     : display this help" << endl;
+}
+
+ImageType determineImageType(const std::string& filename)
+{
+    string lowercaseFilename = filename;
+    StringOperations::lowercase(lowercaseFilename);
+    
+    size_t size = lowercaseFilename.size();
+    if ((lowercaseFilename.substr(size - 5, size) == ".jpeg") || (lowercaseFilename.substr(size - 4, size) == ".jpg"))
+    {
+        return Jpeg;
+    }
+    
+    return Png;
 }

@@ -18,6 +18,20 @@
 #include "videothumbnailer.hpp"
 
 #include <vector>
+#include <stdexcept>
+
+ImageType getImageType(image_type imageType)
+{
+    switch (imageType)
+    {
+        case PNG:
+            return Png;
+        case JPEG:
+            return Jpeg;
+        default:
+            throw std::logic_error("Invalid image type specified");
+    }
+}
 
 extern "C" video_thumbnailer* create_thumbnailer(void)
 {
@@ -28,7 +42,7 @@ extern "C" video_thumbnailer* create_thumbnailer(void)
     thumbnailer->seek_percentage        = 10;
     thumbnailer->overlay_film_strip     = 0;
     thumbnailer->workaround_bugs        = 0;
-    thumbnailer->thumbnail_image_type   = IMAGE_PNG;
+    thumbnailer->thumbnail_image_type   = PNG;
     
     return thumbnailer;
 }
@@ -75,7 +89,7 @@ extern "C" void generate_thumbnail_to_buffer(video_thumbnailer* thumbnailer, con
     videoThumbnailer->setFilmStripOverlay(thumbnailer->overlay_film_strip != 0);
     videoThumbnailer->setWorkAroundIssues(thumbnailer->workaround_bugs != 0);
     
-    videoThumbnailer->generateThumbnail(movie_filename, *dataVector);
+    videoThumbnailer->generateThumbnail(movie_filename, getImageType(thumbnailer->thumbnail_image_type), *dataVector);
     generated_image_data->image_data_ptr = &dataVector->front();
     generated_image_data->image_data_size = dataVector->size();
 }
@@ -89,5 +103,5 @@ extern "C" void generate_thumbnail_to_file(video_thumbnailer* thumbnailer, const
     videoThumbnailer->setFilmStripOverlay(thumbnailer->overlay_film_strip != 0);
     videoThumbnailer->setWorkAroundIssues(thumbnailer->workaround_bugs != 0);
     
-    videoThumbnailer->generateThumbnail(movie_filename, output_fileName);
+    videoThumbnailer->generateThumbnail(movie_filename, getImageType(thumbnailer->thumbnail_image_type), output_fileName);
 }

@@ -30,14 +30,16 @@ int main(int argc, char** argv)
     video_thumbnailer* thumbnailer = create_thumbnailer();
     image_data* imageData = create_image_data();
     
-    thumbnailer->seek_percentage    = 15;
-    thumbnailer->overlay_film_strip = 1;
+    thumbnailer->seek_percentage        = 15;
+    thumbnailer->overlay_film_strip     = 1;
+    thumbnailer->thumbnail_size         = 1024;
+    thumbnailer->thumbnail_image_type   = JPEG;
     
     generate_thumbnail_to_buffer(thumbnailer, argv[1], imageData);
     
-    FILE* pngFile = fopen("output.png", "wb");
-    fwrite(imageData->image_data_ptr, 1 , imageData->image_data_size, pngFile);    
-    fclose(pngFile);
+    FILE* imageFile = fopen("output.jpg", "wb");
+    fwrite(imageData->image_data_ptr, 1 , imageData->image_data_size, imageFile);
+    fclose(imageFile);
             
     destroy_image_data(imageData);
     destroy_thumbnailer(thumbnailer);

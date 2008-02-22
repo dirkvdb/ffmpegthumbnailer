@@ -16,7 +16,6 @@
 
 #include "videothumbnailer.hpp"
 
-#include "pngwriter.hpp"
 #include "moviedecoder.hpp"
 #include "stringoperations.hpp"
 
@@ -106,6 +105,7 @@ void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageWriter& i
 	}
     
 	movieDecoder.getScaledVideoFrame(m_ThumbnailSize, videoFrame);
+
 	if (m_OverlayFilmStrip && (videoFrame.width > FILMHOLE_WIDTH * 2))
 	{
 		overlayFilmStrip(videoFrame);
@@ -120,17 +120,19 @@ void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageWriter& i
 	writeImage(videoFile, imageWriter, videoFrame, movieDecoder.getDuration(), rowPointers);
 }
 
-void VideoThumbnailer::generateThumbnail(const string& videoFile, const string& outputFile)
+void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageType type, const string& outputFile)
 {
-    PngWriter pngWriter(outputFile);
-    generateThumbnail(videoFile, pngWriter);
+    ImageWriter* imageWriter = ImageWriterFactory<const string&>::createImageWriter(type, outputFile);
+    generateThumbnail(videoFile, *imageWriter);
+    delete imageWriter;
 }
 
-void VideoThumbnailer::generateThumbnail(const std::string& videoFile, std::vector<uint8_t>& buffer)
+void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageType type, vector<uint8_t>& buffer)
 {
     buffer.clear();
-    PngWriter pngWriter(buffer);
-    generateThumbnail(videoFile, pngWriter);
+    ImageWriter* imageWriter = ImageWriterFactory<vector<uint8_t>&>::createImageWriter(type, buffer);
+    generateThumbnail(videoFile, *imageWriter);
+    delete imageWriter;
 }
 
 void VideoThumbnailer::writeImage(const string& videoFile, ImageWriter& imageWriter, const VideoFrame& videoFrame, int duration, vector<uint8_t*>& rowPointers)
