@@ -22,9 +22,8 @@
 #include <map>
 #include <inttypes.h>
 
+#include "imagetypes.h"
 #include "imagewriterfactory.h"
-
-typedef std::map<uint8_t, int> Histogram;
 
 class VideoFrame;
 class ImageWriter;
@@ -45,6 +44,8 @@ public:
     void setWorkAroundIssues(bool workAround);
 	
 private:
+    typedef std::map<uint8_t, int> Histogram;
+
     void generateThumbnail(const std::string& videoFile, ImageWriter& imageWriter);
     void writeImage(const std::string& videoFile, ImageWriter& imageWriter, const VideoFrame& videoFrame, int duration, std::vector<uint8_t*>& rowPointers);
 	

@@ -14,35 +14,13 @@
 //    along with this program; if not, write to the Free Software
 //    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-#ifndef IMAGE_WRITER_FACTORY_H
-#define IMAGE_WRITER_FACTORY_H
+#ifndef IMAGE_TYPES_H
+#define IMAGE_TYPES_H
 
-#include "imagewriter.h"
-#include "pngwriter.h"
-#include "jpegwriter.h"
-#include "imagetypes.h"
-
-#include <string>
-#include <inttypes.h>
-#include <stdexcept>
-
-
-template <typename T>
-class ImageWriterFactory
+typedef enum ImageTypeEnum
 {
-public:
-    static ImageWriter* createImageWriter(ImageType imageType, T output)
-    {
-        switch (imageType)
-        {
-            case Png:
-                return new PngWriter(output);
-            case Jpeg:
-                return new JpegWriter(output);
-            default:
-                throw std::logic_error("ImageWriterFactory::createImageWriter: Invalid image type specified");
-        }
-    }
-};
+    Png,
+    Jpeg
+} ImageType;
 
 #endif
