@@ -21,9 +21,9 @@
 #include <inttypes.h>
 #include <stdexcept>
 
-#include "imagewriter.hpp"
-#include "pngwriter.hpp"
-#include "jpegwriter.hpp"
+#include "imagewriter.h"
+#include "pngwriter.h"
+#include "jpegwriter.h"
 
 enum ImageType
 {

@@ -21,7 +21,7 @@
 #include <vector>
 #include <jpeglib.h>
 
-#include "imagewriter.hpp"
+#include "imagewriter.h"
 
 struct BufferWriter;
 

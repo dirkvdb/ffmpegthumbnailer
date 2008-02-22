@@ -15,7 +15,7 @@
 //    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "videothumbnailerc.h"
-#include "videothumbnailer.hpp"
+#include "videothumbnailer.h"
 
 #include <vector>
 #include <stdexcept>

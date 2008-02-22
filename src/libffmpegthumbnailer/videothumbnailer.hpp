@@ -14,15 +14,15 @@
 //    along with this program; if not, write to the Free Software
 //    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-#ifndef VIDEO_THUMBNAILER_HPP
-#define VIDEO_THUMBNAILER_HPP
+#ifndef VIDEO_THUMBNAILER_H
+#define VIDEO_THUMBNAILER_H
 
 #include <string>
 #include <vector>
 #include <map>
 #include <inttypes.h>
 
-#include "imagewriterfactory.hpp"
+#include "imagewriterfactory.h"
 
 typedef std::map<uint8_t, int> Histogram;
 
