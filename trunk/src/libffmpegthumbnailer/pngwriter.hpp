@@ -21,7 +21,7 @@
 #include <vector>
 #include <png.h>
 
-#include "imagewriter.hpp"
+#include "imagewriter.h"
 
 class PngWriter : public ImageWriter
 {
