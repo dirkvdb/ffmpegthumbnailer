@@ -76,8 +76,8 @@ int main(int argc, char** argv)
     
 	try
 	{
-		VideoThumbnailer videoThumbailer(inputFile);
-		videoThumbailer.generateThumbnail(outputFile, thumbnailSize, filmStripOverlay, seekPercentage, workaroundIssues);
+		VideoThumbnailer videoThumbnailer(thumbnailSize, seekPercentage, filmStripOverlay, workaroundIssues);
+		videoThumbnailer.generateThumbnail(inputFile, outputFile);
 	}
 	catch (exception& e)
 	{

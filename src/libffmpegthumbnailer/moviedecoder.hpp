@@ -29,15 +29,13 @@ extern "C" {
 #include <ffmpeg/avformat.h>
 }
 
-typedef unsigned char byte;
-
 struct VideoFrame
 {
 	int width;
 	int height;
 	int lineSize;
 	
-	std::vector<byte> frameData;
+	std::vector<uint8_t> frameData;
 };
 
 class MovieDecoder
