@@ -23,38 +23,45 @@
 extern "C"
 {
 #endif
+
+typedef enum image_type_enum
+{
+    IMAGE_PNG,
+    IMAGE_JPEG
+} image_type;
     
-struct video_thumbnailer
+typedef struct video_thumbnailer_struct
 {
     int         thumbnail_size;     /* default = 128 */
     int         seek_percentage;    /* default = 10 */
     int         overlay_film_strip; /* default = 0 */
     int         workaround_bugs;    /* default = 0 */
+    image_type  image_type;         /* default = IMAGE_PNG */
     
-    void*       thumbnailer;        /* for internal use only */
-};
+    void*               thumbnailer;        /* for internal use only */
+} video_thumbnailer;
 
-struct png_data
+typedef struct image_data_struct
 {
-    uint8_t*    png_data_ptr;       /* points to the png data after call to generate_thumbnail_to_buffer */
-    int         png_data_size;      /* contains the size of the png data after call to generate_thumbnail_to_buffer */
+    uint8_t*    image_data_ptr;       /* points to the image data after call to generate_thumbnail_to_buffer */
+    int         image_data_size;      /* contains the size of the image data after call to generate_thumbnail_to_buffer */
     
-    void*       internal_data;      /* for internal use only */
-};
+    void*       internal_data;        /* for internal use only */
+} image_data;
 
 /* intitialize video_thumbnailer structure */
 void thumbnailer_init(video_thumbnailer* thumbnailer);
 /* destroy video_thumbnailer structure */
 void thumbnailer_destroy(video_thumbnailer* thumbnailer);
 
-/* intitialize png_data structure */
-void png_data_init(png_data* data);
-/* destroy png_data structure */
-void png_data_destroy(png_data* data);
+/* intitialize image_data structure */
+void image_data_init(image_data* data);
+/* destroy image_data structure */
+void image_data_destroy(image_data* data);
 
-/* generate thumbnail from video file (movie_filename), png data is stored in generated_png_data struct */
-void generate_thumbnail_to_buffer(video_thumbnailer* thumbnailer, const char* movie_filename, png_data* generated_png_data);
-/* generate thumbnail from video file (movie_filename), png is written to output_fileName on disk*/
+/* generate thumbnail from video file (movie_filename), image data is stored in generated_image_data struct */
+void generate_thumbnail_to_buffer(video_thumbnailer* thumbnailer, const char* movie_filename, image_data* generated_image_data);
+/* generate thumbnail from video file (movie_filename), image is written to output_fileName on disk*/
 void generate_thumbnail_to_file(video_thumbnailer* thumbnailer, const char* movie_filename, const char* output_fileName);
 
 #ifdef __cplusplus
