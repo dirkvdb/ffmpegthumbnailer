@@ -14,15 +14,13 @@
 //    along with this program; if not, write to the Free Software
 //    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-#ifndef VIDEO_THUMBNAILER_H
-#define VIDEO_THUMBNAILER_H
+#ifndef VIDEO_THUMBNAILER_HPP
+#define VIDEO_THUMBNAILER_HPP
 
 #include <string>
 #include <vector>
 #include <map>
 #include <inttypes.h>
-
-#include "moviedecoder.hpp"
 
 typedef std::map<uint8_t, int> Histogram;
 
@@ -32,16 +30,23 @@ class PngWriter;
 class VideoThumbnailer
 {
 public:
-	VideoThumbnailer(const std::string& videoFile);
+    VideoThumbnailer();
+	VideoThumbnailer(int thumbnailSize, uint16_t seekPercentage, bool filmStripOverlay, bool workaroundIssues);
 	~VideoThumbnailer();
-	void generateThumbnail(const std::string& outputFile, int thumbnailSize, bool filmStripOverlay, unsigned short seekPercentage, bool workaroundIssues);
-    void generateThumbnail(std::vector<uint8_t>& buffer, int thumbnailSize, bool filmStripOverlay, unsigned short seekPercentage, bool workaroundIssues);
+
+	void generateThumbnail(const std::string& videoFile, const std::string& outputFile);
+    void generateThumbnail(const std::string& videoFile, std::vector<uint8_t>& buffer);
+
+    void setThumbnailSize(int size);
+    void setSeekPercentage(int percentage);
+    void setFilmStripOverlay(bool enabled);
+    void setWorkAroundIssues(bool workAround);
 	
 private:
-    void generateThumbnail(PngWriter& pngWriter, int thumbnailSize, bool filmStripOverlay, unsigned short seekPercentage, bool workaroundIssues);
-    void writePng(PngWriter& pngWriter, const VideoFrame& videoFrame, std::vector<uint8_t*>& rowPointers);
+    void generateThumbnail(const std::string& videoFile, PngWriter& pngWriter);
+    void writePng(const std::string& videoFile, PngWriter& pngWriter, const VideoFrame& videoFrame, int duration, std::vector<uint8_t*>& rowPointers);
 	
-    std::string getMimeType();
+    std::string getMimeType(const std::string& videoFile);
 	std::string getExtension(const std::string& videoFilename);
 
 	void generateHistogram(const VideoFrame& videoFrame, Histogram& histogram);
@@ -49,8 +54,10 @@ private:
 	void overlayFilmStrip(VideoFrame& videoFrame);
 
 private:
-	MovieDecoder 	m_MovieDecoder;
-	std::string		m_VideoFileName;
+    int             m_ThumbnailSize;
+    uint16_t        m_SeekPercentage;    
+    bool            m_OverlayFilmStrip;
+    bool            m_WorkAroundIssues;
 };
 
 #endif

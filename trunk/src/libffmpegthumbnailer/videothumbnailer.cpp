@@ -15,7 +15,9 @@
 //    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "videothumbnailer.hpp"
+
 #include "pngwriter.hpp"
+#include "moviedecoder.hpp"
 #include "stringoperations.hpp"
 
 #include <iostream>
@@ -44,9 +46,19 @@ static const uint8_t filmHole[FILMHOLE_WIDTH * FILMHOLE_HEIGHT * 3] = {
 };
 
 
-VideoThumbnailer::VideoThumbnailer(const std::string& videoFile)
-: m_MovieDecoder(videoFile)
-, m_VideoFileName(videoFile)
+VideoThumbnailer::VideoThumbnailer()
+: m_ThumbnailSize(128)
+, m_SeekPercentage(10)
+, m_OverlayFilmStrip(false)
+, m_WorkAroundIssues(false)
+{
+}
+
+VideoThumbnailer::VideoThumbnailer(int thumbnailSize, uint16_t seekPercentage, bool filmStripOverlay, bool workaroundIssues)
+: m_ThumbnailSize(thumbnailSize)
+, m_SeekPercentage(seekPercentage)
+, m_OverlayFilmStrip(filmStripOverlay)
+, m_WorkAroundIssues(workaroundIssues)
 {
 }
 
@@ -54,21 +66,38 @@ VideoThumbnailer::~VideoThumbnailer()
 {
 }
 
-void VideoThumbnailer::generateThumbnail(PngWriter& pngWriter, int thumbnailSize, bool filmStripOverlay, unsigned short seekPercentage, bool workaroundIssues)
+void VideoThumbnailer::setSeekPercentage(int percentage)
 {
-	if (seekPercentage > 95)
-	{
-		seekPercentage = 95;
-	}
+    m_SeekPercentage = percentage > 95 ? 95 : percentage;
+}
+
+void VideoThumbnailer::setThumbnailSize(int size)
+{
+    m_ThumbnailSize = size;
+}
+
+void VideoThumbnailer::setWorkAroundIssues(bool workAround)
+{
+    m_WorkAroundIssues = workAround;
+}
+
+void VideoThumbnailer::setFilmStripOverlay(bool enabled)
+{
+    m_OverlayFilmStrip = enabled;
+}
+
+void VideoThumbnailer::generateThumbnail(const string& videoFile, PngWriter& pngWriter)
+{
+    MovieDecoder movieDecoder(videoFile);
     
 	VideoFrame 	videoFrame;
-	m_MovieDecoder.decodeVideoFrame(); //before seeking, a frame has to be decoded
+	movieDecoder.decodeVideoFrame(); //before seeking, a frame has to be decoded
     
-	if ((!workaroundIssues) || (m_MovieDecoder.getCodec() != "h264")) //workaround for bug in older ffmpeg (100% cpu usage when seeking in h264 files)
+	if ((!m_WorkAroundIssues) || (movieDecoder.getCodec() != "h264")) //workaround for bug in older ffmpeg (100% cpu usage when seeking in h264 files)
 	{
 		try
 		{
-			m_MovieDecoder.seek(m_MovieDecoder.getDuration() * seekPercentage / 100);
+			movieDecoder.seek(movieDecoder.getDuration() * m_SeekPercentage / 100);
 		}
 		catch (exception& e)
 		{
@@ -76,61 +105,61 @@ void VideoThumbnailer::generateThumbnail(PngWriter& pngWriter, int thumbnailSize
 		}
 	}
     
-	m_MovieDecoder.getScaledVideoFrame(thumbnailSize, videoFrame);
-	if (filmStripOverlay && (videoFrame.width > FILMHOLE_WIDTH * 2))
+	movieDecoder.getScaledVideoFrame(m_ThumbnailSize, videoFrame);
+	if (m_OverlayFilmStrip && (videoFrame.width > FILMHOLE_WIDTH * 2))
 	{
 		overlayFilmStrip(videoFrame);
 	}
     
-	vector<byte*> rowPointers;
+	vector<uint8_t*> rowPointers;
 	for (int i = 0; i < videoFrame.height; ++i)
 	{
 		rowPointers.push_back(&(videoFrame.frameData[i * videoFrame.lineSize])); 
 	}
 	
-	writePng(pngWriter, videoFrame, rowPointers);
+	writePng(videoFile, pngWriter, videoFrame, movieDecoder.getDuration(), rowPointers);
 }
 
-void VideoThumbnailer::generateThumbnail(const string& outputFile, int thumbnailSize, bool filmStripOverlay, unsigned short seekPercentage, bool workaroundIssues)
+void VideoThumbnailer::generateThumbnail(const string& videoFile, const string& outputFile)
 {
     PngWriter pngWriter(outputFile);
-    generateThumbnail(pngWriter, thumbnailSize, filmStripOverlay, seekPercentage, workaroundIssues);
+    generateThumbnail(videoFile, pngWriter);
 }
 
-void VideoThumbnailer::generateThumbnail(std::vector<uint8_t>& buffer, int thumbnailSize, bool filmStripOverlay, unsigned short seekPercentage, bool workaroundIssues)
+void VideoThumbnailer::generateThumbnail(const std::string& videoFile, std::vector<uint8_t>& buffer)
 {
     buffer.clear();
     PngWriter pngWriter(buffer);
-    generateThumbnail(pngWriter, thumbnailSize, filmStripOverlay, seekPercentage, workaroundIssues);
+    generateThumbnail(videoFile, pngWriter);
 }
 
-void VideoThumbnailer::writePng(PngWriter& pngWriter, const VideoFrame& videoFrame, vector<uint8_t*>& rowPointers)
+void VideoThumbnailer::writePng(const string& videoFile, PngWriter& pngWriter, const VideoFrame& videoFrame, int duration, vector<uint8_t*>& rowPointers)
 {
     struct stat statInfo;
-    if (stat(m_VideoFileName.c_str(), &statInfo) == 0)
+    if (stat(videoFile.c_str(), &statInfo) == 0)
     {
 		pngWriter.setPngText("Thumb::MTime", StringOperations::toString(statInfo.st_mtime));
 		pngWriter.setPngText("Thumb::Size", StringOperations::toString(statInfo.st_size));
     }
     else
     {
-    	throw logic_error("Could not stat file");
+    	throw logic_error("Could not stat file: " + videoFile);
     } 
     
-    string mimeType = getMimeType();
+    string mimeType = getMimeType(videoFile);
     if (!mimeType.empty())
     {
     	pngWriter.setPngText("Thumb::Mimetype", mimeType);
     }
 	
-	pngWriter.setPngText("Thumb::URI", m_VideoFileName);
-	pngWriter.setPngText("Thumb::Movie::Length", StringOperations::toString(m_MovieDecoder.getDuration()));
+	pngWriter.setPngText("Thumb::URI", videoFile);
+	pngWriter.setPngText("Thumb::Movie::Length", StringOperations::toString(duration));
     pngWriter.writeFrame(&(rowPointers.front()), videoFrame.width, videoFrame.height);
 }
 
-string VideoThumbnailer::getMimeType()
+string VideoThumbnailer::getMimeType(const string& videoFile)
 {
-	string extension = getExtension(m_VideoFileName);
+	string extension = getExtension(videoFile);
 	
 	if (extension == "avi")
 	{
@@ -183,18 +212,18 @@ string VideoThumbnailer::getExtension(const string& videoFilename)
 	return extension;
 }
 
-void VideoThumbnailer::generateHistogram(const VideoFrame& videoFrame, std::map<byte, int>& histogram)
+void VideoThumbnailer::generateHistogram(const VideoFrame& videoFrame, std::map<uint8_t, int>& histogram)
 {
 	for (int i = 0; i < videoFrame.height; ++i)
 	{
 		int pixelIndex = i * videoFrame.lineSize;
 		for (int j = 0; j < videoFrame.width * 3; j += 3)
 		{
-			byte r = videoFrame.frameData[pixelIndex + j];
-			byte g = videoFrame.frameData[pixelIndex + j + 1];
-			byte b = videoFrame.frameData[pixelIndex + j + 2];
+			uint8_t r = videoFrame.frameData[pixelIndex + j];
+			uint8_t g = videoFrame.frameData[pixelIndex + j + 1];
+			uint8_t b = videoFrame.frameData[pixelIndex + j + 2];
 			
-			byte luminance = static_cast<byte>(0.299 * r + 0.587 * g + 0.114 * b);
+			uint8_t luminance = static_cast<uint8_t>(0.299 * r + 0.587 * g + 0.114 * b);
 			histogram[luminance] += 1;
 		}
 	}
