@@ -21,22 +21,16 @@
 #include <vector>
 #include <png.h>
 
-struct RGBData
-{
-	int width;
-	int height;
-	
-	uint8_t** imageData;
-};
+#include "imagewriter.hpp"
 
-class PngWriter
+class PngWriter : public ImageWriter
 {
 public:
 	PngWriter(const std::string& outputFile);
     PngWriter(std::vector<uint8_t>& outputBuffer);
 	~PngWriter();
 	
-	void setPngText(const std::string& key, const std::string& value);
+	void setText(const std::string& key, const std::string& value);
 	void writeFrame(png_byte** rgbData, int width, int height);
 	
 private:

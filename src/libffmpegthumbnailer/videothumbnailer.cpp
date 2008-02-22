@@ -86,7 +86,7 @@ void VideoThumbnailer::setFilmStripOverlay(bool enabled)
     m_OverlayFilmStrip = enabled;
 }
 
-void VideoThumbnailer::generateThumbnail(const string& videoFile, PngWriter& pngWriter)
+void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageWriter& imageWriter)
 {
     MovieDecoder movieDecoder(videoFile);
     
@@ -117,7 +117,7 @@ void VideoThumbnailer::generateThumbnail(const string& videoFile, PngWriter& png
 		rowPointers.push_back(&(videoFrame.frameData[i * videoFrame.lineSize])); 
 	}
 	
-	writePng(videoFile, pngWriter, videoFrame, movieDecoder.getDuration(), rowPointers);
+	writeImage(videoFile, imageWriter, videoFrame, movieDecoder.getDuration(), rowPointers);
 }
 
 void VideoThumbnailer::generateThumbnail(const string& videoFile, const string& outputFile)
@@ -133,13 +133,13 @@ void VideoThumbnailer::generateThumbnail(const std::string& videoFile, std::vect
     generateThumbnail(videoFile, pngWriter);
 }
 
-void VideoThumbnailer::writePng(const string& videoFile, PngWriter& pngWriter, const VideoFrame& videoFrame, int duration, vector<uint8_t*>& rowPointers)
+void VideoThumbnailer::writeImage(const string& videoFile, ImageWriter& imageWriter, const VideoFrame& videoFrame, int duration, vector<uint8_t*>& rowPointers)
 {
     struct stat statInfo;
     if (stat(videoFile.c_str(), &statInfo) == 0)
     {
-		pngWriter.setPngText("Thumb::MTime", StringOperations::toString(statInfo.st_mtime));
-		pngWriter.setPngText("Thumb::Size", StringOperations::toString(statInfo.st_size));
+		imageWriter.setText("Thumb::MTime", StringOperations::toString(statInfo.st_mtime));
+		imageWriter.setText("Thumb::Size", StringOperations::toString(statInfo.st_size));
     }
     else
     {
@@ -149,12 +149,12 @@ void VideoThumbnailer::writePng(const string& videoFile, PngWriter& pngWriter, c
     string mimeType = getMimeType(videoFile);
     if (!mimeType.empty())
     {
-    	pngWriter.setPngText("Thumb::Mimetype", mimeType);
+    	imageWriter.setText("Thumb::Mimetype", mimeType);
     }
 	
-	pngWriter.setPngText("Thumb::URI", videoFile);
-	pngWriter.setPngText("Thumb::Movie::Length", StringOperations::toString(duration));
-    pngWriter.writeFrame(&(rowPointers.front()), videoFrame.width, videoFrame.height);
+	imageWriter.setText("Thumb::URI", videoFile);
+	imageWriter.setText("Thumb::Movie::Length", StringOperations::toString(duration));
+    imageWriter.writeFrame(&(rowPointers.front()), videoFrame.width, videoFrame.height);
 }
 
 string VideoThumbnailer::getMimeType(const string& videoFile)

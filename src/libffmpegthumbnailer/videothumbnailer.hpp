@@ -25,7 +25,7 @@
 typedef std::map<uint8_t, int> Histogram;
 
 class VideoFrame;
-class PngWriter;
+class ImageWriter;
 
 class VideoThumbnailer
 {
@@ -43,8 +43,8 @@ public:
     void setWorkAroundIssues(bool workAround);
 	
 private:
-    void generateThumbnail(const std::string& videoFile, PngWriter& pngWriter);
-    void writePng(const std::string& videoFile, PngWriter& pngWriter, const VideoFrame& videoFrame, int duration, std::vector<uint8_t*>& rowPointers);
+    void generateThumbnail(const std::string& videoFile, ImageWriter& imageWriter);
+    void writeImage(const std::string& videoFile, ImageWriter& imageWriter, const VideoFrame& videoFrame, int duration, std::vector<uint8_t*>& rowPointers);
 	
     std::string getMimeType(const std::string& videoFile);
 	std::string getExtension(const std::string& videoFilename);
