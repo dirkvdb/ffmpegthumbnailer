@@ -286,7 +286,6 @@ void MovieDecoder::convertAndScaleFrame(int format, int scaledSize, int& scaledW
 
 	if (NULL == scaleContext)
 	{
-		sws_freeContext(scaleContext);
 		throw logic_error("Failed to create resize context");
 	}
 	
