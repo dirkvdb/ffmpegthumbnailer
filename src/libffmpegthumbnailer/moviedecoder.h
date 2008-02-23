@@ -47,7 +47,6 @@ public:
     std::string getCodec();
     void seek(int timeInSeconds);
 	void decodeVideoFrame();
-    //void decodeVideoFrame(VideoFrame& videoFrame, int scaledSize);
 	void getScaledVideoFrame(int scaledSize, VideoFrame& videoFrame);
 
 	int getWidth();
