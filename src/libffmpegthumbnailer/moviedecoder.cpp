@@ -26,13 +26,14 @@ extern "C" {
 
 using namespace std;
 
-MovieDecoder::MovieDecoder(const string& filename)
+MovieDecoder::MovieDecoder(const string& filename, AVFormatContext* pavContext)
 : m_VideoStream(-1)
-, m_pFormatContext(NULL)
+, m_pFormatContext(pavContext)
 , m_pVideoCodecContext(NULL)
 , m_pVideoCodec(NULL)
 , m_pVideoStream(NULL)
 , m_pFrame(NULL)
+, m_FormatContextWasGiven(pavContext != NULL)
 {
 	initialize(filename);
 }
@@ -42,34 +43,13 @@ MovieDecoder::~MovieDecoder()
 	destroy();
 }
 
-void MovieDecoder::destroy()
-{
-	if (m_pVideoCodecContext)
-	{
-		avcodec_close(m_pVideoCodecContext);
-		m_pVideoCodecContext = NULL;
-	}
-
-	if (m_pFormatContext)
-	{
-		av_close_input_file(m_pFormatContext);
-		m_pFormatContext = NULL;
-	}
-	
-	if (m_pFrame)
-	{
-		av_free(m_pFrame);
-		m_pFrame = NULL;
-	}
-}
-
 void MovieDecoder::initialize(const string& filename)
 {
 	av_register_all();
 	avcodec_init();
 	avcodec_register_all();
 
-	if (av_open_input_file(&m_pFormatContext, filename.c_str(), NULL, 0, NULL) != 0)
+	if ((!m_FormatContextWasGiven) && av_open_input_file(&m_pFormatContext, filename.c_str(), NULL, 0, NULL) != 0)
 	{
 		throw logic_error(string("Could not open input file: ") + filename);
 	}
@@ -81,6 +61,27 @@ void MovieDecoder::initialize(const string& filename)
 
 	initializeVideo();
 	m_pFrame = avcodec_alloc_frame();
+}
+
+void MovieDecoder::destroy()
+{
+	if (m_pVideoCodecContext)
+	{
+		avcodec_close(m_pVideoCodecContext);
+		m_pVideoCodecContext = NULL;
+	}
+
+	if ((!m_FormatContextWasGiven) && m_pFormatContext)
+	{
+		av_close_input_file(m_pFormatContext);
+		m_pFormatContext = NULL;
+	}
+	
+	if (m_pFrame)
+	{
+		av_free(m_pFrame);
+		m_pFrame = NULL;
+	}
 }
 
 string MovieDecoder::getCodec()

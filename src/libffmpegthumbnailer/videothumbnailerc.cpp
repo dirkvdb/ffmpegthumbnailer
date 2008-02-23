@@ -30,6 +30,7 @@ extern "C" video_thumbnailer* create_thumbnailer(void)
     thumbnailer->overlay_film_strip     = 0;
     thumbnailer->workaround_bugs        = 0;
     thumbnailer->thumbnail_image_type   = Png;
+    thumbnailer->av_format_context      = NULL;
     
     return thumbnailer;
 }
@@ -76,7 +77,7 @@ extern "C" void generate_thumbnail_to_buffer(video_thumbnailer* thumbnailer, con
     videoThumbnailer->setFilmStripOverlay(thumbnailer->overlay_film_strip != 0);
     videoThumbnailer->setWorkAroundIssues(thumbnailer->workaround_bugs != 0);
     
-    videoThumbnailer->generateThumbnail(movie_filename, thumbnailer->thumbnail_image_type, *dataVector);
+    videoThumbnailer->generateThumbnail(movie_filename, thumbnailer->thumbnail_image_type, *dataVector, thumbnailer->av_format_context);
     generated_image_data->image_data_ptr = &dataVector->front();
     generated_image_data->image_data_size = dataVector->size();
 }
@@ -90,5 +91,5 @@ extern "C" void generate_thumbnail_to_file(video_thumbnailer* thumbnailer, const
     videoThumbnailer->setFilmStripOverlay(thumbnailer->overlay_film_strip != 0);
     videoThumbnailer->setWorkAroundIssues(thumbnailer->workaround_bugs != 0);
     
-    videoThumbnailer->generateThumbnail(movie_filename, thumbnailer->thumbnail_image_type, output_fileName);
+    videoThumbnailer->generateThumbnail(movie_filename, thumbnailer->thumbnail_image_type, output_fileName, thumbnailer->av_format_context);
 }

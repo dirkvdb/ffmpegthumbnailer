@@ -20,6 +20,8 @@
 #include <inttypes.h>
 #include "imagetypes.h"
 
+struct AVFormatContext;
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -27,11 +29,12 @@ extern "C"
 
 typedef struct video_thumbnailer_struct
 {
-    int         thumbnail_size;         /* default = 128 */
-    int         seek_percentage;        /* default = 10 */
-    int         overlay_film_strip;     /* default = 0 */
-    int         workaround_bugs;        /* default = 0 */
-    ImageType   thumbnail_image_type;   /* default = Png */
+    int                 thumbnail_size;         /* default = 128 */
+    int                 seek_percentage;        /* default = 10 */
+    int                 overlay_film_strip;     /* default = 0 */
+    int                 workaround_bugs;        /* default = 0 */
+    ImageType           thumbnail_image_type;   /* default = Png */
+    AVFormatContext*    av_format_context;      /* default = NULL */
     
     void*               thumbnailer;    /* for internal use only */
 } video_thumbnailer;

@@ -85,9 +85,9 @@ void VideoThumbnailer::setFilmStripOverlay(bool enabled)
     m_OverlayFilmStrip = enabled;
 }
 
-void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageWriter& imageWriter)
+void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageWriter& imageWriter, AVFormatContext* pavContext)
 {
-    MovieDecoder movieDecoder(videoFile);
+    MovieDecoder movieDecoder(videoFile, pavContext);
     
 	VideoFrame 	videoFrame;
 	movieDecoder.decodeVideoFrame(); //before seeking, a frame has to be decoded
@@ -120,18 +120,18 @@ void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageWriter& i
 	writeImage(videoFile, imageWriter, videoFrame, movieDecoder.getDuration(), rowPointers);
 }
 
-void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageType type, const string& outputFile)
+void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageType type, const string& outputFile, AVFormatContext* pavContext)
 {
     ImageWriter* imageWriter = ImageWriterFactory<const string&>::createImageWriter(type, outputFile);
-    generateThumbnail(videoFile, *imageWriter);
+    generateThumbnail(videoFile, *imageWriter, pavContext);
     delete imageWriter;
 }
 
-void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageType type, vector<uint8_t>& buffer)
+void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageType type, vector<uint8_t>& buffer, AVFormatContext* pavContext)
 {
     buffer.clear();
     ImageWriter* imageWriter = ImageWriterFactory<vector<uint8_t>&>::createImageWriter(type, buffer);
-    generateThumbnail(videoFile, *imageWriter);
+    generateThumbnail(videoFile, *imageWriter, pavContext);
     delete imageWriter;
 }
 

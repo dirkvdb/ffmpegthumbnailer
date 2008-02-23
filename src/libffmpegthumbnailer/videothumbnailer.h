@@ -27,6 +27,7 @@
 
 class VideoFrame;
 class ImageWriter;
+struct AVFormatContext;
 
 class VideoThumbnailer
 {
@@ -35,8 +36,8 @@ public:
 	VideoThumbnailer(int thumbnailSize, uint16_t seekPercentage, bool filmStripOverlay, bool workaroundIssues);
 	~VideoThumbnailer();
 
-	void generateThumbnail(const std::string& videoFile, ImageType type, const std::string& outputFile);
-    void generateThumbnail(const std::string& videoFile, ImageType type, std::vector<uint8_t>& buffer);
+	void generateThumbnail(const std::string& videoFile, ImageType type, const std::string& outputFile, AVFormatContext* pavContext = NULL);
+    void generateThumbnail(const std::string& videoFile, ImageType type, std::vector<uint8_t>& buffer, AVFormatContext* pavContext = NULL);
 
     void setThumbnailSize(int size);
     void setSeekPercentage(int percentage);
@@ -46,7 +47,7 @@ public:
 private:
     typedef std::map<uint8_t, int> Histogram;
 
-    void generateThumbnail(const std::string& videoFile, ImageWriter& imageWriter);
+    void generateThumbnail(const std::string& videoFile, ImageWriter& imageWriter, AVFormatContext* pavContext = NULL);
     void writeImage(const std::string& videoFile, ImageWriter& imageWriter, const VideoFrame& videoFrame, int duration, std::vector<uint8_t*>& rowPointers);
 	
     std::string getMimeType(const std::string& videoFile);
