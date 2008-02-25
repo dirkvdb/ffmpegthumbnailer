@@ -6,6 +6,10 @@ FFMpeg Thumbnailer is a lightweight video thumbnailer that can be used by file m
 The thumbnailer is based on ffmpeg so it supports al the video formats that ffmpeg supports.
 
 = News =
+== Version 1.2.0 has been released ==
+  * Option to output files in jpeg
+  * ffmpegthumbnailer can now be accessed as a library (libffmpegthumbnailer) by other applications
+
 == Version 1.1.5 has been released ==
 I finally looked at some problems I was still experiencing and managed to fix them.
 Changelog:
@@ -18,7 +22,7 @@ ffmpegthumbnailer is called from the command line
 
 Available command line arguments:
   * -i: input video filename
-  * -o: output filename of the generated png file
+  * -o: output filename of the generated image file (filename ending with .jpg or .jpeg will be in jpeg format, otherwise png is used)
   * -s: size of the generated thumbnail in pixels (optional, default value: 128)
   * -t: time to seek to in the movie (percentage) (optional, default: 10)
   * -f: use this option to overlay a movie strip on the generated thumbnail
