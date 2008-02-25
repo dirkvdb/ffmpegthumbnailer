@@ -1,0 +1,10 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@/libffmpegthumbnailer
+
+Name: libffmpegthumbnailer
+Description: Generates thumbnails for movie files
+Version: 1.0.0
+Libs: -L${libdir} -lffmpegthumbnailer @FFMPEG_LIBS@ @PNG_LIBS@ -ljpeg
+Cflags: -I${includedir}
