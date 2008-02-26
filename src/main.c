@@ -17,7 +17,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <libffmpegthumbnailer/videothumbnailerc.h>
+#include "libffmpegthumbnailer/videothumbnailerc.h"
 
 int main(int argc, char** argv)
 {
@@ -35,11 +35,16 @@ int main(int argc, char** argv)
     thumbnailer->thumbnail_size         = 256;
     thumbnailer->thumbnail_image_type   = Jpeg;
     
-    generate_thumbnail_to_buffer(thumbnailer, argv[1], imageData);
-    
-    FILE* imageFile = fopen("output.jpg", "wb");
-    fwrite(imageData->image_data_ptr, 1 , imageData->image_data_size, imageFile);
-    fclose(imageFile);
+    if (generate_thumbnail_to_buffer(thumbnailer, argv[1], imageData) == 0)
+    {
+        FILE* imageFile = fopen("output.jpg", "wb");
+        fwrite(imageData->image_data_ptr, 1 , imageData->image_data_size, imageFile);
+        fclose(imageFile);
+    }
+    else
+    {
+        printf("Failed to generate thumbnail\n");
+    }
             
     destroy_image_data(imageData);
     destroy_thumbnailer(thumbnailer);
