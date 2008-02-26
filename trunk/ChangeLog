@@ -1,5 +1,8 @@
 FFmpegThumbnailer
 
+version 1.2.2
+- Fixed linker errors when using certain ldflags
+
 version 1.2.1
 - Fixed compilation error in c interface when compiled with c compiler
 - Error handling added to c interface
