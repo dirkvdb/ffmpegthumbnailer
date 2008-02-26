@@ -6,6 +6,10 @@ FFMpeg Thumbnailer is a lightweight video thumbnailer that can be used by file m
 The thumbnailer is based on ffmpeg so it supports al the video formats that ffmpeg supports.
 
 = News =
+== Version 1.2.1 has been released ==
+  * Fixed compilation error in c interface when compiled with c compiler
+  * Error handling added to c interface
+
 == Version 1.2.0 has been released ==
   * Option to output files in jpeg
   * ffmpegthumbnailer can now be accessed as a library (libffmpegthumbnailer) by other applications
