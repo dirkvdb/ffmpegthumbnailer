@@ -10,4 +10,4 @@ libffmpegthumbnailer_la_SOURCES =   moviedecoder.h moviedecoder.cpp \
 libffmpegthumbnailer_include_HEADERS    = videothumbnailer.h videothumbnailerc.h imagetypes.h
 
 libffmpegthumbnailer_includedir         = $(includedir)/libffmpegthumbnailer
-libffmpegthumbnailer_la_LDFLAGS         = -version-info 1:0:0
+libffmpegthumbnailer_la_LDFLAGS         = -version-info 2:0:0
