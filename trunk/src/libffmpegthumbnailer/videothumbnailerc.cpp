@@ -18,6 +18,7 @@
 #include "videothumbnailer.h"
 
 #include <vector>
+#include <iostream>
 #include <stdexcept>
 
 extern "C" video_thumbnailer* create_thumbnailer(void)
@@ -67,29 +68,49 @@ extern "C" void destroy_image_data(image_data* data)
     delete data;
 }
 
-extern "C" void generate_thumbnail_to_buffer(video_thumbnailer* thumbnailer, const char* movie_filename, image_data* generated_image_data)
+extern "C" int generate_thumbnail_to_buffer(video_thumbnailer* thumbnailer, const char* movie_filename, image_data* generated_image_data)
 {
-    VideoThumbnailer* videoThumbnailer  = reinterpret_cast<VideoThumbnailer*>(thumbnailer->thumbnailer);
-    std::vector<uint8_t>* dataVector    = reinterpret_cast<std::vector<uint8_t>* >(generated_image_data->internal_data);
+    try
+    {
+        VideoThumbnailer* videoThumbnailer  = reinterpret_cast<VideoThumbnailer*>(thumbnailer->thumbnailer);
+        std::vector<uint8_t>* dataVector    = reinterpret_cast<std::vector<uint8_t>* >(generated_image_data->internal_data);
+        
+        videoThumbnailer->setThumbnailSize(thumbnailer->thumbnail_size);
+        videoThumbnailer->setSeekPercentage(thumbnailer->seek_percentage);
+        videoThumbnailer->setFilmStripOverlay(thumbnailer->overlay_film_strip != 0);
+        videoThumbnailer->setWorkAroundIssues(thumbnailer->workaround_bugs != 0);
+        
+        videoThumbnailer->generateThumbnail(movie_filename, thumbnailer->thumbnail_image_type, *dataVector, thumbnailer->av_format_context);
+        generated_image_data->image_data_ptr = &dataVector->front();
+        generated_image_data->image_data_size = dataVector->size();
+    }
+    catch (std::logic_error& e)
+    {
+        std::cerr << e.what() << std::endl;
+        return -1;
+    }
     
-    videoThumbnailer->setThumbnailSize(thumbnailer->thumbnail_size);
-    videoThumbnailer->setSeekPercentage(thumbnailer->seek_percentage);
-    videoThumbnailer->setFilmStripOverlay(thumbnailer->overlay_film_strip != 0);
-    videoThumbnailer->setWorkAroundIssues(thumbnailer->workaround_bugs != 0);
-    
-    videoThumbnailer->generateThumbnail(movie_filename, thumbnailer->thumbnail_image_type, *dataVector, thumbnailer->av_format_context);
-    generated_image_data->image_data_ptr = &dataVector->front();
-    generated_image_data->image_data_size = dataVector->size();
+    return 0;
 }
 
-extern "C" void generate_thumbnail_to_file(video_thumbnailer* thumbnailer, const char* movie_filename, const char* output_fileName)
+extern "C" int generate_thumbnail_to_file(video_thumbnailer* thumbnailer, const char* movie_filename, const char* output_fileName)
 {
-    VideoThumbnailer* videoThumbnailer = reinterpret_cast<VideoThumbnailer*>(thumbnailer->thumbnailer);
+    try
+    {
+        VideoThumbnailer* videoThumbnailer = reinterpret_cast<VideoThumbnailer*>(thumbnailer->thumbnailer);
+        
+        videoThumbnailer->setThumbnailSize(thumbnailer->thumbnail_size);
+        videoThumbnailer->setSeekPercentage(thumbnailer->seek_percentage);
+        videoThumbnailer->setFilmStripOverlay(thumbnailer->overlay_film_strip != 0);
+        videoThumbnailer->setWorkAroundIssues(thumbnailer->workaround_bugs != 0);
+        
+        videoThumbnailer->generateThumbnail(movie_filename, thumbnailer->thumbnail_image_type, output_fileName, thumbnailer->av_format_context);
+    }
+    catch (std::logic_error& e)
+    {
+        std::cerr << e.what() << std::endl;
+        return -1;
+    }
     
-    videoThumbnailer->setThumbnailSize(thumbnailer->thumbnail_size);
-    videoThumbnailer->setSeekPercentage(thumbnailer->seek_percentage);
-    videoThumbnailer->setFilmStripOverlay(thumbnailer->overlay_film_strip != 0);
-    videoThumbnailer->setWorkAroundIssues(thumbnailer->workaround_bugs != 0);
-    
-    videoThumbnailer->generateThumbnail(movie_filename, thumbnailer->thumbnail_image_type, output_fileName, thumbnailer->av_format_context);
+    return 0;
 }

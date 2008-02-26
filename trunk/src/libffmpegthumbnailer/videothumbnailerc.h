@@ -20,21 +20,21 @@
 #include <inttypes.h>
 #include "imagetypes.h"
 
-struct AVFormatContext;
-
 #ifdef __cplusplus
 extern "C"
 {
 #endif
+    
+struct AVFormatContext;
 
 typedef struct video_thumbnailer_struct
 {
-    int                 thumbnail_size;         /* default = 128 */
-    int                 seek_percentage;        /* default = 10 */
-    int                 overlay_film_strip;     /* default = 0 */
-    int                 workaround_bugs;        /* default = 0 */
-    ImageType           thumbnail_image_type;   /* default = Png */
-    AVFormatContext*    av_format_context;      /* default = NULL */
+    int                     thumbnail_size;         /* default = 128 */
+    int                     seek_percentage;        /* default = 10 */
+    int                     overlay_film_strip;     /* default = 0 */
+    int                     workaround_bugs;        /* default = 0 */
+    ImageType               thumbnail_image_type;   /* default = Png */
+    struct AVFormatContext* av_format_context;      /* default = NULL */
     
     void*               thumbnailer;    /* for internal use only */
 } video_thumbnailer;
@@ -58,9 +58,9 @@ image_data* create_image_data(void);
 void destroy_image_data(image_data* data);
 
 /* generate thumbnail from video file (movie_filename), image data is stored in generated_image_data struct */
-void generate_thumbnail_to_buffer(video_thumbnailer* thumbnailer, const char* movie_filename, image_data* generated_image_data);
+int generate_thumbnail_to_buffer(video_thumbnailer* thumbnailer, const char* movie_filename, image_data* generated_image_data);
 /* generate thumbnail from video file (movie_filename), image is written to output_fileName on disk*/
-void generate_thumbnail_to_file(video_thumbnailer* thumbnailer, const char* movie_filename, const char* output_fileName);
+int generate_thumbnail_to_file(video_thumbnailer* thumbnailer, const char* movie_filename, const char* output_fileName);
 
 #ifdef __cplusplus
 }
