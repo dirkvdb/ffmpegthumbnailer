@@ -96,7 +96,7 @@ int main(int argc, char** argv)
 
 void printUsage()
 {
-	cout << "Usage: ffmpegvideothumbnailer [options]" << endl << endl
+	cout << "Usage: ffmpegthumbnailer [options]" << endl << endl
 		 << "Options:" << endl
 		 << "  -i<s>  : input file" << endl
 		 << "  -o<s>  : output file" << endl
