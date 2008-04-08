@@ -1,5 +1,8 @@
 FFmpegThumbnailer
 
+version 1.2.3
+- ffmegthumbnailer now compiles against latest ffmpeg revisions (thanks to Alexis Ballier)
+
 version 1.2.2
 - Fixed linker errors when using certain ldflags
 
