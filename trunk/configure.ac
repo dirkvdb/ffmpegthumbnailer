@@ -18,6 +18,13 @@ PKG_CHECK_MODULES(	FFMPEG, libavutil libavformat libavcodec libswscale, HAVE_FFM
 					AC_MSG_ERROR([ +Could not find ffmpeg. Please update PKG_CONFIG_PATH to point at location of ffmpeg pkgconfig files directory.])
 )
 
+AC_CHECK_HEADERS(ffmpeg/avcodec.h libavcodec/avcodec.h)
+AC_CHECK_HEADERS(ffmpeg/avformat.h libavformat/avformat.h)
+AC_CHECK_HEADERS(ffmpeg/avutil.h libavutil/avutil.h)
+AC_CHECK_HEADERS([ffmpeg/swscale.h libswscale/swscale.h])
+
+
+
 PKG_CHECK_MODULES(	PNG, libpng, HAVE_PNG=yes, AC_MSG_ERROR([ +Could not find libpng])
 )
 

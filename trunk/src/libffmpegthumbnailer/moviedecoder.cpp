@@ -21,7 +21,11 @@
 #include <iostream>
 
 extern "C" {
+#if HAVE_LIBSWSCALE_SWSCALE_H
+#include <libswscale/swscale.h>
+#else
 #include <ffmpeg/swscale.h>
+#endif
 }
 
 using namespace std;
