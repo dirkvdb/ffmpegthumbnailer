@@ -1,5 +1,8 @@
 FFmpegThumbnailer
 
+version 1.2.4
+- Fixed missing includes when compiling with gcc 3.4 (thanks to Samuli Suominen)
+
 version 1.2.3
 - ffmegthumbnailer now compiles against latest ffmpeg revisions (thanks to Alexis Ballier)
 

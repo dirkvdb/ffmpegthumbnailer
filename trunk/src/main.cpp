@@ -17,6 +17,7 @@
 #include <iostream>
 #include <unistd.h>
 #include <stdexcept>
+#include <stdlib.h>
 
 #include "libffmpegthumbnailer/videothumbnailer.h"
 #include "libffmpegthumbnailer/stringoperations.h"

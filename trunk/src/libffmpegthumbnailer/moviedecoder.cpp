@@ -19,6 +19,7 @@
 
 #include <assert.h>
 #include <iostream>
+#include <cstring>
 
 extern "C" {
 #if HAVE_LIBSWSCALE_SWSCALE_H
