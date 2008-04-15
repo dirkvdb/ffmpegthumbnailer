@@ -16,6 +16,7 @@
 
 #include "jpegwriter.h"
 #include <stdexcept>
+#include <cstring>
 #include <assert.h>
 
 using namespace std;
