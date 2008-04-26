@@ -299,7 +299,7 @@ void MovieDecoder::convertAndScaleFrame(int format, int scaledSize, int& scaledW
 	
 	createAVFrame(&convertedFrame, scaledWidth, scaledHeight, format);
 
-    sws_scale(scaleContext, m_pFrame->data, m_pFrame->linesize, 0, m_pVideoCodecContext->width,
+	sws_scale(scaleContext, m_pFrame->data, m_pFrame->linesize, 0, m_pVideoCodecContext->height,
 			  convertedFrame->data, convertedFrame->linesize);
 	sws_freeContext(scaleContext);
 
