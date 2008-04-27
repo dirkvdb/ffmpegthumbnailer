@@ -1,5 +1,8 @@
 FFmpegThumbnailer
 
+version 1.2.5
+- Fixed crash when thumbnailing raw avi files
+
 version 1.2.4
 - Fixed missing includes when compiling with gcc 3.4 (thanks to Samuli Suominen)
 
