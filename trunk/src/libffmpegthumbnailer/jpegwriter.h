@@ -19,7 +19,10 @@
 
 #include <string>
 #include <vector>
-#include <jpeglib.h>
+
+extern "C" {
+    #include <jpeglib.h>
+}
 
 #include "imagewriter.h"
 
@@ -28,20 +31,20 @@ struct BufferWriter;
 class JpegWriter : public ImageWriter
 {
 public:
-	JpegWriter(const std::string& outputFile);
+    JpegWriter(const std::string& outputFile);
     JpegWriter(std::vector<uint8_t>& outputBuffer);
-	~JpegWriter();
-	
-	void setText(const std::string& key, const std::string& value);
-	void writeFrame(uint8_t** rgbData, int width, int height);
-	
+    ~JpegWriter();
+    
+    void setText(const std::string& key, const std::string& value);
+    void writeFrame(uint8_t** rgbData, int width, int height);
+    
 private:
     void init();
-	
+    
 private:
-	FILE* 		            m_pFile;
-	jpeg_compress_struct    m_Compression;
-	jpeg_error_mgr          m_ErrorHandler;
+    FILE*                   m_pFile;
+    jpeg_compress_struct    m_Compression;
+    jpeg_error_mgr          m_ErrorHandler;
     BufferWriter*           m_pBufferWriter;
 };
 
