@@ -86,7 +86,7 @@ void MovieDecoder::destroy()
     if (m_pPacket)
     {
         av_free_packet(m_pPacket);
-	delete m_pPacket;
+        delete m_pPacket;
         m_pPacket = NULL;
     }
     
@@ -175,7 +175,7 @@ int MovieDecoder::getDuration()
 
 void MovieDecoder::seek(int timeInSeconds)
 {
-    int64_t timestamp = (::int64_t) (AV_TIME_BASE * timeInSeconds);
+    int64_t timestamp = AV_TIME_BASE * static_cast<int64_t>(timeInSeconds);
 
     if (timestamp < 0)
     {
@@ -215,7 +215,7 @@ void MovieDecoder::seek(int timeInSeconds)
 
 void MovieDecoder::decodeVideoFrame()
 {
-    bool        frameFinished = false;
+    bool frameFinished = false;
     
     while(!frameFinished && getVideoPacket())
     {
