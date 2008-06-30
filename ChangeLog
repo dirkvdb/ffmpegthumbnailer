@@ -1,10 +1,14 @@
 FFmpegThumbnailer
 
+version 1.2.6
+- Fixed seeking in large files due to integer overflow (Thanks to AWaters1)
+- Fixed possible linker error (Thanks to pressh)
+
 version 1.2.5
 - Fixed crash when thumbnailing raw avi files
 
 version 1.2.4
-- Fixed missing includes when compiling with gcc 3.4 (thanks to Samuli Suominen)
+- Fixed missing includes when compiling with gcc 4.3 (thanks to Samuli Suominen)
 
 version 1.2.3
 - ffmegthumbnailer now compiles against latest ffmpeg revisions (thanks to Alexis Ballier)
