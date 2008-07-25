@@ -163,7 +163,7 @@ void VideoThumbnailer::writeImage(const string& videoFile, ImageWriter& imageWri
 	
 	imageWriter.setText("Thumb::URI", videoFile);
 	imageWriter.setText("Thumb::Movie::Length", StringOperations::toString(duration));
-    imageWriter.writeFrame(&(rowPointers.front()), videoFrame.width, videoFrame.height, m_Quality);
+    imageWriter.writeFrame(&(rowPointers.front()), videoFrame.width, videoFrame.height, m_ImageQuality);
 }
 
 string VideoThumbnailer::getMimeType(const string& videoFile)

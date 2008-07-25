@@ -24,7 +24,7 @@
 extern "C"
 {
 #endif
-    
+
 struct AVFormatContext;
 
 typedef struct video_thumbnailer_struct
@@ -33,10 +33,10 @@ typedef struct video_thumbnailer_struct
     int                     seek_percentage;        /* default = 10 */
     int                     overlay_film_strip;     /* default = 0 */
     int                     workaround_bugs;        /* default = 0 */
-    int                     thumbnail_image_quality /* default = 8 (0 is bad, 10 is best)*/
+    int                     thumbnail_image_quality;/* default = 8 (0 is bad, 10 is best)*/
     ImageType               thumbnail_image_type;   /* default = Png */
     struct AVFormatContext* av_format_context;      /* default = NULL */
-    
+
     void*               thumbnailer;    /* for internal use only */
 } video_thumbnailer;
 
@@ -44,7 +44,7 @@ typedef struct image_data_struct
 {
     uint8_t*    image_data_ptr;       /* points to the image data after call to generate_thumbnail_to_buffer */
     int         image_data_size;      /* contains the size of the image data after call to generate_thumbnail_to_buffer */
-    
+
     void*       internal_data;        /* for internal use only */
 } image_data;
 
