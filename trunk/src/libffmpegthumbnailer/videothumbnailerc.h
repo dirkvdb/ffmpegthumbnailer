@@ -33,6 +33,7 @@ typedef struct video_thumbnailer_struct
     int                     seek_percentage;        /* default = 10 */
     int                     overlay_film_strip;     /* default = 0 */
     int                     workaround_bugs;        /* default = 0 */
+    int                     thumbnail_image_quality /* default = 8 (0 is bad, 10 is best)*/
     ImageType               thumbnail_image_type;   /* default = Png */
     struct AVFormatContext* av_format_context;      /* default = NULL */
     

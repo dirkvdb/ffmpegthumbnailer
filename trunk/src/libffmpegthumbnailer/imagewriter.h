@@ -27,7 +27,7 @@ public:
     virtual ~ImageWriter() {}
 
 	virtual void setText(const std::string& key, const std::string& value) = 0;
-	virtual void writeFrame(uint8_t** rgbData, int width, int height) = 0;
+	virtual void writeFrame(uint8_t** rgbData, int width, int height, int quality) = 0;
 };
 
 #endif

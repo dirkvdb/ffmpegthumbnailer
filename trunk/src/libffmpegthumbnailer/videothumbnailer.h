@@ -33,7 +33,7 @@ class VideoThumbnailer
 {
 public:
     VideoThumbnailer();
-	VideoThumbnailer(int thumbnailSize, uint16_t seekPercentage, bool filmStripOverlay, bool workaroundIssues);
+	VideoThumbnailer(int thumbnailSize, uint16_t seekPercentage, bool filmStripOverlay, bool workaroundIssues, int imageQuality);
 	~VideoThumbnailer();
 
 	void generateThumbnail(const std::string& videoFile, ImageType type, const std::string& outputFile, AVFormatContext* pavContext = NULL);
@@ -43,6 +43,7 @@ public:
     void setSeekPercentage(int percentage);
     void setFilmStripOverlay(bool enabled);
     void setWorkAroundIssues(bool workAround);
+    void setImageQuality(int imageQuality);
 	
 private:
     typedef std::map<uint8_t, int> Histogram;
@@ -62,6 +63,7 @@ private:
     uint16_t        m_SeekPercentage;    
     bool            m_OverlayFilmStrip;
     bool            m_WorkAroundIssues;
+    int             m_ImageQuality;
 };
 
 #endif
