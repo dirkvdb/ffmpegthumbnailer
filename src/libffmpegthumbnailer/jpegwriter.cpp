@@ -41,13 +41,13 @@ JpegWriter::JpegWriter(const string& outputFile)
 , m_pBufferWriter(NULL)
 {
     init();
-	m_pFile = fopen(outputFile.c_str(), "wb");
-	
-	if (!m_pFile)
+    m_pFile = fopen(outputFile.c_str(), "wb");
+
+    if (!m_pFile)
     {
        throw logic_error(string("Failed to open output file: ") + outputFile);
     }
-    
+
     jpeg_stdio_dest(&m_Compression, m_pFile);
 }
 
@@ -57,13 +57,13 @@ JpegWriter::JpegWriter(std::vector<uint8_t>& outputBuffer)
 , m_pBufferWriter(NULL)
 {
     init();
-    
+
     m_Compression.dest = (jpeg_destination_mgr*)(m_Compression.mem->alloc_small) ((j_common_ptr) &m_Compression, JPOOL_PERMANENT, sizeof(BufferWriter));
 
-	m_pBufferWriter = reinterpret_cast<BufferWriter*>(m_Compression.dest);
-	m_pBufferWriter->m_DestMgr.init_destination     = jpegInitDestination;
-	m_pBufferWriter->m_DestMgr.empty_output_buffer  = jpegFlushWorkBuffer;
-	m_pBufferWriter->m_DestMgr.term_destination     = jpegDestroyDestination;
+    m_pBufferWriter = reinterpret_cast<BufferWriter*>(m_Compression.dest);
+    m_pBufferWriter->m_DestMgr.init_destination     = jpegInitDestination;
+    m_pBufferWriter->m_DestMgr.empty_output_buffer  = jpegFlushWorkBuffer;
+    m_pBufferWriter->m_DestMgr.term_destination     = jpegDestroyDestination;
     m_pBufferWriter->m_pDataSink                    = &outputBuffer;
 }
 
@@ -73,7 +73,7 @@ JpegWriter::~JpegWriter()
     {
         fclose(m_pFile);
     }
-    
+
     jpeg_destroy_compress(&m_Compression);
 }
 
@@ -93,14 +93,14 @@ void JpegWriter::writeFrame(uint8_t** rgbData, int width, int height, int qualit
     m_Compression.image_height = height;
     m_Compression.input_components = 3;
     m_Compression.in_color_space = JCS_RGB;
-    
-    quality = max(10, quality);
-    quality = min(0, quality);
-    
+
+    quality = min(10, quality);
+    quality = max(0, quality);
+
     jpeg_set_defaults(&m_Compression);
     jpeg_set_quality(&m_Compression, quality * 10, TRUE);
     jpeg_start_compress(&m_Compression, TRUE);
-    
+
     while (m_Compression.next_scanline < m_Compression.image_height)
     {
         (void) jpeg_write_scanlines(&m_Compression, reinterpret_cast<JSAMPLE**>(&rgbData[m_Compression.next_scanline]), 1);
@@ -121,14 +121,14 @@ void jpegInitDestination(j_compress_ptr pCompressionInfo)
 boolean jpegFlushWorkBuffer(j_compress_ptr pCompressionInfo)
 {
     BufferWriter* bufWriter = reinterpret_cast<BufferWriter*>(pCompressionInfo->dest);
-    
+
     size_t prevSize = bufWriter->m_pDataSink->size();
     bufWriter->m_pDataSink->resize(prevSize + JPEG_WORK_BUFFER_SIZE);
     memcpy((&bufWriter->m_pDataSink->front()) + prevSize, bufWriter->m_pDataBuffer, JPEG_WORK_BUFFER_SIZE);
-    
+
     bufWriter->m_DestMgr.next_output_byte = bufWriter->m_pDataBuffer;
     bufWriter->m_DestMgr.free_in_buffer = JPEG_WORK_BUFFER_SIZE;
-    
+
     return true;
 }
 
@@ -137,7 +137,7 @@ void jpegDestroyDestination(j_compress_ptr pCompressionInfo)
 {
     BufferWriter* bufWriter = reinterpret_cast<BufferWriter*>(pCompressionInfo->dest);
     size_t datacount = JPEG_WORK_BUFFER_SIZE - bufWriter->m_DestMgr.free_in_buffer;
-    
+
     size_t prevSize = bufWriter->m_pDataSink->size();
     bufWriter->m_pDataSink->resize(prevSize + datacount);
     memcpy((&bufWriter->m_pDataSink->front()) + prevSize, bufWriter->m_pDataBuffer, datacount);
