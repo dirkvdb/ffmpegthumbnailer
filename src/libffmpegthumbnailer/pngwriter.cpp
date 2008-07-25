@@ -86,17 +86,17 @@ void PngWriter::setText(const string& key, const string& value)
 	png_set_text(m_PngPtr, m_InfoPtr, &pngText, 1);	
 }
 
-void PngWriter::writeFrame(uint8_t** rgbData, int width, int height)
+void PngWriter::writeFrame(uint8_t** rgbData, int width, int height, int /*quality*/)
 {
     if (setjmp(png_jmpbuf(m_PngPtr)))
 	{
 		throw logic_error("Writing png file failed");
 	}
- 		
+	
 	png_set_IHDR(m_PngPtr, m_InfoPtr, width, height, 8,
 				 PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE,
 				 PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
-				 
+
     png_set_rows(m_PngPtr, m_InfoPtr, rgbData);
     png_write_png(m_PngPtr, m_InfoPtr, 0, NULL);	
 }

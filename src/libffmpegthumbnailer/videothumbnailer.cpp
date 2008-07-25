@@ -50,14 +50,16 @@ VideoThumbnailer::VideoThumbnailer()
 , m_SeekPercentage(10)
 , m_OverlayFilmStrip(false)
 , m_WorkAroundIssues(false)
+, m_ImageQuality(8)
 {
 }
 
-VideoThumbnailer::VideoThumbnailer(int thumbnailSize, uint16_t seekPercentage, bool filmStripOverlay, bool workaroundIssues)
+VideoThumbnailer::VideoThumbnailer(int thumbnailSize, uint16_t seekPercentage, bool filmStripOverlay, bool workaroundIssues, int imageQuality)
 : m_ThumbnailSize(thumbnailSize)
 , m_SeekPercentage(seekPercentage)
 , m_OverlayFilmStrip(filmStripOverlay)
 , m_WorkAroundIssues(workaroundIssues)
+, m_ImageQuality(imageQuality)
 {
 }
 
@@ -83,6 +85,11 @@ void VideoThumbnailer::setWorkAroundIssues(bool workAround)
 void VideoThumbnailer::setFilmStripOverlay(bool enabled)
 {
     m_OverlayFilmStrip = enabled;
+}
+
+void VideoThumbnailer::setImageQuality(int imageQuality)
+{
+    m_ImageQuality = imageQuality;
 }
 
 void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageWriter& imageWriter, AVFormatContext* pavContext)
@@ -156,7 +163,7 @@ void VideoThumbnailer::writeImage(const string& videoFile, ImageWriter& imageWri
 	
 	imageWriter.setText("Thumb::URI", videoFile);
 	imageWriter.setText("Thumb::Movie::Length", StringOperations::toString(duration));
-    imageWriter.writeFrame(&(rowPointers.front()), videoFrame.width, videoFrame.height);
+    imageWriter.writeFrame(&(rowPointers.front()), videoFrame.width, videoFrame.height, m_Quality);
 }
 
 string VideoThumbnailer::getMimeType(const string& videoFile)

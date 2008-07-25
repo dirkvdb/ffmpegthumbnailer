@@ -32,12 +32,13 @@ int main(int argc, char** argv)
 	int 	option;
 	int 	seekPercentage = 10;
 	int 	thumbnailSize = 128;
+	int     imageQuality = 8;       
 	bool 	filmStripOverlay = false;
     bool    workaroundIssues = false;
 	char* 	inputFile = NULL;
 	char* 	outputFile = NULL;
 	
-	while ((option = getopt (argc, argv, "i:o:s:t:fwh")) != -1)
+	while ((option = getopt (argc, argv, "i:o:s:t:q:fwh")) != -1)
 	{
 		switch (option)
 		{
@@ -59,6 +60,9 @@ int main(int argc, char** argv)
 			case 'w':
 				workaroundIssues = true;
 				break;
+			case 'q':
+				imageQuality = atoi(optarg);
+				break;
             case 'h':
 				printUsage();
 				return 0;
@@ -79,7 +83,7 @@ int main(int argc, char** argv)
     
 	try
 	{
-        VideoThumbnailer videoThumbnailer(thumbnailSize, seekPercentage, filmStripOverlay, workaroundIssues);
+        VideoThumbnailer videoThumbnailer(thumbnailSize, seekPercentage, filmStripOverlay, workaroundIssues, imageQuality);
 		videoThumbnailer.generateThumbnail(inputFile, determineImageType(outputFile), outputFile);
     }
 	catch (exception& e)
@@ -103,6 +107,7 @@ void printUsage()
 		 << "  -o<s>  : output file" << endl
 		 << "  -s<n>  : thumbnail size (default: 128)" << endl
 		 << "  -t<n>  : time to seek to (percentage) (default: 10)" << endl
+		 << "  -q<n>  : image quality (0 = bad, 10 = best) (default: 8)" << endl
 		 << "  -f     : create a movie strip overlay" << endl
          << "  -w     : workaround issues in old versions of ffmpeg" << endl
          << "  -h     : display this help" << endl;

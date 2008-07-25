@@ -25,13 +25,14 @@ extern "C" video_thumbnailer* create_thumbnailer(void)
 {
     video_thumbnailer* thumbnailer = new video_thumbnailer_struct();
 
-    thumbnailer->thumbnailer            = new VideoThumbnailer();
-    thumbnailer->thumbnail_size         = 128;
-    thumbnailer->seek_percentage        = 10;
-    thumbnailer->overlay_film_strip     = 0;
-    thumbnailer->workaround_bugs        = 0;
-    thumbnailer->thumbnail_image_type   = Png;
-    thumbnailer->av_format_context      = NULL;
+    thumbnailer->thumbnailer                = new VideoThumbnailer();
+    thumbnailer->thumbnail_size             = 128;
+    thumbnailer->seek_percentage            = 10;
+    thumbnailer->overlay_film_strip         = 0;
+    thumbnailer->workaround_bugs            = 0;
+    thumbnailer->thumbnail_image_quality    = 8;
+    thumbnailer->thumbnail_image_type       = Png;
+    thumbnailer->av_format_context          = NULL;
     
     return thumbnailer;
 }
@@ -79,6 +80,7 @@ extern "C" int generate_thumbnail_to_buffer(video_thumbnailer* thumbnailer, cons
         videoThumbnailer->setSeekPercentage(thumbnailer->seek_percentage);
         videoThumbnailer->setFilmStripOverlay(thumbnailer->overlay_film_strip != 0);
         videoThumbnailer->setWorkAroundIssues(thumbnailer->workaround_bugs != 0);
+        videoThumbnailer->setImageQuality(thumbnailer->thumbnail_image_quality);
         
         videoThumbnailer->generateThumbnail(movie_filename, thumbnailer->thumbnail_image_type, *dataVector, thumbnailer->av_format_context);
         generated_image_data->image_data_ptr = &dataVector->front();
@@ -103,6 +105,7 @@ extern "C" int generate_thumbnail_to_file(video_thumbnailer* thumbnailer, const 
         videoThumbnailer->setSeekPercentage(thumbnailer->seek_percentage);
         videoThumbnailer->setFilmStripOverlay(thumbnailer->overlay_film_strip != 0);
         videoThumbnailer->setWorkAroundIssues(thumbnailer->workaround_bugs != 0);
+        videoThumbnailer->setImageQuality(thumbnailer->thumbnail_image_quality);
         
         videoThumbnailer->generateThumbnail(movie_filename, thumbnailer->thumbnail_image_type, output_fileName, thumbnailer->av_format_context);
     }

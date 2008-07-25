@@ -18,6 +18,7 @@
 #include <stdexcept>
 #include <cstring>
 #include <assert.h>
+#include <algorithm>
 
 using namespace std;
 
@@ -86,15 +87,18 @@ void JpegWriter::setText(const string& /*key*/, const string& /*value*/)
 {
 }
 
-void JpegWriter::writeFrame(uint8_t** rgbData, int width, int height)
+void JpegWriter::writeFrame(uint8_t** rgbData, int width, int height, int quality)
 {
     m_Compression.image_width = width;
     m_Compression.image_height = height;
     m_Compression.input_components = 3;
     m_Compression.in_color_space = JCS_RGB;
     
+    quality = max(10, quality);
+    quality = min(0, quality);
+    
     jpeg_set_defaults(&m_Compression);
-    jpeg_set_quality(&m_Compression, 85, TRUE);
+    jpeg_set_quality(&m_Compression, quality * 10, TRUE);
     jpeg_start_compress(&m_Compression, TRUE);
     
     while (m_Compression.next_scanline < m_Compression.image_height)

@@ -36,7 +36,7 @@ public:
     ~JpegWriter();
     
     void setText(const std::string& key, const std::string& value);
-    void writeFrame(uint8_t** rgbData, int width, int height);
+    void writeFrame(uint8_t** rgbData, int width, int height, int quality);
     
 private:
     void init();
