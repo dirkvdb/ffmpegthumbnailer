@@ -45,5 +45,6 @@ AC_CONFIG_FILES([libffmpegthumbnailer.pc:libffmpegthumbnailer.pc.in])
 AC_OUTPUT([
 	Makefile
 	src/Makefile
-    src/libffmpegthumbnailer/Makefile
+	src/libffmpegthumbnailer/Makefile
+	man/Makefile
  ])

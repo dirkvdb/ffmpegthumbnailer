@@ -1,4 +1,4 @@
-SUBDIRS = src
+SUBDIRS = src man
 AM_CXXFLAGS = -Wall
 
 pkgconfigdir = @pkgconfigdir@

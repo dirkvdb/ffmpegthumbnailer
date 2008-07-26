@@ -29,86 +29,86 @@ ImageType determineImageType(const std::string& filename);
 
 int main(int argc, char** argv)
 {
-	int 	option;
-	int 	seekPercentage = 10;
-	int 	thumbnailSize = 128;
-	int     imageQuality = 8;       
-	bool 	filmStripOverlay = false;
+    int     option;
+    int     seekPercentage = 10;
+    int     thumbnailSize = 128;
+    int     imageQuality = 8;
+    bool    filmStripOverlay = false;
     bool    workaroundIssues = false;
-	char* 	inputFile = NULL;
-	char* 	outputFile = NULL;
-	
-	while ((option = getopt (argc, argv, "i:o:s:t:q:fwh")) != -1)
-	{
-		switch (option)
-		{
-			case 'i':
-				inputFile = optarg;
-				break;
-			case 'o':
-				outputFile = optarg;
-				break;
-			case 's':
-				thumbnailSize = atoi(optarg);
-				break;
-			case 'f':
-				filmStripOverlay = true;
-				break;
-			case 't':
-				seekPercentage = atoi(optarg);
-				break;
-			case 'w':
-				workaroundIssues = true;
-				break;
-			case 'q':
-				imageQuality = atoi(optarg);
-				break;
+    char*   inputFile = NULL;
+    char*   outputFile = NULL;
+
+    while ((option = getopt (argc, argv, "i:o:s:t:q:fwh")) != -1)
+    {
+        switch (option)
+        {
+            case 'i':
+                inputFile = optarg;
+                break;
+            case 'o':
+                outputFile = optarg;
+                break;
+            case 's':
+                thumbnailSize = atoi(optarg);
+                break;
+            case 'f':
+                filmStripOverlay = true;
+                break;
+            case 't':
+                seekPercentage = atoi(optarg);
+                break;
+            case 'w':
+                workaroundIssues = true;
+                break;
+            case 'q':
+                imageQuality = atoi(optarg);
+                break;
             case 'h':
-				printUsage();
-				return 0;
-			case '?':
-			default:
-				cerr << "invalid arguments" << endl;
-				printUsage();
-				return -1;
-		}
-	}
-	
-	if (!inputFile || !outputFile)
-	{
-		cerr << "invalid arguments" << endl;
-		printUsage();
-        return 0;
-	}
-    
-	try
-	{
-        VideoThumbnailer videoThumbnailer(thumbnailSize, seekPercentage, filmStripOverlay, workaroundIssues, imageQuality);
-		videoThumbnailer.generateThumbnail(inputFile, determineImageType(outputFile), outputFile);
+                printUsage();
+                return 0;
+            case '?':
+            default:
+                cerr << "invalid arguments" << endl;
+                printUsage();
+                return -1;
+        }
     }
-	catch (exception& e)
-	{
-		cerr << "Error: " << e.what() << endl;
-		return -1;
-	}
-	catch (...)
-	{
-		return -1;
-	}
-	
-	return 0;
+
+    if (!inputFile || !outputFile)
+    {
+        cerr << "invalid arguments" << endl;
+        printUsage();
+        return 0;
+    }
+
+    try
+    {
+        VideoThumbnailer videoThumbnailer(thumbnailSize, seekPercentage, filmStripOverlay, workaroundIssues, imageQuality);
+        videoThumbnailer.generateThumbnail(inputFile, determineImageType(outputFile), outputFile);
+    }
+    catch (exception& e)
+    {
+        cerr << "Error: " << e.what() << endl;
+        return -1;
+    }
+    catch (...)
+    {
+        return -1;
+    }
+
+    return 0;
 }
 
 void printUsage()
 {
-	cout << "Usage: ffmpegthumbnailer [options]" << endl << endl
-		 << "Options:" << endl
-		 << "  -i<s>  : input file" << endl
-		 << "  -o<s>  : output file" << endl
-		 << "  -s<n>  : thumbnail size (default: 128)" << endl
-		 << "  -t<n>  : time to seek to (percentage) (default: 10)" << endl
-		 << "  -q<n>  : image quality (0 = bad, 10 = best) (default: 8)" << endl
-		 << "  -f     : create a movie strip overlay" << endl
+    cout << "Usage: ffmpegthumbnailer [options]" << endl << endl
+         << "Options:" << endl
+         << "  -i<s>  : input file" << endl
+         << "  -o<s>  : output file" << endl
+         << "  -s<n>  : thumbnail size (default: 128)" << endl
+         << "  -t<n>  : time to seek to (percentage) (default: 10)" << endl
+         << "  -q<n>  : image quality (0 = bad, 10 = best) (default: 8)" << endl
+         << "  -f     : create a movie strip overlay" << endl
          << "  -w     : workaround issues in old versions of ffmpeg" << endl
          << "  -h     : display this help" << endl;
 }
@@ -117,12 +117,12 @@ ImageType determineImageType(const std::string& filename)
 {
     string lowercaseFilename = filename;
     StringOperations::lowercase(lowercaseFilename);
-    
+
     size_t size = lowercaseFilename.size();
     if ((lowercaseFilename.substr(size - 5, size) == ".jpeg") || (lowercaseFilename.substr(size - 4, size) == ".jpg"))
     {
         return Jpeg;
     }
-    
+
     return Png;
 }
