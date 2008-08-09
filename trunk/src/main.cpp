@@ -35,13 +35,17 @@ int main(int argc, char** argv)
     int     imageQuality = 8;
     bool    filmStripOverlay = false;
     bool    workaroundIssues = false;
+    bool    maintainAspectRatio = true;
     char*   inputFile = NULL;
     char*   outputFile = NULL;
 
-    while ((option = getopt (argc, argv, "i:o:s:t:q:fwh")) != -1)
+    while ((option = getopt (argc, argv, "i:o:s:t:q:afwh")) != -1)
     {
         switch (option)
         {
+            case 'a':
+                maintainAspectRatio = false;
+                break;
             case 'i':
                 inputFile = optarg;
                 break;
@@ -83,7 +87,7 @@ int main(int argc, char** argv)
 
     try
     {
-        VideoThumbnailer videoThumbnailer(thumbnailSize, seekPercentage, filmStripOverlay, workaroundIssues, imageQuality);
+        VideoThumbnailer videoThumbnailer(thumbnailSize, seekPercentage, filmStripOverlay, workaroundIssues, maintainAspectRatio, imageQuality);
         videoThumbnailer.generateThumbnail(inputFile, determineImageType(outputFile), outputFile);
     }
     catch (exception& e)
@@ -108,6 +112,7 @@ void printUsage()
          << "  -s<n>  : thumbnail size (default: 128)" << endl
          << "  -t<n>  : time to seek to (percentage) (default: 10)" << endl
          << "  -q<n>  : image quality (0 = bad, 10 = best) (default: 8)" << endl
+         << "  -a     : ignore aspect ratio and generate square thumbnail" << endl
          << "  -f     : create a movie strip overlay" << endl
          << "  -w     : workaround issues in old versions of ffmpeg" << endl
          << "  -h     : display this help" << endl;

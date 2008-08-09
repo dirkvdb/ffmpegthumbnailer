@@ -82,14 +82,14 @@ void MovieDecoder::destroy()
         av_close_input_file(m_pFormatContext);
         m_pFormatContext = NULL;
     }
-    
+
     if (m_pPacket)
     {
         av_free_packet(m_pPacket);
         delete m_pPacket;
         m_pPacket = NULL;
     }
-    
+
     if (m_pFrame)
     {
         av_free(m_pFrame);
@@ -103,7 +103,7 @@ string MovieDecoder::getCodec()
     {
         return m_pVideoCodec->name;
     }
-    
+
     return "";
 }
 
@@ -149,7 +149,7 @@ int MovieDecoder::getWidth()
     {
         return m_pVideoCodecContext->height;
     }
-    
+
     return -1;
 }
 
@@ -159,9 +159,9 @@ int MovieDecoder::getHeight()
     {
         return m_pVideoCodecContext->width;
     }
-    
+
     return -1;
-}  
+}
 
 int MovieDecoder::getDuration()
 {
@@ -181,7 +181,7 @@ void MovieDecoder::seek(int timeInSeconds)
     {
         timestamp = 0;
     }
-   
+
     int ret = av_seek_frame(m_pFormatContext, -1, timestamp, 0);
     if (ret >= 0)
     {
@@ -191,7 +191,7 @@ void MovieDecoder::seek(int timeInSeconds)
     {
         throw logic_error("Seeking in video failed");
     }
-    
+
     int count = 0;
     do
     {
@@ -216,7 +216,7 @@ void MovieDecoder::seek(int timeInSeconds)
 void MovieDecoder::decodeVideoFrame()
 {
     bool frameFinished = false;
-    
+
     while(!frameFinished && getVideoPacket())
     {
         frameFinished = decodeVideoPacket();
@@ -230,16 +230,21 @@ void MovieDecoder::decodeVideoFrame()
 
 bool MovieDecoder::decodeVideoPacket()
 {
-    assert(m_pPacket->stream_index == m_VideoStream);
+    //cout << m_pPacket->stream_index << " - " << m_VideoStream << endl;
+    if (m_pPacket->stream_index != m_VideoStream)
+    {
+        return false;
+    }
+
     int frameFinished;
-    
-    int bytesDecoded = avcodec_decode_video(m_pVideoCodecContext, m_pFrame, &frameFinished, 
+
+    int bytesDecoded = avcodec_decode_video(m_pVideoCodecContext, m_pFrame, &frameFinished,
                                         m_pPacket->data, m_pPacket->size);
     if (bytesDecoded < 0)
     {
         throw logic_error("Failed to decode video frame: bytesDecoded < 0");
     }
-    
+
     return frameFinished > 0;
 }
 
@@ -247,21 +252,21 @@ bool MovieDecoder::getVideoPacket()
 {
     bool framesAvailable = true;
     bool frameDecoded = false;
-    
+
     int attempts = 0;
-    
+
     if (m_pPacket)
     {
         av_free_packet(m_pPacket);
         delete m_pPacket;
     }
-    
+
     m_pPacket = new AVPacket();
-    
+
     while (framesAvailable && !frameDecoded && attempts++ < 250)
     {
         framesAvailable = av_read_frame(m_pFormatContext, m_pPacket) >= 0;
-        
+
         if (framesAvailable)
         {
             frameDecoded = m_pPacket->stream_index == m_VideoStream;
@@ -271,33 +276,33 @@ bool MovieDecoder::getVideoPacket()
             }
         }
     }
-    
+
     return frameDecoded;
 }
 
-void MovieDecoder::getScaledVideoFrame(int scaledSize, VideoFrame& videoFrame)
+void MovieDecoder::getScaledVideoFrame(int scaledSize, bool maintainAspectRatio, VideoFrame& videoFrame)
 {
     if (m_pFrame->interlaced_frame)
     {
         avpicture_deinterlace((AVPicture*) m_pFrame, (AVPicture*) m_pFrame, m_pVideoCodecContext->pix_fmt,
                               m_pVideoCodecContext->width, m_pVideoCodecContext->height);
     }
-    
+
     int scaledWidth, scaledHeight;
-    convertAndScaleFrame(PIX_FMT_RGB24, scaledSize, scaledWidth, scaledHeight);
-    
+    convertAndScaleFrame(PIX_FMT_RGB24, scaledSize, maintainAspectRatio, scaledWidth, scaledHeight);
+
     videoFrame.width = scaledWidth;
     videoFrame.height = scaledHeight;
     videoFrame.lineSize = m_pFrame->linesize[0];
-    
+
     videoFrame.frameData.clear();
     videoFrame.frameData.resize(videoFrame.lineSize * videoFrame.height);
     memcpy((&(videoFrame.frameData.front())), m_pFrame->data[0], videoFrame.lineSize * videoFrame.height);
 }
 
-void MovieDecoder::convertAndScaleFrame(int format, int scaledSize, int& scaledWidth, int& scaledHeight)
+void MovieDecoder::convertAndScaleFrame(int format, int scaledSize, bool maintainAspectRatio, int& scaledWidth, int& scaledHeight)
 {
-    calculateDimensions(m_pVideoCodecContext->width, m_pVideoCodecContext->height, scaledSize, scaledWidth, scaledHeight);
+    calculateDimensions(m_pVideoCodecContext->width, m_pVideoCodecContext->height, scaledSize, maintainAspectRatio, scaledWidth, scaledHeight);
     SwsContext* scaleContext = sws_getContext(m_pVideoCodecContext->width, m_pVideoCodecContext->height,
                                               m_pVideoCodecContext->pix_fmt, scaledWidth, scaledHeight,
                                               format, SWS_BICUBIC, NULL, NULL, NULL);
@@ -306,9 +311,9 @@ void MovieDecoder::convertAndScaleFrame(int format, int scaledSize, int& scaledW
     {
         throw logic_error("Failed to create resize context");
     }
-    
+
     AVFrame* convertedFrame = NULL;
-    
+
     createAVFrame(&convertedFrame, scaledWidth, scaledHeight, format);
 
     sws_scale(scaleContext, m_pFrame->data, m_pFrame->linesize, 0, m_pVideoCodecContext->height,
@@ -319,26 +324,34 @@ void MovieDecoder::convertAndScaleFrame(int format, int scaledSize, int& scaledW
     m_pFrame = convertedFrame;
 }
 
-void MovieDecoder::calculateDimensions(int srcWidth, int srcHeight, int squareSize, int& destWidth, int& destHeight)
+void MovieDecoder::calculateDimensions(int srcWidth, int srcHeight, int squareSize, bool maintainAspectRatio, int& destWidth, int& destHeight)
 {
-    if (srcWidth > srcHeight)
+    if (!maintainAspectRatio)
     {
-        destWidth  = squareSize;
-        destHeight = static_cast<int>(static_cast<float>(squareSize) / srcWidth * srcHeight);
+        destWidth = squareSize;
+        destHeight = squareSize;
     }
     else
     {
-        destWidth  = static_cast<int>(static_cast<float>(squareSize) / srcHeight * srcWidth);
-        destHeight = squareSize;
+        if (srcWidth > srcHeight)
+        {
+            destWidth  = squareSize;
+            destHeight = static_cast<int>(static_cast<float>(squareSize) / srcWidth * srcHeight);
+        }
+        else
+        {
+            destWidth  = static_cast<int>(static_cast<float>(squareSize) / srcHeight * srcWidth);
+            destHeight = squareSize;
+        }
     }
 }
 
 void MovieDecoder::createAVFrame(AVFrame** avFrame, int width, int height, int format)
 {
     *avFrame        = avcodec_alloc_frame();
-    
+
     int         numBytes = avpicture_get_size(format, width, height);
     uint8_t*    pBuffer = new uint8_t[numBytes];
-    
+
     avpicture_fill((AVPicture*) *avFrame, pBuffer, format, width, height);
 }

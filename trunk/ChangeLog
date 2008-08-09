@@ -1,5 +1,10 @@
 FFmpegThumbnailer
 
+version ???
+- Option added to ignore aspect ration and generate square thumbnail
+- Quality option added for jpeg thumbnails
+- Man page added (thanks to Lionel Le Folgoc)
+
 version 1.2.6
 - Fixed seeking in large files due to integer overflow (Thanks to AWaters1)
 - Fixed possible linker error (Thanks to pressh)

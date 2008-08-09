@@ -42,7 +42,7 @@ struct VideoFrame
     int width;
     int height;
     int lineSize;
-    
+
     std::vector<uint8_t> frameData;
 };
 
@@ -51,27 +51,27 @@ class MovieDecoder
 public:
     MovieDecoder(const std::string& filename, AVFormatContext* pavContext = NULL);
     ~MovieDecoder();
-    
+
     std::string getCodec();
     void seek(int timeInSeconds);
     void decodeVideoFrame();
-    void getScaledVideoFrame(int scaledSize, VideoFrame& videoFrame);
+    void getScaledVideoFrame(int scaledSize, bool maintainAspectRatio, VideoFrame& videoFrame);
 
     int getWidth();
-    int getHeight();    
+    int getHeight();
     int getDuration();
-    
+
 private:
     void initialize(const std::string& filename);
     void initializeVideo();
     void destroy();
-    
+
     bool decodeVideoPacket();
     bool getVideoPacket();
-    void convertAndScaleFrame(int format, int scaledSize, int& scaledWidth, int& scaledHeight);
+    void convertAndScaleFrame(int format, int scaledSize, bool maintainAspectRatio, int& scaledWidth, int& scaledHeight);
     void createAVFrame(AVFrame** avFrame, int width, int height, int format);
-    void calculateDimensions(int srcWidth, int srcHeight, int squareSize, int& destWidth, int& destHeight);
-    
+    void calculateDimensions(int srcWidth, int srcHeight, int squareSize, bool maintainAspectRatio, int& destWidth, int& destHeight);
+
 private:
     int                     m_VideoStream;
     AVFormatContext*        m_pFormatContext;
