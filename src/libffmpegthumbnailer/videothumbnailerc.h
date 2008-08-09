@@ -36,6 +36,7 @@ typedef struct video_thumbnailer_struct
     int                     thumbnail_image_quality;/* default = 8 (0 is bad, 10 is best)*/
     ImageType               thumbnail_image_type;   /* default = Png */
     struct AVFormatContext* av_format_context;      /* default = NULL */
+    int                     maintain_aspect_ratio;  /* default = 1 */
 
     void*               thumbnailer;    /* for internal use only */
 } video_thumbnailer;
