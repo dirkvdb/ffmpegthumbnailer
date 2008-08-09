@@ -33,10 +33,10 @@ class VideoThumbnailer
 {
 public:
     VideoThumbnailer();
-	VideoThumbnailer(int thumbnailSize, uint16_t seekPercentage, bool filmStripOverlay, bool workaroundIssues, int imageQuality);
-	~VideoThumbnailer();
+    VideoThumbnailer(int thumbnailSize, uint16_t seekPercentage, bool filmStripOverlay, bool workaroundIssues, bool maintainAspectRatio, int imageQuality);
+    ~VideoThumbnailer();
 
-	void generateThumbnail(const std::string& videoFile, ImageType type, const std::string& outputFile, AVFormatContext* pavContext = NULL);
+    void generateThumbnail(const std::string& videoFile, ImageType type, const std::string& outputFile, AVFormatContext* pavContext = NULL);
     void generateThumbnail(const std::string& videoFile, ImageType type, std::vector<uint8_t>& buffer, AVFormatContext* pavContext = NULL);
 
     void setThumbnailSize(int size);
@@ -44,26 +44,28 @@ public:
     void setFilmStripOverlay(bool enabled);
     void setWorkAroundIssues(bool workAround);
     void setImageQuality(int imageQuality);
-	
+    void setMaintainAspectRatio(bool enabled);
+
 private:
     typedef std::map<uint8_t, int> Histogram;
 
     void generateThumbnail(const std::string& videoFile, ImageWriter& imageWriter, AVFormatContext* pavContext = NULL);
     void writeImage(const std::string& videoFile, ImageWriter& imageWriter, const VideoFrame& videoFrame, int duration, std::vector<uint8_t*>& rowPointers);
-	
-    std::string getMimeType(const std::string& videoFile);
-	std::string getExtension(const std::string& videoFilename);
 
-	void generateHistogram(const VideoFrame& videoFrame, Histogram& histogram);
-	bool isDarkImage(const int numPixels, const Histogram& histogram);
-	void overlayFilmStrip(VideoFrame& videoFrame);
+    std::string getMimeType(const std::string& videoFile);
+    std::string getExtension(const std::string& videoFilename);
+
+    void generateHistogram(const VideoFrame& videoFrame, Histogram& histogram);
+    bool isDarkImage(const int numPixels, const Histogram& histogram);
+    void overlayFilmStrip(VideoFrame& videoFrame);
 
 private:
     int             m_ThumbnailSize;
-    uint16_t        m_SeekPercentage;    
+    uint16_t        m_SeekPercentage;
     bool            m_OverlayFilmStrip;
     bool            m_WorkAroundIssues;
     int             m_ImageQuality;
+    bool            m_MaintainAspectRatio;
 };
 
 #endif

@@ -51,15 +51,17 @@ VideoThumbnailer::VideoThumbnailer()
 , m_OverlayFilmStrip(false)
 , m_WorkAroundIssues(false)
 , m_ImageQuality(8)
+, m_MaintainAspectRatio(true)
 {
 }
 
-VideoThumbnailer::VideoThumbnailer(int thumbnailSize, uint16_t seekPercentage, bool filmStripOverlay, bool workaroundIssues, int imageQuality)
+VideoThumbnailer::VideoThumbnailer(int thumbnailSize, uint16_t seekPercentage, bool filmStripOverlay, bool workaroundIssues, bool maintainAspectRatio, int imageQuality)
 : m_ThumbnailSize(thumbnailSize)
 , m_SeekPercentage(seekPercentage)
 , m_OverlayFilmStrip(filmStripOverlay)
 , m_WorkAroundIssues(workaroundIssues)
 , m_ImageQuality(imageQuality)
+, m_MaintainAspectRatio(maintainAspectRatio)
 {
 }
 
@@ -92,6 +94,11 @@ void VideoThumbnailer::setImageQuality(int imageQuality)
     m_ImageQuality = imageQuality;
 }
 
+void VideoThumbnailer::setMaintainAspectRatio(bool enabled)
+{
+    m_MaintainAspectRatio = enabled;
+}
+
 void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageWriter& imageWriter, AVFormatContext* pavContext)
 {
     MovieDecoder movieDecoder(videoFile, pavContext);
@@ -111,7 +118,7 @@ void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageWriter& i
         }
     }
 
-    movieDecoder.getScaledVideoFrame(m_ThumbnailSize, videoFrame);
+    movieDecoder.getScaledVideoFrame(m_ThumbnailSize, m_MaintainAspectRatio, videoFrame);
 
     if (m_OverlayFilmStrip && (videoFrame.width > FILMHOLE_WIDTH * 2))
     {
