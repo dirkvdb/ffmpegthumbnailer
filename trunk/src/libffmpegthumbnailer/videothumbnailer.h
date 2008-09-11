@@ -33,7 +33,7 @@ class VideoThumbnailer
 {
 public:
     VideoThumbnailer();
-    VideoThumbnailer(int thumbnailSize, uint16_t seekPercentage, bool filmStripOverlay, bool workaroundIssues, bool maintainAspectRatio, int imageQuality);
+    VideoThumbnailer(int thumbnailSize, bool filmStripOverlay, bool workaroundIssues, bool maintainAspectRatio, int imageQuality);
     ~VideoThumbnailer();
 
     void generateThumbnail(const std::string& videoFile, ImageType type, const std::string& outputFile, AVFormatContext* pavContext = NULL);
@@ -41,6 +41,7 @@ public:
 
     void setThumbnailSize(int size);
     void setSeekPercentage(int percentage);
+    void setSeekTime(const std::string& seekTime);
     void setFilmStripOverlay(bool enabled);
     void setWorkAroundIssues(bool workAround);
     void setImageQuality(int imageQuality);
@@ -66,6 +67,7 @@ private:
     bool            m_WorkAroundIssues;
     int             m_ImageQuality;
     bool            m_MaintainAspectRatio;
+    std::string     m_SeekTime;
 };
 
 #endif

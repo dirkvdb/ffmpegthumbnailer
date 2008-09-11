@@ -31,6 +31,7 @@ int main(int argc, char** argv)
 {
     int     option;
     int     seekPercentage = 10;
+    string  seekTime;
     int     thumbnailSize = 128;
     int     imageQuality = 8;
     bool    filmStripOverlay = false;
@@ -59,7 +60,14 @@ int main(int argc, char** argv)
                 filmStripOverlay = true;
                 break;
             case 't':
-                seekPercentage = atoi(optarg);
+                if (string(optarg).find(':') != string::npos)
+                {
+                    seekTime = optarg;
+                }
+                else
+                {
+                    seekPercentage = atoi(optarg);
+                }
                 break;
             case 'w':
                 workaroundIssues = true;
@@ -87,7 +95,15 @@ int main(int argc, char** argv)
 
     try
     {
-        VideoThumbnailer videoThumbnailer(thumbnailSize, seekPercentage, filmStripOverlay, workaroundIssues, maintainAspectRatio, imageQuality);
+        VideoThumbnailer videoThumbnailer(thumbnailSize, filmStripOverlay, workaroundIssues, maintainAspectRatio, imageQuality);
+        if (!seekTime.empty())
+        {
+            videoThumbnailer.setSeekTime(seekTime);
+        }
+        else
+        {
+            videoThumbnailer.setSeekPercentage(seekPercentage);
+        }
         videoThumbnailer.generateThumbnail(inputFile, determineImageType(outputFile), outputFile);
     }
     catch (exception& e)
@@ -107,15 +123,15 @@ void printUsage()
 {
     cout << "Usage: ffmpegthumbnailer [options]" << endl << endl
          << "Options:" << endl
-         << "  -i<s>  : input file" << endl
-         << "  -o<s>  : output file" << endl
-         << "  -s<n>  : thumbnail size (default: 128)" << endl
-         << "  -t<n>  : time to seek to (percentage) (default: 10)" << endl
-         << "  -q<n>  : image quality (0 = bad, 10 = best) (default: 8)" << endl
-         << "  -a     : ignore aspect ratio and generate square thumbnail" << endl
-         << "  -f     : create a movie strip overlay" << endl
-         << "  -w     : workaround issues in old versions of ffmpeg" << endl
-         << "  -h     : display this help" << endl;
+         << "  -i<s>   : input file" << endl
+         << "  -o<s>   : output file" << endl
+         << "  -s<n>   : thumbnail size (default: 128)" << endl
+         << "  -t<n|s> : time to seek to (percentage or absolute time hh:mm:ss) (default: 10%)" << endl
+         << "  -q<n>   : image quality (0 = bad, 10 = best) (default: 8)" << endl
+         << "  -a      : ignore aspect ratio and generate square thumbnail" << endl
+         << "  -f      : create a movie strip overlay" << endl
+         << "  -w      : workaround issues in old versions of ffmpeg" << endl
+         << "  -h      : display this help" << endl;
 }
 
 ImageType determineImageType(const std::string& filename)

@@ -28,6 +28,7 @@ extern "C" video_thumbnailer* create_thumbnailer(void)
     thumbnailer->thumbnailer                = new VideoThumbnailer();
     thumbnailer->thumbnail_size             = 128;
     thumbnailer->seek_percentage            = 10;
+    thumbnailer->seek_time                  = NULL;
     thumbnailer->overlay_film_strip         = 0;
     thumbnailer->workaround_bugs            = 0;
     thumbnailer->thumbnail_image_quality    = 8;
@@ -74,11 +75,19 @@ void setProperties(video_thumbnailer* thumbnailer)
 {
     VideoThumbnailer* videoThumbnailer  = reinterpret_cast<VideoThumbnailer*>(thumbnailer->thumbnailer);
     videoThumbnailer->setThumbnailSize(thumbnailer->thumbnail_size);
-    videoThumbnailer->setSeekPercentage(thumbnailer->seek_percentage);
     videoThumbnailer->setFilmStripOverlay(thumbnailer->overlay_film_strip != 0);
     videoThumbnailer->setWorkAroundIssues(thumbnailer->workaround_bugs != 0);
     videoThumbnailer->setImageQuality(thumbnailer->thumbnail_image_quality);
     videoThumbnailer->setMaintainAspectRatio(thumbnailer->maintain_aspect_ratio != 0);
+
+    if (thumbnailer->seek_time != NULL)
+    {
+        videoThumbnailer->setSeekTime(thumbnailer->seek_time);
+    }
+    else
+    {
+        videoThumbnailer->setSeekPercentage(thumbnailer->seek_percentage);
+    }
 }
 
 extern "C" int generate_thumbnail_to_buffer(video_thumbnailer* thumbnailer, const char* movie_filename, image_data* generated_image_data)
