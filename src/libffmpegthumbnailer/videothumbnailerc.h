@@ -31,6 +31,7 @@ typedef struct video_thumbnailer_struct
 {
     int                     thumbnail_size;         /* default = 128 */
     int                     seek_percentage;        /* default = 10 */
+    char*                   seek_time;              /* default = NULL (format hh:mm:ss, overrides seek_percentage if set) */
     int                     overlay_film_strip;     /* default = 0 */
     int                     workaround_bugs;        /* default = 0 */
     int                     thumbnail_image_quality;/* default = 8 (0 is bad, 10 is best)*/

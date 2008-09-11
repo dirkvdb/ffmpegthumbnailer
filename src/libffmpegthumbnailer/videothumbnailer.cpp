@@ -55,9 +55,9 @@ VideoThumbnailer::VideoThumbnailer()
 {
 }
 
-VideoThumbnailer::VideoThumbnailer(int thumbnailSize, uint16_t seekPercentage, bool filmStripOverlay, bool workaroundIssues, bool maintainAspectRatio, int imageQuality)
+VideoThumbnailer::VideoThumbnailer(int thumbnailSize, bool filmStripOverlay, bool workaroundIssues, bool maintainAspectRatio, int imageQuality)
 : m_ThumbnailSize(thumbnailSize)
-, m_SeekPercentage(seekPercentage)
+, m_SeekPercentage(10)
 , m_OverlayFilmStrip(filmStripOverlay)
 , m_WorkAroundIssues(workaroundIssues)
 , m_ImageQuality(imageQuality)
@@ -71,7 +71,13 @@ VideoThumbnailer::~VideoThumbnailer()
 
 void VideoThumbnailer::setSeekPercentage(int percentage)
 {
+    m_SeekTime.clear();
     m_SeekPercentage = percentage > 95 ? 95 : percentage;
+}
+
+void VideoThumbnailer::setSeekTime(const std::string& seekTime)
+{
+    m_SeekTime = seekTime;
 }
 
 void VideoThumbnailer::setThumbnailSize(int size)
@@ -99,6 +105,14 @@ void VideoThumbnailer::setMaintainAspectRatio(bool enabled)
     m_MaintainAspectRatio = enabled;
 }
 
+int timeToSeconds(const std::string& time)
+{
+    int hours, minutes, seconds;
+    sscanf(time.c_str(), "%d:%d:%d", &hours, &minutes, &seconds);
+
+    return (hours * 3600) + (minutes * 60) + seconds;
+}
+
 void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageWriter& imageWriter, AVFormatContext* pavContext)
 {
     MovieDecoder movieDecoder(videoFile, pavContext);
@@ -110,7 +124,10 @@ void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageWriter& i
     {
         try
         {
-            movieDecoder.seek(movieDecoder.getDuration() * m_SeekPercentage / 100);
+            int secondToSeekTo = m_SeekTime.empty() ?
+                movieDecoder.getDuration() * m_SeekPercentage / 100 :
+                timeToSeconds(m_SeekTime);
+            movieDecoder.seek(secondToSeekTo);
         }
         catch (exception& e)
         {
