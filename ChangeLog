@@ -1,7 +1,7 @@
 FFmpegThumbnailer
 
-version ???
-- Option added to ignore aspect ration and generate square thumbnail
+version 1.3.0
+- Option added to ignore aspect ratio and generate square thumbnails
 - Quality option added for jpeg thumbnails
 - Man page added (thanks to Lionel Le Folgoc)
 - Added option to seek to absolute time in stead of percentage
