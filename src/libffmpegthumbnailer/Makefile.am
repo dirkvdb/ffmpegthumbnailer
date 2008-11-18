@@ -18,5 +18,5 @@ libffmpegthumbnailer_include_HEADERS    =   videothumbnailer.h \
                                             filmstripfilter.h
 
 libffmpegthumbnailer_includedir         = $(includedir)/libffmpegthumbnailer
-libffmpegthumbnailer_la_LDFLAGS         = -version-info 2:0:0
+libffmpegthumbnailer_la_LDFLAGS         = -version-info 3:0:0
 libffmpegthumbnailer_la_LIBADD          = $(FFMPEG_LIBS) $(PNG_LIBS) -ljpeg
