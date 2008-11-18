@@ -1,5 +1,8 @@
 FFmpegThumbnailer
 
+version 1.4.?
+- Filter support added that alows library users to implement filters that will be applied to the frame data
+
 version 1.3.0
 - Option added to ignore aspect ratio and generate square thumbnails
 - Quality option added for jpeg thumbnails
