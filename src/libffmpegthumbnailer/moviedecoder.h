@@ -1,4 +1,4 @@
-//    Copyright (C) 2007 Dirk Vanden Boer <dirk.vdb@gmail.com>
+//    Copyright (C) 2008 Dirk Vanden Boer <dirk.vdb@gmail.com>
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -24,6 +24,8 @@
 #include <string>
 #include <vector>
 
+#include "videoframe.h"
+
 extern "C" {
 #if HAVE_LIBAVCODEC_AVCODEC_H
 #include <libavcodec/avcodec.h>
@@ -36,15 +38,6 @@ extern "C" {
 #include <ffmpeg/avformat.h>
 #endif
 }
-
-struct VideoFrame
-{
-    int width;
-    int height;
-    int lineSize;
-
-    std::vector<uint8_t> frameData;
-};
 
 class MovieDecoder
 {
