@@ -16,6 +16,7 @@
 
 #include "videothumbnailerc.h"
 #include "videothumbnailer.h"
+#include "filmstripfilter.h"
 
 #include <vector>
 #include <iostream>
@@ -26,6 +27,7 @@ extern "C" video_thumbnailer* create_thumbnailer(void)
     video_thumbnailer* thumbnailer = new video_thumbnailer_struct();
 
     thumbnailer->thumbnailer                = new VideoThumbnailer();
+    thumbnailer->filter                     = new FilmStripFilter();
     thumbnailer->thumbnail_size             = 128;
     thumbnailer->seek_percentage            = 10;
     thumbnailer->seek_time                  = NULL;
@@ -43,6 +45,9 @@ extern "C" void destroy_thumbnailer(video_thumbnailer* thumbnailer)
 {
     VideoThumbnailer* videoThumbnailer = reinterpret_cast<VideoThumbnailer*>(thumbnailer->thumbnailer);
     delete videoThumbnailer;
+    FilmStripFilter* filmStripFilter = reinterpret_cast<FilmStripFilter*>(thumbnailer->filter);
+    delete filmStripFilter;
+
     thumbnailer->thumbnailer = 0;
 
     delete thumbnailer;
@@ -75,10 +80,15 @@ void setProperties(video_thumbnailer* thumbnailer)
 {
     VideoThumbnailer* videoThumbnailer  = reinterpret_cast<VideoThumbnailer*>(thumbnailer->thumbnailer);
     videoThumbnailer->setThumbnailSize(thumbnailer->thumbnail_size);
-    videoThumbnailer->setFilmStripOverlay(thumbnailer->overlay_film_strip != 0);
     videoThumbnailer->setWorkAroundIssues(thumbnailer->workaround_bugs != 0);
     videoThumbnailer->setImageQuality(thumbnailer->thumbnail_image_quality);
     videoThumbnailer->setMaintainAspectRatio(thumbnailer->maintain_aspect_ratio != 0);
+
+    if (thumbnailer->overlay_film_strip)
+    {
+        videoThumbnailer->removeFilter(reinterpret_cast<IFilter*>(thumbnailer->filter));
+        videoThumbnailer->addFilter(reinterpret_cast<IFilter*>(thumbnailer->filter));
+    }
 
     if (thumbnailer->seek_time != NULL)
     {

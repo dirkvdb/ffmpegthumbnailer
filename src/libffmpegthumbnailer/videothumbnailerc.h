@@ -39,7 +39,8 @@ typedef struct video_thumbnailer_struct
     struct AVFormatContext* av_format_context;      /* default = NULL */
     int                     maintain_aspect_ratio;  /* default = 1 */
 
-    void*               thumbnailer;    /* for internal use only */
+    void*                   thumbnailer;            /* for internal use only */
+    void*                   filter;                 /* for internal use only */
 } video_thumbnailer;
 
 typedef struct image_data_struct

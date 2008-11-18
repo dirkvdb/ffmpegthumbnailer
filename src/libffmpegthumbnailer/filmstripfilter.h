@@ -14,19 +14,15 @@
 //    along with this program; if not, write to the Free Software
 //    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-#ifndef VIDEOFRAME_H
-#define VIDEOFRAME_H
+#ifndef FILMSTRIPFILTER_H
+#define FILMSTRIPFILTER_H
 
-#include <inttypes.h>
-#include <vector>
+#include "ifilter.h"
 
-struct VideoFrame
+class FilmStripFilter : public IFilter
 {
-    int width;
-    int height;
-    int lineSize;
-
-    std::vector<uint8_t> frameData;
+public:
+    void process(VideoFrame& videoFrame);
 };
 
 #endif
