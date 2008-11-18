@@ -136,6 +136,7 @@ void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageWriter& i
     }
 
     movieDecoder.getScaledVideoFrame(m_ThumbnailSize, m_MaintainAspectRatio, videoFrame);
+    applyFilters(videoFrame);
 
     if (m_OverlayFilmStrip && (videoFrame.width > FILMHOLE_WIDTH * 2))
     {
@@ -243,6 +244,26 @@ string VideoThumbnailer::getExtension(const string& videoFilename)
     }
 
     return extension;
+}
+
+void VideoThumbnailer::addFilter(IFilter* filter)
+{
+    m_Filters.push_back(filter);
+}
+
+void VideoThumbnailer::clearFilters()
+{
+    m_Filters.clear();
+}
+
+void VideoThumbnailer::applyFilters(VideoFrame& frameData)
+{
+    for (vector<IFilter*>::iterator iter = m_Filters.begin();
+         iter != m_Filters.end();
+         ++iter)
+    {
+        (*iter)->process(frameData);
+    }
 }
 
 void VideoThumbnailer::generateHistogram(const VideoFrame& videoFrame, std::map<uint8_t, int>& histogram)

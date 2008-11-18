@@ -1,4 +1,4 @@
-//    Copyright (C) 2007 Dirk Vanden Boer <dirk.vdb@gmail.com>
+//    Copyright (C) 2008 Dirk Vanden Boer <dirk.vdb@gmail.com>
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
 
 #include "imagetypes.h"
 #include "imagewriterfactory.h"
+#include "ifilter.h"
 
 class VideoFrame;
 class ImageWriter;
@@ -46,6 +47,8 @@ public:
     void setWorkAroundIssues(bool workAround);
     void setImageQuality(int imageQuality);
     void setMaintainAspectRatio(bool enabled);
+    void addFilter(IFilter* filter);
+    void clearFilters();
 
 private:
     typedef std::map<uint8_t, int> Histogram;
@@ -59,15 +62,17 @@ private:
     void generateHistogram(const VideoFrame& videoFrame, Histogram& histogram);
     bool isDarkImage(const int numPixels, const Histogram& histogram);
     void overlayFilmStrip(VideoFrame& videoFrame);
+    void applyFilters(VideoFrame& frameData);
 
 private:
-    int             m_ThumbnailSize;
-    uint16_t        m_SeekPercentage;
-    bool            m_OverlayFilmStrip;
-    bool            m_WorkAroundIssues;
-    int             m_ImageQuality;
-    bool            m_MaintainAspectRatio;
-    std::string     m_SeekTime;
+    int                         m_ThumbnailSize;
+    uint16_t                    m_SeekPercentage;
+    bool                        m_OverlayFilmStrip;
+    bool                        m_WorkAroundIssues;
+    int                         m_ImageQuality;
+    bool                        m_MaintainAspectRatio;
+    std::string                 m_SeekTime;
+    std::vector<IFilter*>       m_Filters;
 };
 
 #endif
