@@ -25,6 +25,7 @@
 #include "imagetypes.h"
 #include "imagewriterfactory.h"
 #include "ifilter.h"
+#include "filmstripfilter.h"
 
 class VideoFrame;
 class ImageWriter;
@@ -34,7 +35,7 @@ class VideoThumbnailer
 {
 public:
     VideoThumbnailer();
-    VideoThumbnailer(int thumbnailSize, bool filmStripOverlay, bool workaroundIssues, bool maintainAspectRatio, int imageQuality);
+    VideoThumbnailer(int thumbnailSize, bool workaroundIssues, bool maintainAspectRatio, int imageQuality);
     ~VideoThumbnailer();
 
     void generateThumbnail(const std::string& videoFile, ImageType type, const std::string& outputFile, AVFormatContext* pavContext = NULL);
@@ -43,11 +44,11 @@ public:
     void setThumbnailSize(int size);
     void setSeekPercentage(int percentage);
     void setSeekTime(const std::string& seekTime);
-    void setFilmStripOverlay(bool enabled);
     void setWorkAroundIssues(bool workAround);
     void setImageQuality(int imageQuality);
     void setMaintainAspectRatio(bool enabled);
     void addFilter(IFilter* filter);
+    void removeFilter(IFilter* filter);
     void clearFilters();
 
 private:
@@ -61,7 +62,6 @@ private:
 
     void generateHistogram(const VideoFrame& videoFrame, Histogram& histogram);
     bool isDarkImage(const int numPixels, const Histogram& histogram);
-    void overlayFilmStrip(VideoFrame& videoFrame);
     void applyFilters(VideoFrame& frameData);
 
 private:

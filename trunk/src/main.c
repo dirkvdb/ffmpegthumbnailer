@@ -26,15 +26,15 @@ int main(int argc, char** argv)
         printf("No moviefile specified\n");
         return -1;
     }
-    
+
     video_thumbnailer* thumbnailer = create_thumbnailer();
     image_data* imageData = create_image_data();
-    
+
     thumbnailer->seek_percentage        = 15;
     thumbnailer->overlay_film_strip     = 1;
     thumbnailer->thumbnail_size         = 256;
     thumbnailer->thumbnail_image_type   = Jpeg;
-    
+
     if (generate_thumbnail_to_buffer(thumbnailer, argv[1], imageData) == 0)
     {
         FILE* imageFile = fopen("output.jpg", "wb");
@@ -45,9 +45,9 @@ int main(int argc, char** argv)
     {
         printf("Failed to generate thumbnail\n");
     }
-            
+
     destroy_image_data(imageData);
     destroy_thumbnailer(thumbnailer);
 
-	return 0;
+    return 0;
 }

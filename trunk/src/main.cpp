@@ -21,6 +21,7 @@
 
 #include "libffmpegthumbnailer/videothumbnailer.h"
 #include "libffmpegthumbnailer/stringoperations.h"
+#include "libffmpegthumbnailer/filmstripfilter.h"
 
 using namespace std;
 
@@ -95,7 +96,15 @@ int main(int argc, char** argv)
 
     try
     {
-        VideoThumbnailer videoThumbnailer(thumbnailSize, filmStripOverlay, workaroundIssues, maintainAspectRatio, imageQuality);
+        VideoThumbnailer videoThumbnailer(thumbnailSize, workaroundIssues, maintainAspectRatio, imageQuality);
+        FilmStripFilter* filmStripFilter = NULL;
+
+        if (filmStripOverlay)
+        {
+            filmStripFilter = new FilmStripFilter();
+            videoThumbnailer.addFilter(filmStripFilter);
+        }
+
         if (!seekTime.empty())
         {
             videoThumbnailer.setSeekTime(seekTime);
@@ -105,6 +114,8 @@ int main(int argc, char** argv)
             videoThumbnailer.setSeekPercentage(seekPercentage);
         }
         videoThumbnailer.generateThumbnail(inputFile, determineImageType(outputFile), outputFile);
+
+        delete filmStripFilter;
     }
     catch (exception& e)
     {
