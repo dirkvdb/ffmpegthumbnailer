@@ -1,7 +1,7 @@
 FFmpegThumbnailer
 
 version 1.4.0
-- Filter support added that alows library users to implement filters that will be applied to the frame data
+- Filter support added that allows library users to implement filters that will be applied to the frame data
 - Fixed compilation error with gcc 4.4
 
 version 1.3.0
