@@ -16,6 +16,7 @@
 
 #include "jpegwriter.h"
 #include <stdexcept>
+#include <cstdio>
 #include <cstring>
 #include <assert.h>
 #include <algorithm>
