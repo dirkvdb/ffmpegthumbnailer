@@ -176,9 +176,9 @@ void VideoThumbnailer::generateSmartThumbnail(MovieDecoder& movieDecoder, VideoF
         float rmse = 0.0;
         for (int j = 0; j < 255; ++j)
         {
-            float error = (avgHistogram.r[j] - histograms[i].r[j])
-                        + (avgHistogram.g[j] - histograms[i].g[j])
-                        + (avgHistogram.b[j] - histograms[i].b[j]);
+            float error = fabsf(avgHistogram.r[j] - histograms[i].r[j])
+                        + fabsf(avgHistogram.g[j] - histograms[i].g[j])
+                        + fabsf(avgHistogram.b[j] - histograms[i].b[j]);
             rmse += (error * error) / 255;
         }
         
