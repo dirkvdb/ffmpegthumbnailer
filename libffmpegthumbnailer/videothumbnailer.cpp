@@ -152,9 +152,9 @@ void VideoThumbnailer::generateSmartThumbnail(MovieDecoder& movieDecoder, VideoF
     
     for (int i = 0; i < SMART_FRAME_ATTEMPTS; ++i)
     {
+        movieDecoder.decodeVideoFrame();
         movieDecoder.getScaledVideoFrame(m_ThumbnailSize, m_MaintainAspectRatio, videoFrames[i]);
         generateHistogram(videoFrames[i], histograms[i]);
-        movieDecoder.decodeVideoFrame();
     }
     
     Histogram<float> avgHistogram;
@@ -343,13 +343,9 @@ void VideoThumbnailer::generateHistogram(const VideoFrame& videoFrame, Histogram
         int pixelIndex = i * videoFrame.lineSize;
         for (int j = 0; j < videoFrame.width * 3; j += 3)
         {
-            uint8_t r = videoFrame.frameData[pixelIndex + j];
-            uint8_t g = videoFrame.frameData[pixelIndex + j + 1];
-            uint8_t b = videoFrame.frameData[pixelIndex + j + 2];
-
-            ++histogram.r[r];
-            ++histogram.g[g];
-            ++histogram.b[b];
+            ++histogram.r[videoFrame.frameData[pixelIndex + j]];
+            ++histogram.g[videoFrame.frameData[pixelIndex + j] + 1];
+            ++histogram.b[videoFrame.frameData[pixelIndex + j] + 2];
         }
     }
 }
