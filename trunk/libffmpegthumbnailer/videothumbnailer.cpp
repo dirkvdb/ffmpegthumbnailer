@@ -21,13 +21,18 @@
 #include "filmstripfilter.h"
 
 #include <iostream>
+#include <iomanip>
 #include <sstream>
+#include <cfloat>
+#include <cmath>
 #include <stdexcept>
 #include <assert.h>
 #include <algorithm>
 #include <sys/stat.h>
 
 using namespace std;
+
+static const int SMART_FRAME_ATTEMPTS = 25;
 
 VideoThumbnailer::VideoThumbnailer()
 : m_ThumbnailSize(128)
@@ -36,15 +41,17 @@ VideoThumbnailer::VideoThumbnailer()
 , m_WorkAroundIssues(false)
 , m_ImageQuality(8)
 , m_MaintainAspectRatio(true)
+, m_SmartFrameSelection(false)
 {
 }
 
-VideoThumbnailer::VideoThumbnailer(int thumbnailSize, bool workaroundIssues, bool maintainAspectRatio, int imageQuality)
+VideoThumbnailer::VideoThumbnailer(int thumbnailSize, bool workaroundIssues, bool maintainAspectRatio, int imageQuality, bool smartFrameSelection)
 : m_ThumbnailSize(thumbnailSize)
 , m_SeekPercentage(10)
 , m_WorkAroundIssues(workaroundIssues)
 , m_ImageQuality(imageQuality)
 , m_MaintainAspectRatio(maintainAspectRatio)
+, m_SmartFrameSelection(smartFrameSelection)
 {
 }
 
@@ -83,6 +90,11 @@ void VideoThumbnailer::setMaintainAspectRatio(bool enabled)
     m_MaintainAspectRatio = enabled;
 }
 
+void VideoThumbnailer::setSmartFrameSelection(bool enabled)
+{
+    m_SmartFrameSelection = enabled;
+}
+
 int timeToSeconds(const std::string& time)
 {
     int hours, minutes, seconds;
@@ -112,8 +124,16 @@ void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageWriter& i
             cerr << e.what() << endl;
         }
     }
+    
+    if (m_SmartFrameSelection)
+    {
+        generateSmartThumbnail(movieDecoder, videoFrame);
+    }
+    else
+    {
+        movieDecoder.getScaledVideoFrame(m_ThumbnailSize, m_MaintainAspectRatio, videoFrame);
+    }
 
-    movieDecoder.getScaledVideoFrame(m_ThumbnailSize, m_MaintainAspectRatio, videoFrame);
     applyFilters(videoFrame);
 
     vector<uint8_t*> rowPointers;
@@ -123,6 +143,69 @@ void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageWriter& i
     }
 
     writeImage(videoFile, imageWriter, videoFrame, movieDecoder.getDuration(), rowPointers);
+}
+
+void VideoThumbnailer::generateSmartThumbnail(MovieDecoder& movieDecoder, VideoFrame& videoFrame)
+{
+    vector<VideoFrame> videoFrames(SMART_FRAME_ATTEMPTS);
+    vector<Histogram<int> > histograms(SMART_FRAME_ATTEMPTS);
+    
+    for (int i = 0; i < SMART_FRAME_ATTEMPTS; ++i)
+    {
+        movieDecoder.getScaledVideoFrame(m_ThumbnailSize, m_MaintainAspectRatio, videoFrames[i]);
+        generateHistogram(videoFrames[i], histograms[i]);
+        movieDecoder.decodeVideoFrame();
+    }
+    
+    Histogram<float> avgHistogram;
+    for (int i = 0; i < SMART_FRAME_ATTEMPTS; ++i)
+    {
+        for (int j = 0; j < 255; ++j)
+        {
+            avgHistogram.r[i] += static_cast<float>(histograms[i].r[j]) / SMART_FRAME_ATTEMPTS;
+            avgHistogram.g[i] += static_cast<float>(histograms[i].g[j]) / SMART_FRAME_ATTEMPTS;
+            avgHistogram.b[i] += static_cast<float>(histograms[i].b[j]) / SMART_FRAME_ATTEMPTS;
+        }
+    }
+    
+    int bestFrame = -1;
+    float minRMSE = FLT_MAX;
+    for (int i = 0; i < SMART_FRAME_ATTEMPTS; ++i)
+    {
+        //calculate root mean squared error
+        float rmse = 0.0;
+        for (int j = 0; j < 255; ++j)
+        {
+            float error = (avgHistogram.r[j] - histograms[i].r[j])
+                        + (avgHistogram.g[j] - histograms[i].g[j])
+                        + (avgHistogram.b[j] - histograms[i].b[j]);
+            rmse += (error * error) / 255;
+        }
+        
+        rmse = sqrtf(rmse);
+        if (rmse < minRMSE)
+        {
+            minRMSE = rmse;
+            bestFrame = i;
+        }
+        
+#ifdef DEBUG_MODE
+        stringstream outputFile;
+        outputFile << "frames/Frame" << setfill('0') << setw(3) << i << "_" << rmse << endl;
+        ImageWriter* imageWriter = ImageWriterFactory<const string&>::createImageWriter(Png, outputFile.str());
+        vector<uint8_t*> rowPointers;
+        for (int x = 0; x < videoFrames[i].height; ++x)
+            rowPointers.push_back(&(videoFrames[i].frameData[x * videoFrames[i].lineSize]));
+        imageWriter->writeFrame(&(rowPointers.front()), videoFrames[i].width, videoFrames[i].height, m_ImageQuality);
+        delete imageWriter;
+#endif
+    }
+    
+#ifdef DEBUG_MODE
+    cout << "Best frame was: " << bestFrame << "(RMSE: " << minRMSE << ")" << endl;
+#endif
+    assert(bestFrame != -1);
+    videoFrame = videoFrames[bestFrame];
 }
 
 void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageType type, const string& outputFile, AVFormatContext* pavContext)
@@ -253,7 +336,7 @@ void VideoThumbnailer::applyFilters(VideoFrame& frameData)
     }
 }
 
-void VideoThumbnailer::generateHistogram(const VideoFrame& videoFrame, std::map<uint8_t, int>& histogram)
+void VideoThumbnailer::generateHistogram(const VideoFrame& videoFrame, Histogram<int>& histogram)
 {
     for (int i = 0; i < videoFrame.height; ++i)
     {
@@ -264,22 +347,9 @@ void VideoThumbnailer::generateHistogram(const VideoFrame& videoFrame, std::map<
             uint8_t g = videoFrame.frameData[pixelIndex + j + 1];
             uint8_t b = videoFrame.frameData[pixelIndex + j + 2];
 
-            uint8_t luminance = static_cast<uint8_t>(0.299 * r + 0.587 * g + 0.114 * b);
-            histogram[luminance] += 1;
+            ++histogram.r[r];
+            ++histogram.g[g];
+            ++histogram.b[b];
         }
     }
 }
-
-bool VideoThumbnailer::isDarkImage(const int numPixels, const Histogram& histogram)
-{
-    int darkPixels = 0;
-
-    Histogram::const_iterator iter;
-    for(iter = histogram.begin(); iter->first < 15; ++iter)
-    {
-        darkPixels += iter->second;
-    }
-
-    return darkPixels > static_cast<int>(numPixels / 2);
-}
-
