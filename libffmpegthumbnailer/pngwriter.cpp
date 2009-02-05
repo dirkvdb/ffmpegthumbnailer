@@ -20,7 +20,6 @@
 
 using namespace std;
 
-static void writeRowCallback(png_structp, png_uint_32, int);
 static void writeDataCallback(png_structp png_ptr, png_bytep data, png_size_t length);
 
 PngWriter::PngWriter(const string& outputFile)
@@ -99,11 +98,6 @@ void PngWriter::writeFrame(uint8_t** rgbData, int width, int height, int /*quali
 
     png_set_rows(m_PngPtr, m_InfoPtr, rgbData);
     png_write_png(m_PngPtr, m_InfoPtr, 0, NULL);	
-}
-
-void writeRowCallback(png_structp, png_uint_32, int)
-{
-	// not interested
 }
 
 void writeDataCallback(png_structp png_ptr, png_bytep data, png_size_t length)

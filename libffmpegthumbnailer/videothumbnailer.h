@@ -26,16 +26,18 @@
 #include "imagewriterfactory.h"
 #include "ifilter.h"
 #include "filmstripfilter.h"
+#include "histogram.h"
 
 class VideoFrame;
 class ImageWriter;
+class MovieDecoder;
 struct AVFormatContext;
 
 class VideoThumbnailer
 {
 public:
     VideoThumbnailer();
-    VideoThumbnailer(int thumbnailSize, bool workaroundIssues, bool maintainAspectRatio, int imageQuality);
+    VideoThumbnailer(int thumbnailSize, bool workaroundIssues, bool maintainAspectRatio, int imageQuality, bool smartFrameSelection);
     ~VideoThumbnailer();
 
     void generateThumbnail(const std::string& videoFile, ImageType type, const std::string& outputFile, AVFormatContext* pavContext = NULL);
@@ -47,21 +49,20 @@ public:
     void setWorkAroundIssues(bool workAround);
     void setImageQuality(int imageQuality);
     void setMaintainAspectRatio(bool enabled);
+    void setSmartFrameSelection(bool enabled);
     void addFilter(IFilter* filter);
     void removeFilter(IFilter* filter);
     void clearFilters();
 
 private:
-    typedef std::map<uint8_t, int> Histogram;
-
     void generateThumbnail(const std::string& videoFile, ImageWriter& imageWriter, AVFormatContext* pavContext = NULL);
+    void generateSmartThumbnail(MovieDecoder& movieDecoder, VideoFrame& videoFrame);
     void writeImage(const std::string& videoFile, ImageWriter& imageWriter, const VideoFrame& videoFrame, int duration, std::vector<uint8_t*>& rowPointers);
 
     std::string getMimeType(const std::string& videoFile);
     std::string getExtension(const std::string& videoFilename);
 
-    void generateHistogram(const VideoFrame& videoFrame, Histogram& histogram);
-    bool isDarkImage(const int numPixels, const Histogram& histogram);
+    void generateHistogram(const VideoFrame& videoFrame, Histogram<int>& histogram);
     void applyFilters(VideoFrame& frameData);
 
 private:
@@ -71,6 +72,7 @@ private:
     bool                        m_WorkAroundIssues;
     int                         m_ImageQuality;
     bool                        m_MaintainAspectRatio;
+    bool                        m_SmartFrameSelection;
     std::string                 m_SeekTime;
     std::vector<IFilter*>       m_Filters;
 };

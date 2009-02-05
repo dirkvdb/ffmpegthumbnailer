@@ -1,5 +1,5 @@
 AC_INIT([ffmpegthumbnailer], [1.4.0])
-AC_CONFIG_SRCDIR([src/main.cpp])
+AC_CONFIG_SRCDIR([libffmpegthumbnailer/main.cpp])
 AM_INIT_AUTOMAKE
 
 AC_LANG_CPLUSPLUS
@@ -24,7 +24,6 @@ AC_CHECK_HEADERS(ffmpeg/avutil.h libavutil/avutil.h)
 AC_CHECK_HEADERS([ffmpeg/swscale.h libswscale/swscale.h])
 
 
-
 PKG_CHECK_MODULES(	PNG, libpng, HAVE_PNG=yes, AC_MSG_ERROR([ +Could not find libpng])
 )
 
@@ -36,6 +35,17 @@ AC_ARG_WITH(pkgconfigdir,
 	[Use the specified pkgconfig dir (default is libdir/pkgconfig)]),
 	[pkgconfigdir=${withval}],
 	[pkgconfigdir='${libdir}/pkgconfig'])
+	
+AC_ARG_ENABLE(debug,
+   [  --enable-debug Build in debug mode ],
+   DEBUG=$enableval)
+   
+AM_CONDITIONAL(DEBUG, test "$enable_debug" = "yes")
+
+if test "$DEBUG" = "yes"; then
+    AC_DEFINE(DEBUG_MODE)
+    CXXFLAGS="$CXXFLAGS -g -Wall -Werror -Wfatal-errors"
+fi
 
 AC_SUBST([pkgconfigdir])
 AC_MSG_NOTICE([pkgconfig directory is ${pkgconfigdir}])
@@ -44,7 +54,5 @@ AC_CONFIG_FILES([libffmpegthumbnailer.pc:libffmpegthumbnailer.pc.in])
 
 AC_OUTPUT([
 	Makefile
-	src/Makefile
-	src/libffmpegthumbnailer/Makefile
 	man/Makefile
- ])
+])

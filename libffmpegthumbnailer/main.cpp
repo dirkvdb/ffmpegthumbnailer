@@ -25,6 +25,7 @@
 
 using namespace std;
 
+void printVersion();
 void printUsage();
 ImageType determineImageType(const std::string& filename);
 
@@ -38,10 +39,11 @@ int main(int argc, char** argv)
     bool    filmStripOverlay = false;
     bool    workaroundIssues = false;
     bool    maintainAspectRatio = true;
+    bool    smartFrameSelection = false;
     char*   inputFile = NULL;
     char*   outputFile = NULL;
 
-    while ((option = getopt (argc, argv, "i:o:s:t:q:afwh")) != -1)
+    while ((option = getopt (argc, argv, "i:o:s:t:q:afwhvp")) != -1)
     {
         switch (option)
         {
@@ -59,6 +61,9 @@ int main(int argc, char** argv)
                 break;
             case 'f':
                 filmStripOverlay = true;
+                break;
+            case 'p':
+                smartFrameSelection = true;
                 break;
             case 't':
                 if (string(optarg).find(':') != string::npos)
@@ -79,6 +84,9 @@ int main(int argc, char** argv)
             case 'h':
                 printUsage();
                 return 0;
+            case 'v':
+                printVersion();
+                return 0;
             case '?':
             default:
                 cerr << "invalid arguments" << endl;
@@ -96,7 +104,7 @@ int main(int argc, char** argv)
 
     try
     {
-        VideoThumbnailer videoThumbnailer(thumbnailSize, workaroundIssues, maintainAspectRatio, imageQuality);
+        VideoThumbnailer videoThumbnailer(thumbnailSize, workaroundIssues, maintainAspectRatio, imageQuality, smartFrameSelection);
         FilmStripFilter* filmStripFilter = NULL;
 
         if (filmStripOverlay)
@@ -130,9 +138,14 @@ int main(int argc, char** argv)
     return 0;
 }
 
+void printVersion()
+{
+    cout << PACKAGE_NAME" version: "VERSION << endl;
+}
+
 void printUsage()
 {
-    cout << "Usage: ffmpegthumbnailer [options]" << endl << endl
+    cout << "Usage: "PACKAGE_NAME" [options]" << endl << endl
          << "Options:" << endl
          << "  -i<s>   : input file" << endl
          << "  -o<s>   : output file" << endl
@@ -141,7 +154,9 @@ void printUsage()
          << "  -q<n>   : image quality (0 = bad, 10 = best) (default: 8)" << endl
          << "  -a      : ignore aspect ratio and generate square thumbnail" << endl
          << "  -f      : create a movie strip overlay" << endl
+         << "  -p      : use smarter frame selection (slower)" << endl
          << "  -w      : workaround issues in old versions of ffmpeg" << endl
+         << "  -v      : print version number" << endl
          << "  -h      : display this help" << endl;
 }
 
