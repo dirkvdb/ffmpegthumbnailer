@@ -35,7 +35,7 @@ libffmpegthumbnailer_la_LIBADD          = $(FFMPEG_LIBS) $(PNG_LIBS) -ljpeg
 
 bin_PROGRAMS = ffmpegthumbnailer
 
-ffmpegthumbnailer_SOURCES = libffmpegthumbnailer/main.cpp
+ffmpegthumbnailer_SOURCES = ffmpegthumbnailer/main.cpp
 ffmpegthumbnailer_LDADD = libffmpegthumbnailer.la
 
 if ENABLE_UNITTEST
