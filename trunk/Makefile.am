@@ -43,8 +43,8 @@ check_PROGRAMS = testrunner
 endif
 
 testrunner_SOURCES =    unittest/testrunner.cpp \
-                        unittest/videothumbnailertest.cpp \
-                        unittest/histogramtest.cpp
+                        unittest/histogramtest.cpp \
+                        unittest/videothumbnailertest.cpp
 
 testrunner_LDFLAGS  =   libffmpegthumbnailer.la
 testrunner_LDADD    =   $(UNITTEST_LIBS)

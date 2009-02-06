@@ -76,7 +76,7 @@ private:
     std::string                 m_SeekTime;
     std::vector<IFilter*>       m_Filters;
     
-    friend class VideoThumbnailerTester;
+    friend class VideoThumbnailerTest;
 };
 
 #endif

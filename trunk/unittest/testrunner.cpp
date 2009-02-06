@@ -1,16 +1,10 @@
-#include <unittest++/UnitTest++.h>
-
-#include <locale.h>
 #include <iostream>
 
-using namespace std;
+#include <gtest/gtest.h>
 
-int main(void)
-{
-    if (!setlocale(LC_CTYPE, ""))
-    {
-        cerr << "Locale not specified. Check LANG, LC_CTYPE, LC_ALL" << endl;
-        return 1;
-    }
-    return UnitTest::RunAllTests();
+int main(int argc, char **argv) {
+    std::cout << "Running ffmpegthumbnailer tests" << std::endl;
+
+    testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }

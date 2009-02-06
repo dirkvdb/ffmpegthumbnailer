@@ -52,9 +52,12 @@ AC_ARG_ENABLE(unittests,
    ENABLE_UNITTEST=$enableval)
 
 if test "$ENABLE_UNITTEST" = "yes"; then
-    PKG_CHECK_MODULES(UNITTEST, unittest++, HAVE_UNITTEST=yes, AC_MSG_ERROR([ +Could not find unittest++]))
+    AC_CHECK_HEADERS(
+    [gtest/gtest.h],,
+    [AC_MSG_ERROR([Missing gtest library, install the google unittest framework])])
+    
+    UNITTEST_LIBS="$(gtest-config --libs)"
     AC_SUBST(UNITTEST_LIBS)
-    AC_SUBST(UNITTEST_CFLAGS)
 fi
 AM_CONDITIONAL(ENABLE_UNITTEST, test "$enable_unittests" = "yes")
 
