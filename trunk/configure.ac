@@ -1,5 +1,5 @@
 AC_INIT([ffmpegthumbnailer], [1.4.0])
-AC_CONFIG_SRCDIR([libffmpegthumbnailer/main.cpp])
+AC_CONFIG_SRCDIR([ffmpegthumbnailer/main.cpp])
 AM_INIT_AUTOMAKE
 
 AC_LANG_CPLUSPLUS
