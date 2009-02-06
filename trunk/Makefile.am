@@ -38,6 +38,17 @@ bin_PROGRAMS = ffmpegthumbnailer
 ffmpegthumbnailer_SOURCES = libffmpegthumbnailer/main.cpp
 ffmpegthumbnailer_LDADD = libffmpegthumbnailer.la
 
+if ENABLE_UNITTEST
+check_PROGRAMS = testrunner
+endif
+
+testrunner_SOURCES =    unittest/testrunner.cpp \
+                        unittest/videothumbnailertest.cpp \
+                        unittest/histogramtest.cpp
+
+testrunner_LDFLAGS  =   libffmpegthumbnailer.la
+testrunner_LDADD    =   $(UNITTEST_LIBS)
+
 pkgconfigdir = @pkgconfigdir@
 pkgconfig_DATA = libffmpegthumbnailer.pc
 

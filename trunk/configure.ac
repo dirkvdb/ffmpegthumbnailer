@@ -47,6 +47,17 @@ if test "$DEBUG" = "yes"; then
     CXXFLAGS="$CXXFLAGS -g -Wall -Werror -Wfatal-errors"
 fi
 
+AC_ARG_ENABLE(unittests,
+   [  --enable-unittests Enables build of unittests ],
+   ENABLE_UNITTEST=$enableval)
+
+if test "$ENABLE_UNITTEST" = "yes"; then
+    PKG_CHECK_MODULES(UNITTEST, unittest++, HAVE_UNITTEST=yes, AC_MSG_ERROR([ +Could not find unittest++]))
+    AC_SUBST(UNITTEST_LIBS)
+    AC_SUBST(UNITTEST_CFLAGS)
+fi
+AM_CONDITIONAL(ENABLE_UNITTEST, test "$enable_unittests" = "yes")
+
 AC_SUBST([pkgconfigdir])
 AC_MSG_NOTICE([pkgconfig directory is ${pkgconfigdir}])
 
@@ -56,3 +67,20 @@ AC_OUTPUT([
 	Makefile
 	man/Makefile
 ])
+
+
+echo
+echo "CONFIGURATION SUMMARY ----"
+
+if test "x$ENABLE_UNITTEST" = xyes; then
+    echo "unittests           : enabled"
+else
+    echo "unittests           : disabled"
+fi
+
+if test "x$DEBUG" = xyes; then
+    echo "debug mode          : enabled"
+else
+    echo "debug mode          : disabled"
+fi
+

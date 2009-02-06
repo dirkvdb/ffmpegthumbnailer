@@ -22,6 +22,12 @@
 
 struct VideoFrame
 {
+    VideoFrame()
+    : width(0), height(0), lineSize(0) {}
+    
+    VideoFrame(int width, int height, int lineSize)
+    : width(width), height(height), lineSize(lineSize) {}
+    
     int width;
     int height;
     int lineSize;
