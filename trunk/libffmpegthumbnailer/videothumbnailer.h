@@ -63,6 +63,7 @@ private:
     std::string getExtension(const std::string& videoFilename);
 
     void generateHistogram(const VideoFrame& videoFrame, Histogram<int>& histogram);
+    int getBestThumbnailIndex(std::vector<VideoFrame>& videoFrames, const std::vector<Histogram<int> >& histograms);
     void applyFilters(VideoFrame& frameData);
 
 private:

@@ -157,53 +157,8 @@ void VideoThumbnailer::generateSmartThumbnail(MovieDecoder& movieDecoder, VideoF
         generateHistogram(videoFrames[i], histograms[i]);
     }
     
-    Histogram<float> avgHistogram;
-    for (int i = 0; i < SMART_FRAME_ATTEMPTS; ++i)
-    {
-        for (int j = 0; j < 255; ++j)
-        {
-            avgHistogram.r[i] += static_cast<float>(histograms[i].r[j]) / SMART_FRAME_ATTEMPTS;
-            avgHistogram.g[i] += static_cast<float>(histograms[i].g[j]) / SMART_FRAME_ATTEMPTS;
-            avgHistogram.b[i] += static_cast<float>(histograms[i].b[j]) / SMART_FRAME_ATTEMPTS;
-        }
-    }
+    int bestFrame = getBestThumbnailIndex(videoFrames, histograms);
     
-    int bestFrame = -1;
-    float minRMSE = FLT_MAX;
-    for (int i = 0; i < SMART_FRAME_ATTEMPTS; ++i)
-    {
-        //calculate root mean squared error
-        float rmse = 0.0;
-        for (int j = 0; j < 255; ++j)
-        {
-            float error = fabsf(avgHistogram.r[j] - histograms[i].r[j])
-                        + fabsf(avgHistogram.g[j] - histograms[i].g[j])
-                        + fabsf(avgHistogram.b[j] - histograms[i].b[j]);
-            rmse += (error * error) / 255;
-        }
-        
-        rmse = sqrtf(rmse);
-        if (rmse < minRMSE)
-        {
-            minRMSE = rmse;
-            bestFrame = i;
-        }
-        
-#ifdef DEBUG_MODE
-        stringstream outputFile;
-        outputFile << "frames/Frame" << setfill('0') << setw(3) << i << "_" << rmse << endl;
-        ImageWriter* imageWriter = ImageWriterFactory<const string&>::createImageWriter(Png, outputFile.str());
-        vector<uint8_t*> rowPointers;
-        for (int x = 0; x < videoFrames[i].height; ++x)
-            rowPointers.push_back(&(videoFrames[i].frameData[x * videoFrames[i].lineSize]));
-        imageWriter->writeFrame(&(rowPointers.front()), videoFrames[i].width, videoFrames[i].height, m_ImageQuality);
-        delete imageWriter;
-#endif
-    }
-    
-#ifdef DEBUG_MODE
-    cout << "Best frame was: " << bestFrame << "(RMSE: " << minRMSE << ")" << endl;
-#endif
     assert(bestFrame != -1);
     videoFrame = videoFrames[bestFrame];
 }
@@ -348,4 +303,57 @@ void VideoThumbnailer::generateHistogram(const VideoFrame& videoFrame, Histogram
             ++histogram.b[videoFrame.frameData[pixelIndex + j + 2]];
         }
     }
+}
+
+int VideoThumbnailer::getBestThumbnailIndex(vector<VideoFrame>& videoFrames, const vector<Histogram<int> >& histograms)
+{
+    Histogram<float> avgHistogram;
+    for (size_t i = 0; i < histograms.size(); ++i)
+    {
+        for (int j = 0; j < 255; ++j)
+        {
+            avgHistogram.r[j] += static_cast<float>(histograms[i].r[j]) / histograms.size();
+            avgHistogram.g[j] += static_cast<float>(histograms[i].g[j]) / histograms.size();
+            avgHistogram.b[j] += static_cast<float>(histograms[i].b[j]) / histograms.size();
+        }
+    }
+    
+    int bestFrame = -1;
+    float minRMSE = FLT_MAX;
+    for (size_t i = 0; i < histograms.size(); ++i)
+    {
+        //calculate root mean squared error
+        float rmse = 0.0;
+        for (int j = 0; j < 255; ++j)
+        {
+            float error = fabsf(avgHistogram.r[j] - histograms[i].r[j])
+                        + fabsf(avgHistogram.g[j] - histograms[i].g[j])
+                        + fabsf(avgHistogram.b[j] - histograms[i].b[j]);
+            rmse += (error * error) / 255;
+        }
+        
+        rmse = sqrtf(rmse);
+        if (rmse < minRMSE)
+        {
+            minRMSE = rmse;
+            bestFrame = i;
+        }
+        
+#ifdef DEBUG_MODE
+        stringstream outputFile;
+        outputFile << "frames/Frame" << setfill('0') << setw(3) << i << "_" << rmse << endl;
+        ImageWriter* imageWriter = ImageWriterFactory<const string&>::createImageWriter(Png, outputFile.str());
+        vector<uint8_t*> rowPointers;
+        for (int x = 0; x < videoFrames[i].height; ++x)
+            rowPointers.push_back(&(videoFrames[i].frameData[x * videoFrames[i].lineSize]));
+        imageWriter->writeFrame(&(rowPointers.front()), videoFrames[i].width, videoFrames[i].height, m_ImageQuality);
+        delete imageWriter;
+#endif
+    }
+    
+#ifdef DEBUG_MODE
+    cout << "Best frame was: " << bestFrame << "(RMSE: " << minRMSE << ")" << endl;
+#endif
+
+    return bestFrame;
 }
