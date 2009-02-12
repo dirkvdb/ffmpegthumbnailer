@@ -61,7 +61,7 @@ private:
 
     bool decodeVideoPacket();
     bool getVideoPacket();
-    void convertAndScaleFrame(int format, int scaledSize, bool maintainAspectRatio, int& scaledWidth, int& scaledHeight);
+    void convertAndScaleFrame(PixelFormat format, int scaledSize, bool maintainAspectRatio, int& scaledWidth, int& scaledHeight);
     void createAVFrame(AVFrame** avFrame, int width, int height, int format);
     void calculateDimensions(int srcWidth, int srcHeight, int squareSize, bool maintainAspectRatio, int& destWidth, int& destHeight);
 
