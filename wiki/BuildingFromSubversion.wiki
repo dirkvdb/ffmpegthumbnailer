@@ -1,6 +1,4 @@
-#summary One-sentence summary of this page.
-
-=== Building from subversion ===
+#how to build the latest version of ffmpegthumbnailer from subversion
 
 Run these commands to build the latest ffmpegthumbnailer from subversion
 
