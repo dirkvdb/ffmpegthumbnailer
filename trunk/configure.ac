@@ -1,5 +1,5 @@
 AC_INIT([ffmpegthumbnailer], [1.4.0])
-AC_CONFIG_SRCDIR([ffmpegthumbnailer/main.cpp])
+AC_CONFIG_SRCDIR([main.cpp])
 AM_INIT_AUTOMAKE
 
 AC_LANG_CPLUSPLUS
@@ -42,10 +42,15 @@ AC_ARG_ENABLE(debug,
    
 AM_CONDITIONAL(DEBUG, test "$enable_debug" = "yes")
 
+num_cores=`cat /proc/cpuinfo | grep -m 1 "cpu cores" | awk {'print 2'}`
+
 if test "$DEBUG" = "yes"; then
     AC_DEFINE(DEBUG_MODE)
     CXXFLAGS="$CXXFLAGS -g -Wall -Werror -Wfatal-errors"
+else
+    CXXFLAGS="$CXXFLAGS
 fi
+
 
 AC_ARG_ENABLE(unittests,
    [  --enable-unittests Enables build of unittests ],
