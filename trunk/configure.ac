@@ -42,13 +42,9 @@ AC_ARG_ENABLE(debug,
    
 AM_CONDITIONAL(DEBUG, test "$enable_debug" = "yes")
 
-num_cores=`cat /proc/cpuinfo | grep -m 1 "cpu cores" | awk {'print 2'}`
-
 if test "$DEBUG" = "yes"; then
     AC_DEFINE(DEBUG_MODE)
     CXXFLAGS="$CXXFLAGS -g -Wall -Werror -Wfatal-errors"
-else
-    CXXFLAGS="$CXXFLAGS
 fi
 
 
