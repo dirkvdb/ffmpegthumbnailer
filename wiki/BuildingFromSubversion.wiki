@@ -1,4 +1,5 @@
 #summary how to build the latest version of ffmpegthumbnailer from subversion
+#labels Featured
 
 Run these commands to build the latest ffmpegthumbnailer from subversion
 
