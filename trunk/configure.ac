@@ -8,6 +8,8 @@ AC_PROG_INSTALL
 AC_PROG_LIBTOOL
 AC_SYS_LARGEFILE 
 
+AC_CONFIG_MACRO_DIR([m4])
+
 AC_HEADER_STDC
 AC_CHECK_HEADERS(
     [inttypes.h sys/stat.h jpeglib.h],,
