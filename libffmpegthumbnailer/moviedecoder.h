@@ -1,4 +1,4 @@
-//    Copyright (C) 2008 Dirk Vanden Boer <dirk.vdb@gmail.com>
+//    Copyright (C) 2009 Dirk Vanden Boer <dirk.vdb@gmail.com>
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ private:
     bool getVideoPacket();
     void convertAndScaleFrame(PixelFormat format, int scaledSize, bool maintainAspectRatio, int& scaledWidth, int& scaledHeight);
     void createAVFrame(AVFrame** avFrame, int width, int height, int format);
-    void calculateDimensions(int srcWidth, int srcHeight, int squareSize, bool maintainAspectRatio, int& destWidth, int& destHeight);
+    void calculateDimensions(int squareSize, bool maintainAspectRatio, int& destWidth, int& destHeight);
 
 private:
     int                     m_VideoStream;
