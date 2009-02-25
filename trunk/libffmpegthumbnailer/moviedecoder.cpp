@@ -1,4 +1,4 @@
-//    Copyright (C) 2007 Dirk Vanden Boer <dirk.vdb@gmail.com>
+//    Copyright (C) 2009 Dirk Vanden Boer <dirk.vdb@gmail.com>
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -302,7 +302,7 @@ void MovieDecoder::getScaledVideoFrame(int scaledSize, bool maintainAspectRatio,
 
 void MovieDecoder::convertAndScaleFrame(PixelFormat format, int scaledSize, bool maintainAspectRatio, int& scaledWidth, int& scaledHeight)
 {
-    calculateDimensions(m_pVideoCodecContext->width, m_pVideoCodecContext->height, scaledSize, maintainAspectRatio, scaledWidth, scaledHeight);
+    calculateDimensions(scaledSize, maintainAspectRatio, scaledWidth, scaledHeight);
     SwsContext* scaleContext = sws_getContext(m_pVideoCodecContext->width, m_pVideoCodecContext->height,
                                               m_pVideoCodecContext->pix_fmt, scaledWidth, scaledHeight,
                                               format, SWS_BICUBIC, NULL, NULL, NULL);
@@ -324,7 +324,7 @@ void MovieDecoder::convertAndScaleFrame(PixelFormat format, int scaledSize, bool
     m_pFrame = convertedFrame;
 }
 
-void MovieDecoder::calculateDimensions(int srcWidth, int srcHeight, int squareSize, bool maintainAspectRatio, int& destWidth, int& destHeight)
+void MovieDecoder::calculateDimensions(int squareSize, bool maintainAspectRatio, int& destWidth, int& destHeight)
 {
     if (!maintainAspectRatio)
     {
@@ -333,6 +333,16 @@ void MovieDecoder::calculateDimensions(int srcWidth, int srcHeight, int squareSi
     }
     else
     {
+    	int srcWidth 			= m_pVideoCodecContext->width;
+    	int srcHeight 			= m_pVideoCodecContext->height;
+    	int ascpectNominator 	= m_pVideoCodecContext->sample_aspect_ratio.num;
+    	int ascpectDenominator 	= m_pVideoCodecContext->sample_aspect_ratio.den;
+    	
+    	if (ascpectNominator != 0 && ascpectDenominator != 0)
+		{
+			srcWidth = srcWidth * ascpectNominator / ascpectDenominator;
+		}
+    	
         if (srcWidth > srcHeight)
         {
             destWidth  = squareSize;

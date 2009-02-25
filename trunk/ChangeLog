@@ -1,4 +1,6 @@
 FFmpegThumbnailer
+version ?.?.?
+- Aspect ratio bug fix (Thanks to S. Eguchi)
 
 version 1.4.0
 - Filter support added that allows library users to implement filters that will be applied to the frame data
