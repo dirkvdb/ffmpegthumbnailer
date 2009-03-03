@@ -74,6 +74,7 @@ private:
     AVFrame*                m_pFrame;
     AVPacket*               m_pPacket;
     bool                    m_FormatContextWasGiven;
+    bool                    m_AllowSeek;
 };
 
 #endif
