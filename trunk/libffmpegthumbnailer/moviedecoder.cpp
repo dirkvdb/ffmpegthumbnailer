@@ -40,6 +40,7 @@ MovieDecoder::MovieDecoder(const string& filename, AVFormatContext* pavContext)
 , m_pFrame(NULL)
 , m_pPacket(NULL)
 , m_FormatContextWasGiven(pavContext != NULL)
+, m_AllowSeek(filename != "-")
 {
     initialize(filename);
 }
@@ -55,7 +56,9 @@ void MovieDecoder::initialize(const string& filename)
     avcodec_init();
     avcodec_register_all();
 
-    if ((!m_FormatContextWasGiven) && av_open_input_file(&m_pFormatContext, filename.c_str(), NULL, 0, NULL) != 0)
+    string inputFile = filename == "-" ? "pipe:" : filename;
+
+    if ((!m_FormatContextWasGiven) && av_open_input_file(&m_pFormatContext, inputFile.c_str(), NULL, 0, NULL) != 0)
     {
         throw logic_error(string("Could not open input file: ") + filename);
     }
@@ -175,6 +178,11 @@ int MovieDecoder::getDuration()
 
 void MovieDecoder::seek(int timeInSeconds)
 {
+    if (!m_AllowSeek)
+    {
+        return;
+    }
+    
     int64_t timestamp = AV_TIME_BASE * static_cast<int64_t>(timeInSeconds);
 
     if (timestamp < 0)

@@ -180,25 +180,28 @@ void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageType type
 
 void VideoThumbnailer::writeImage(const string& videoFile, ImageWriter& imageWriter, const VideoFrame& videoFrame, int duration, vector<uint8_t*>& rowPointers)
 {
-    struct stat statInfo;
-    if (stat(videoFile.c_str(), &statInfo) == 0)
+    if (videoFile != "-")
     {
-        imageWriter.setText("Thumb::MTime", StringOperations::toString(statInfo.st_mtime));
-        imageWriter.setText("Thumb::Size", StringOperations::toString(statInfo.st_size));
-    }
-    else
-    {
-        throw logic_error("Could not stat file: " + videoFile);
-    }
+        struct stat statInfo;
+        if (stat(videoFile.c_str(), &statInfo) == 0)
+        {
+            imageWriter.setText("Thumb::MTime", StringOperations::toString(statInfo.st_mtime));
+            imageWriter.setText("Thumb::Size", StringOperations::toString(statInfo.st_size));
+        }
+        else
+        {
+            throw logic_error("Could not stat file: " + videoFile);
+        }
 
-    string mimeType = getMimeType(videoFile);
-    if (!mimeType.empty())
-    {
-        imageWriter.setText("Thumb::Mimetype", mimeType);
-    }
+        string mimeType = getMimeType(videoFile);
+        if (!mimeType.empty())
+        {
+            imageWriter.setText("Thumb::Mimetype", mimeType);
+        }
 
-    imageWriter.setText("Thumb::URI", videoFile);
-    imageWriter.setText("Thumb::Movie::Length", StringOperations::toString(duration));
+        imageWriter.setText("Thumb::URI", videoFile);
+        imageWriter.setText("Thumb::Movie::Length", StringOperations::toString(duration));
+    }
     imageWriter.writeFrame(&(rowPointers.front()), videoFrame.width, videoFrame.height, m_ImageQuality);
 }
 

@@ -40,8 +40,8 @@ int main(int argc, char** argv)
     bool    workaroundIssues = false;
     bool    maintainAspectRatio = true;
     bool    smartFrameSelection = false;
-    char*   inputFile = NULL;
-    char*   outputFile = NULL;
+    string  inputFile;
+    string  outputFile;
 
     while ((option = getopt (argc, argv, "i:o:s:t:q:afwhvp")) != -1)
     {
@@ -95,7 +95,7 @@ int main(int argc, char** argv)
         }
     }
 
-    if (!inputFile || !outputFile)
+    if (inputFile.empty() || outputFile.empty())
     {
         cerr << "invalid arguments" << endl;
         printUsage();
