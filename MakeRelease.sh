@@ -10,7 +10,12 @@ then
 	exit 1
 fi
 
-echo "$password"
+status=`svn status -usvn status -u`
+if [ "$status" != "" ]
+then
+	echo "svn status is not clean, commit changes first"
+	exit 1
+fi
 
 #get version number
 version=`cat configure.ac | grep AC_INIT | cut -d[ -f3 | cut -d] -f1`
@@ -34,7 +39,7 @@ then
 	exit 1
 fi
 
-./unittests
+./testrunner
 if [ $? != 0 ]
 then
 	echo "Unittests did not succeed"
