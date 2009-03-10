@@ -1,4 +1,4 @@
-AC_INIT([ffmpegthumbnailer], [1.4.0])
+AC_INIT([ffmpegthumbnailer], [1.5.0])
 AC_CONFIG_SRCDIR([main.cpp])
 AM_INIT_AUTOMAKE
 

@@ -1,7 +1,8 @@
 FFmpegThumbnailer
-version ?.?.?
+version 1.5.0
 - Aspect ratio bug fix (Thanks to S. Eguchi)
 - Support input files from stdin (will ignore seek time)
+- Fixed build error against latest ffmpeg (verified against ffmpeg release 0.5)
 
 version 1.4.0
 - Filter support added that allows library users to implement filters that will be applied to the frame data
