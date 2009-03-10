@@ -32,7 +32,7 @@ then
 	exit 1
 fi
 
-make -C ./builddir/testrunner check
+make -C ./$builddir/testrunner check
 if [ $? != 0 ]
 then
 	echo "Make check failed"
