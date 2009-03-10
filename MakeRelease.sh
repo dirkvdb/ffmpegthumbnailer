@@ -1,6 +1,5 @@
 #!/bin/bash
 
-version=""
 project="ffmpegthumbnailer"
 password=$1
 
@@ -18,6 +17,7 @@ then
 fi
 
 #get version number
+version=""
 version=`cat configure.ac | grep AC_INIT | cut -d[ -f3 | cut -d] -f1`
 
 #build the code
@@ -56,7 +56,7 @@ fi
 cd ..
 
 #upload archive to google
-python googlecode_upload.py -s "Release $version" -p $project -u dirk.vdb -w $password -l "Featured,Type-Source,OpSys-Linux"
+python googlecode_upload.py -s "Release $version" -p $project -u dirk.vdb -w $password -l "Featured,Type-Source,OpSys-Linux" $builddir/$project-$version.tar.gz
 
 #create a tag
-#svn copy https://ffmpegthumbnailer.googlecode.com/svn/trunk https://ffmpegthumbnailer.googlecode.com/svn/tags/$project-$version -m "Tag of release $version"
+svn copy https://ffmpegthumbnailer.googlecode.com/svn/trunk https://ffmpegthumbnailer.googlecode.com/svn/tags/$project-$version -m "Tag of release $version"
