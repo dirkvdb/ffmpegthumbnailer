@@ -25,21 +25,21 @@ builddir="out-$version"
 rm -rf $builddir
 mkdir -p $builddir
 cd $builddir
-../configure
+../configure --enable-unittests
 if [ $? != 0 ]
 then
 	echo "Configure failed"
 	exit 1
 fi
 
-make -C ./$builddir/testrunner check
+make check
 if [ $? != 0 ]
 then
 	echo "Make check failed"
 	exit 1
 fi
 
-./builddir/testrunner
+./testrunner
 if [ $? != 0 ]
 then
 	echo "Unittests did not succeed"
