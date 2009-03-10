@@ -39,7 +39,7 @@ then
 	exit 1
 fi
 
-./testrunner
+./builddir/testrunner
 if [ $? != 0 ]
 then
 	echo "Unittests did not succeed"
