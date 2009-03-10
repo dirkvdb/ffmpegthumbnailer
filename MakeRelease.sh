@@ -10,8 +10,8 @@ then
 	exit 1
 fi
 
-status=`svn status -u`
-if [ "$status" != "" ]
+status=`svn status -u | wc -l`
+if [ $status -ne 1 ]
 then
 	echo "svn status is not clean, commit changes first"
 	exit 1
