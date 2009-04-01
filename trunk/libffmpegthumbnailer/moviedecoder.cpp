@@ -364,7 +364,7 @@ void MovieDecoder::calculateDimensions(int squareSize, bool maintainAspectRatio,
     }
 }
 
-void MovieDecoder::createAVFrame(AVFrame** avFrame, int width, int height, int format)
+void MovieDecoder::createAVFrame(AVFrame** avFrame, int width, int height, PixelFormat format)
 {
     *avFrame        = avcodec_alloc_frame();
 
