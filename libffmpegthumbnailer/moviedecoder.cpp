@@ -22,10 +22,10 @@
 #include <cstring>
 
 extern "C" {
-#if HAVE_LIBSWSCALE_SWSCALE_H
-#include <libswscale/swscale.h>
-#else
+#if HAVE_FFMPEG_SWSCALE_H
 #include <ffmpeg/swscale.h>
+#else
+#include <libswscale/swscale.h>
 #endif
 }
 
