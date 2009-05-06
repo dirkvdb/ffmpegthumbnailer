@@ -29,6 +29,7 @@ AC_CHECK_HEADERS([ffmpeg/swscale.h libswscale/swscale.h])
 PKG_CHECK_MODULES(	PNG, libpng, HAVE_PNG=yes, AC_MSG_ERROR([ +Could not find libpng])
 )
 
+AC_SUBST(FFMPEG_CFLAGS)
 AC_SUBST(FFMPEG_LIBS)
 AC_SUBST(PNG_LIBS)
 

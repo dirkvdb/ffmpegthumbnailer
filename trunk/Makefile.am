@@ -30,6 +30,7 @@ nobase_include_HEADERS =    libffmpegthumbnailer/videothumbnailer.h \
                             libffmpegthumbnailer/filmstripfilter.h
 
 libffmpegthumbnailer_includedir         = $(includedir)/libffmpegthumbnailer
+libffmpegthumbnailer_la_CXXFLAGS        = $(FFMPEG_CFLAGS)
 libffmpegthumbnailer_la_LDFLAGS         = -version-info 3:0:0
 libffmpegthumbnailer_la_LIBADD          = $(FFMPEG_LIBS) $(PNG_LIBS) -ljpeg
 
