@@ -27,15 +27,15 @@
 #include "videoframe.h"
 
 extern "C" {
-#if HAVE_LIBAVCODEC_AVCODEC_H
-#include <libavcodec/avcodec.h>
-#else
+#if HAVE_FFMPEG_AVCODEC_H
 #include <ffmpeg/avcodec.h>
-#endif
-#if HAVE_LIBAVFORMAT_AVFORMAT_H
-#include <libavformat/avformat.h>
 #else
+#include <libavcodec/avcodec.h>
+#endif
+#if HAVE_FFMPEG_AVFORMAT_H
 #include <ffmpeg/avformat.h>
+#else
+#include <libavformat/avformat.h>
 #endif
 }
 
