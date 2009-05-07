@@ -17,10 +17,21 @@
 #ifndef IMAGE_WRITER_FACTORY_H
 #define IMAGE_WRITER_FACTORY_H
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include "imagewriter.h"
-#include "pngwriter.h"
-#include "jpegwriter.h"
 #include "imagetypes.h"
+
+#ifdef HAVE_PNG
+#include "pngwriter.h"
+#endif
+
+#ifdef HAVE_JPEG
+#include "jpegwriter.h"
+#endif
+
 
 #include <string>
 #include <inttypes.h>
@@ -36,9 +47,17 @@ public:
         switch (imageType)
         {
             case Png:
+#ifdef HAVE_PNG
                 return new PngWriter(output);
+#else
+                throw std::logic_error("ffmpegthumbnailer was not compiled with png support");
+#endif
             case Jpeg:
+#ifdef HAVE_JPEG
                 return new JpegWriter(output);
+#else
+                throw std::logic_error("ffmpegthumbnailer was not compiled with jpeg support");
+#endif
             default:
                 throw std::logic_error("ImageWriterFactory::createImageWriter: Invalid image type specified");
         }
