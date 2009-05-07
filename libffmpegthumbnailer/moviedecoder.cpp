@@ -242,7 +242,6 @@ void MovieDecoder::decodeVideoFrame()
 
 bool MovieDecoder::decodeVideoPacket()
 {
-    //cout << m_pPacket->stream_index << " - " << m_VideoStream << endl;
     if (m_pPacket->stream_index != m_VideoStream)
     {
         return false;
@@ -250,8 +249,12 @@ bool MovieDecoder::decodeVideoPacket()
 
     int frameFinished;
 
-    int bytesDecoded = avcodec_decode_video(m_pVideoCodecContext, m_pFrame, &frameFinished,
-                                        m_pPacket->data, m_pPacket->size);
+#if LIBAVCODEC_VERSION_MAJOR < 53
+    int bytesDecoded = avcodec_decode_video(m_pVideoCodecContext, m_pFrame, &frameFinished, m_pPacket->data, m_pPacket->size);
+#else
+    int bytesDecoded = avcodec_decode_video(m_pVideoCodecContext, m_pFrame, &frameFinished, m_pPacket);
+#endif
+
     if (bytesDecoded < 0)
     {
         throw logic_error("Failed to decode video frame: bytesDecoded < 0");
