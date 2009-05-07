@@ -1,5 +1,4 @@
-#!/bin/sh -x
-libtoolize --force
-aclocal
-autoconf
-automake --add-missing
+#!/bin/sh
+echo "Running autoreconf..."
+autoreconf -i || exit 1
+echo "All done"

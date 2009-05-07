@@ -26,6 +26,10 @@
 
 #include "videoframe.h"
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 extern "C" {
 #if HAVE_FFMPEG_AVCODEC_H
 #include <ffmpeg/avcodec.h>

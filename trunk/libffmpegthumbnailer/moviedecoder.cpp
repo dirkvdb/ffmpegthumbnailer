@@ -21,6 +21,10 @@
 #include <iostream>
 #include <cstring>
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 extern "C" {
 #if HAVE_FFMPEG_SWSCALE_H
 #include <ffmpeg/swscale.h>
