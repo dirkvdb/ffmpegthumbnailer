@@ -3,6 +3,7 @@ version 1.5.1
 - Optional compilation of jpeg and png support
 - Fixed ffmpeg CFLAGS issue (causing compilation errors on Fedora)
 - Fixed build error against latest ffmpeg (verified against ffmpeg revision 18769)
+- Fixed missing include files for library usage (thanks to gustavo.boiko)
 
 version 1.5.0
 - Aspect ratio bug fix (Thanks to S. Eguchi)

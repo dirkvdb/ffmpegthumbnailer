@@ -23,9 +23,7 @@
 #include <inttypes.h>
 
 #include "imagetypes.h"
-#include "imagewriterfactory.h"
 #include "ifilter.h"
-#include "filmstripfilter.h"
 #include "histogram.h"
 
 class VideoFrame;

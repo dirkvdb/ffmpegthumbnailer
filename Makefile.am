@@ -32,6 +32,7 @@ nobase_include_HEADERS =    libffmpegthumbnailer/videothumbnailer.h \
                             libffmpegthumbnailer/videothumbnailerc.h \
                             libffmpegthumbnailer/imagetypes.h \
                             libffmpegthumbnailer/ifilter.h \
+                            libffmpegthumbnailer/histogram.h \
                             libffmpegthumbnailer/videoframe.h \
                             libffmpegthumbnailer/filmstripfilter.h
 

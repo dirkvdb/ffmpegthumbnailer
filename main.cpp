@@ -19,6 +19,10 @@
 #include <stdexcept>
 #include <stdlib.h>
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include "libffmpegthumbnailer/videothumbnailer.h"
 #include "libffmpegthumbnailer/stringoperations.h"
 #include "libffmpegthumbnailer/filmstripfilter.h"

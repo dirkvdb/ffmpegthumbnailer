@@ -19,6 +19,7 @@
 #include "moviedecoder.h"
 #include "stringoperations.h"
 #include "filmstripfilter.h"
+#include "imagewriterfactory.h"
 
 #include <iostream>
 #include <iomanip>
