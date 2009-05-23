@@ -1,4 +1,4 @@
-AC_INIT([ffmpegthumbnailer], [1.5.1])
+AC_INIT([ffmpegthumbnailer], [1.5.2])
 AC_CONFIG_SRCDIR([main.cpp])
 AM_INIT_AUTOMAKE
 
@@ -6,7 +6,7 @@ AC_LANG_CPLUSPLUS
 AC_PROG_CXX
 AC_PROG_INSTALL
 AC_PROG_LIBTOOL
-AC_SYS_LARGEFILE 
+AC_SYS_LARGEFILE
 
 AC_CONFIG_MACRO_DIR([m4])
 AM_CONFIG_HEADER(config.h)
@@ -17,8 +17,8 @@ AC_CHECK_HEADERS(
     [AC_MSG_ERROR([Missing headers required to compile ffmpegthumbnailer])]
 )
 
-PKG_CHECK_MODULES(	FFMPEG, libavutil libavformat libavcodec libswscale, HAVE_FFMPEG=yes, 
-					AC_MSG_ERROR([ +Could not find ffmpeg (libavutil libavformat libavcodec libswscale) ])
+PKG_CHECK_MODULES(  FFMPEG, libavutil libavformat libavcodec libswscale, HAVE_FFMPEG=yes,
+                    AC_MSG_ERROR([ +Could not find ffmpeg (libavutil libavformat libavcodec libswscale) ])
 )
 
 #check if old style include paths for ffmpeg are used on the system
@@ -28,17 +28,17 @@ AC_CHECK_HEADERS(ffmpeg/avutil.h)
 AC_CHECK_HEADERS(ffmpeg/swscale.h)
 
 
-#PKG_CHECK_MODULES(	PNG, libpng, HAVE_PNG=yes, AC_MSG_ERROR([ +Could not find libpng]) )
+#PKG_CHECK_MODULES( PNG, libpng, HAVE_PNG=yes, AC_MSG_ERROR([ +Could not find libpng]) )
 
 AC_SUBST(FFMPEG_CFLAGS)
 AC_SUBST(FFMPEG_LIBS)
 #AC_SUBST(PNG_LIBS)
 
 AC_ARG_WITH(pkgconfigdir,
-	AC_HELP_STRING([--with-pkgconfigdir],
-	[Use the specified pkgconfig dir (default is libdir/pkgconfig)]),
-	[pkgconfigdir=${withval}],
-	[pkgconfigdir='${libdir}/pkgconfig'])
+    AC_HELP_STRING([--with-pkgconfigdir],
+    [Use the specified pkgconfig dir (default is libdir/pkgconfig)]),
+    [pkgconfigdir=${withval}],
+    [pkgconfigdir='${libdir}/pkgconfig'])
 
 
 ########################################################################
@@ -110,8 +110,8 @@ AC_MSG_NOTICE([pkgconfig directory is ${pkgconfigdir}])
 AC_CONFIG_FILES([libffmpegthumbnailer.pc:libffmpegthumbnailer.pc.in])
 
 AC_OUTPUT([
-	Makefile
-	man/Makefile
+    Makefile
+    man/Makefile
 ])
 
 

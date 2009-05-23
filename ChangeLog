@@ -1,4 +1,7 @@
 FFmpegThumbnailer
+version 1.5.2
+- Fixed soname version
+
 version 1.5.1
 - Optional compilation of jpeg and png support
 - Fixed ffmpeg CFLAGS issue (causing compilation errors on Fedora)
