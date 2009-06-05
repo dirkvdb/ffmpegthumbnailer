@@ -247,12 +247,14 @@ bool MovieDecoder::decodeVideoPacket()
         return false;
     }
 
+    avcodec_get_frame_defaults(m_pFrame);
+    
     int frameFinished;
 
 #if LIBAVCODEC_VERSION_MAJOR < 53
     int bytesDecoded = avcodec_decode_video(m_pVideoCodecContext, m_pFrame, &frameFinished, m_pPacket->data, m_pPacket->size);
 #else
-    int bytesDecoded = avcodec_decode_video(m_pVideoCodecContext, m_pFrame, &frameFinished, m_pPacket);
+    int bytesDecoded = avcodec_decode_video2(m_pVideoCodecContext, m_pFrame, &frameFinished, m_pPacket);
 #endif
 
     if (bytesDecoded < 0)
@@ -373,7 +375,7 @@ void MovieDecoder::calculateDimensions(int squareSize, bool maintainAspectRatio,
 
 void MovieDecoder::createAVFrame(AVFrame** avFrame, int width, int height, PixelFormat format)
 {
-    *avFrame        = avcodec_alloc_frame();
+    *avFrame = avcodec_alloc_frame();
 
     int         numBytes = avpicture_get_size(format, width, height);
     uint8_t*    pBuffer = new uint8_t[numBytes];
