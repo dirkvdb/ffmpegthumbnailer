@@ -378,7 +378,6 @@ void MovieDecoder::createAVFrame(AVFrame** avFrame, int width, int height, Pixel
     *avFrame = avcodec_alloc_frame();
 
     int         numBytes = avpicture_get_size(format, width, height);
-    uint8_t*    pBuffer = new uint8_t[numBytes];
-
+    uint8_t*    pBuffer = reinterpret_cast<uint8_t*>(av_malloc(numBytes));
     avpicture_fill((AVPicture*) *avFrame, pBuffer, format, width, height);
 }
