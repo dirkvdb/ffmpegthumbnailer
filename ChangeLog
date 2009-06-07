@@ -1,4 +1,7 @@
 FFmpegThumbnailer
+version 1.5.3
+- Memory alignment fix causing segmentation in ffmpeg with altivec enabled
+
 version 1.5.2
 - Fixed soname version
 
