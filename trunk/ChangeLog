@@ -1,4 +1,8 @@
 FFmpegThumbnailer
+
+version 1.5.4
+- Fixed support for large files
+
 version 1.5.3
 - Memory alignment fix causing segmentation in ffmpeg with altivec enabled
 
