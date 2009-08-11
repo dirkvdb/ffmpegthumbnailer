@@ -142,7 +142,6 @@ void MovieDecoder::initializeVideo()
     }
 
     m_pVideoCodecContext->workaround_bugs = 1;
-    m_pFormatContext->flags |= AVFMT_FLAG_GENPTS;
 
     if (avcodec_open(m_pVideoCodecContext, m_pVideoCodec) < 0)
     {
@@ -280,10 +279,9 @@ bool MovieDecoder::getVideoPacket()
 
     m_pPacket = new AVPacket();
 
-    while (framesAvailable && !frameDecoded && attempts++ < 250)
+    while (framesAvailable && !frameDecoded && (attempts++ < 250))
     {
         framesAvailable = av_read_frame(m_pFormatContext, m_pPacket) >= 0;
-
         if (framesAvailable)
         {
             frameDecoded = m_pPacket->stream_index == m_VideoStream;
