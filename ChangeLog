@@ -1,5 +1,8 @@
 FFmpegThumbnailer
 
+version 1.5.5
+- Fixed ffmpegthumbnailer hanging on certain filetypes caused by AVFMT_FLAG_GENPTS flag of video decoder
+
 version 1.5.4
 - Fixed support for large files
 
