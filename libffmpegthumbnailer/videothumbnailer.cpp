@@ -31,7 +31,8 @@
 #include <cfloat>
 #include <cmath>
 #include <stdexcept>
-#include <assert.h>
+#include <cassert>
+#include <cerrno>
 #include <algorithm>
 #include <sys/stat.h>
 
