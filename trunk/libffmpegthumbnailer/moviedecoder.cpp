@@ -153,7 +153,7 @@ int MovieDecoder::getWidth()
 {
     if (m_pVideoCodecContext)
     {
-        return m_pVideoCodecContext->height;
+        return m_pVideoCodecContext->width;
     }
 
     return -1;
@@ -163,7 +163,7 @@ int MovieDecoder::getHeight()
 {
     if (m_pVideoCodecContext)
     {
-        return m_pVideoCodecContext->width;
+        return m_pVideoCodecContext->height;
     }
 
     return -1;
