@@ -203,9 +203,10 @@ void MovieDecoder::seek(int timeInSeconds)
         throw logic_error("Seeking in video failed");
     }
 
-    int count = 0;
+    int keyFrameAttempts = 0;
     do
     {
+        int count = 0;
         bool gotFrame = 0;
 
         while (!gotFrame && count < 20)
@@ -219,8 +220,8 @@ void MovieDecoder::seek(int timeInSeconds)
             ++count;
         }
 
-        ++count;
-    } while ((!m_pFrame->key_frame) && count < 20);
+        ++keyFrameAttempts;
+    } while ((!m_pFrame->key_frame) && keyFrameAttempts < 200);
 }
 
 
