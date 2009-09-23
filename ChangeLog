@@ -1,6 +1,6 @@
 FFmpegThumbnailer
 
-version 1.5.6
+version 1.5.5
 - Fixed build issue with certain versions of autoconf
 - Fixed build issue with recent versions of gcc
 - Fixed thumbnail generation for ogm files
