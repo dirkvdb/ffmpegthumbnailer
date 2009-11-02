@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "libffmpegthumbnailer/videothumbnailer.h"
+#include "libffmpegthumbnailer/imagetypes.h"
 
 using namespace std;
 
@@ -33,6 +34,15 @@ class VideoThumbnailerTest : public testing::Test
     VideoFrame frame;
     VideoThumbnailer videoThumbnailer;
 };
+
+TEST_F(VideoThumbnailerTest, CreateThumbNonAscii)
+{
+	std::string input = std::string(TEST_DATADIR) + "/test_абвгдеёжзийклмно.flv";
+	
+	std::vector<uint8_t> buffer;
+	videoThumbnailer.generateThumbnail(input, Png, buffer);
+	ASSERT_FALSE(buffer.empty());
+}
 
 TEST_F(VideoThumbnailerTest, CreateHistogramBlackFrame)
 {
