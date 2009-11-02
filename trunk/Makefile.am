@@ -56,7 +56,7 @@ testrunner_SOURCES =    unittest/testrunner.cpp \
                         unittest/histogramtest.cpp \
                         unittest/videothumbnailertest.cpp
 
-testrunner_CXXFLAGS =   $(AM_CXXFLAGS)
+testrunner_CXXFLAGS =   $(AM_CXXFLAGS) '-DTEST_DATADIR="$(top_srcdir)/unittest"'
 testrunner_LDFLAGS  =   libffmpegthumbnailer.la
 testrunner_LDADD    =   $(UNITTEST_LIBS)
 
