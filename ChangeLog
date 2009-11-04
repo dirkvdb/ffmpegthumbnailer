@@ -1,5 +1,8 @@
 FFmpegThumbnailer
 
+version 1.?.?
+- Fixed segmentation fault when seek in video file fails
+
 version 1.5.5
 - Fixed build issue with certain versions of autoconf
 - Fixed build issue with recent versions of gcc

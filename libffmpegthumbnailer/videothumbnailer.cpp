@@ -112,10 +112,8 @@ int timeToSeconds(const std::string& time)
 void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageWriter& imageWriter, AVFormatContext* pavContext)
 {
     MovieDecoder movieDecoder(videoFile, pavContext);
-
-    VideoFrame  videoFrame;
     movieDecoder.decodeVideoFrame(); //before seeking, a frame has to be decoded
-
+ 
     if ((!m_WorkAroundIssues) || (movieDecoder.getCodec() != "h264")) //workaround for bug in older ffmpeg (100% cpu usage when seeking in h264 files)
     {
         try
@@ -127,9 +125,15 @@ void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageWriter& i
         }
         catch (exception& e)
         {
-            cerr << e.what() << endl;
-        }
+            cerr << e.what() << ", will use first frame" << endl;
+            //seeking failed, try the first frame again
+            movieDecoder.destroy();
+            movieDecoder.initialize(videoFile);
+            movieDecoder.decodeVideoFrame();
+         }
     }
+    
+    VideoFrame  videoFrame;
     
     if (m_SmartFrameSelection)
     {

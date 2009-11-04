@@ -18,7 +18,6 @@
 #include <stdexcept>
 
 #include <assert.h>
-#include <iostream>
 #include <cstring>
 
 #ifdef HAVE_CONFIG_H
@@ -204,10 +203,12 @@ void MovieDecoder::seek(int timeInSeconds)
     }
 
     int keyFrameAttempts = 0;
+    bool gotFrame = 0;
+    
     do
     {
         int count = 0;
-        bool gotFrame = 0;
+        gotFrame = 0;
 
         while (!gotFrame && count < 20)
         {
@@ -219,9 +220,14 @@ void MovieDecoder::seek(int timeInSeconds)
             catch(logic_error&) {}
             ++count;
         }
-
+        
         ++keyFrameAttempts;
-    } while ((!m_pFrame->key_frame) && keyFrameAttempts < 200);
+    } while ((!gotFrame || !m_pFrame->key_frame) && keyFrameAttempts < 200);
+    
+    if (gotFrame == 0)
+    {
+        throw logic_error("Seeking in video failed");
+    }
 }
 
 
@@ -250,7 +256,7 @@ bool MovieDecoder::decodeVideoPacket()
     avcodec_get_frame_defaults(m_pFrame);
     
     int frameFinished;
-
+    
 #if LIBAVCODEC_VERSION_MAJOR < 53
     int bytesDecoded = avcodec_decode_video(m_pVideoCodecContext, m_pFrame, &frameFinished, m_pPacket->data, m_pPacket->size);
 #else
@@ -271,7 +277,7 @@ bool MovieDecoder::getVideoPacket()
     bool frameDecoded = false;
 
     int attempts = 0;
-
+    
     if (m_pPacket)
     {
         av_free_packet(m_pPacket);
@@ -292,7 +298,7 @@ bool MovieDecoder::getVideoPacket()
             }
         }
     }
-
+    
     return frameDecoded;
 }
 
@@ -331,7 +337,7 @@ void MovieDecoder::convertAndScaleFrame(PixelFormat format, int scaledSize, bool
     AVFrame* convertedFrame = NULL;
 
     createAVFrame(&convertedFrame, scaledWidth, scaledHeight, format);
-
+    
     sws_scale(scaleContext, m_pFrame->data, m_pFrame->linesize, 0, m_pVideoCodecContext->height,
               convertedFrame->data, convertedFrame->linesize);
     sws_freeContext(scaleContext);
@@ -349,16 +355,16 @@ void MovieDecoder::calculateDimensions(int squareSize, bool maintainAspectRatio,
     }
     else
     {
-    	int srcWidth 			= m_pVideoCodecContext->width;
-    	int srcHeight 			= m_pVideoCodecContext->height;
-    	int ascpectNominator 	= m_pVideoCodecContext->sample_aspect_ratio.num;
-    	int ascpectDenominator 	= m_pVideoCodecContext->sample_aspect_ratio.den;
-    	
-    	if (ascpectNominator != 0 && ascpectDenominator != 0)
-		{
-			srcWidth = srcWidth * ascpectNominator / ascpectDenominator;
-		}
-    	
+        int srcWidth            = m_pVideoCodecContext->width;
+        int srcHeight           = m_pVideoCodecContext->height;
+        int ascpectNominator    = m_pVideoCodecContext->sample_aspect_ratio.num;
+        int ascpectDenominator  = m_pVideoCodecContext->sample_aspect_ratio.den;
+        
+        if (ascpectNominator != 0 && ascpectDenominator != 0)
+        {
+            srcWidth = srcWidth * ascpectNominator / ascpectDenominator;
+        }
+        
         if (srcWidth > srcHeight)
         {
             destWidth  = squareSize;
