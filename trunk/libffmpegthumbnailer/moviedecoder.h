@@ -57,12 +57,13 @@ public:
     int getWidth();
     int getHeight();
     int getDuration();
-
-private:
+    
     void initialize(const std::string& filename);
-    void initializeVideo();
     void destroy();
-
+    
+private:
+    void initializeVideo();
+    
     bool decodeVideoPacket();
     bool getVideoPacket();
     void convertAndScaleFrame(PixelFormat format, int scaledSize, bool maintainAspectRatio, int& scaledWidth, int& scaledHeight);
