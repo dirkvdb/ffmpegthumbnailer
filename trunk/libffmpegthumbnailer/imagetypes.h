@@ -20,7 +20,8 @@
 typedef enum ImageTypeEnum
 {
     Png,
-    Jpeg
+    Jpeg,
+    Unknown
 } ImageType;
 
 #endif

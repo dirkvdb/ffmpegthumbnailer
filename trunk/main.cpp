@@ -31,7 +31,8 @@ using namespace std;
 
 void printVersion();
 void printUsage();
-ImageType determineImageType(const std::string& filename);
+ImageType determineImageTypeFromString(const std::string& filename);
+ImageType determineImageTypeFromFilename(const std::string& filename);
 
 int main(int argc, char** argv)
 {
@@ -46,8 +47,9 @@ int main(int argc, char** argv)
     bool    smartFrameSelection = false;
     string  inputFile;
     string  outputFile;
+    string  imageFormat;
 
-    while ((option = getopt (argc, argv, "i:o:s:t:q:afwhvp")) != -1)
+    while ((option = getopt (argc, argv, "i:o:s:t:q:c:afwhvp")) != -1)
     {
         switch (option)
         {
@@ -85,6 +87,9 @@ int main(int argc, char** argv)
             case 'q':
                 imageQuality = atoi(optarg);
                 break;
+            case 'c':
+                imageFormat = optarg;
+                break;
             case 'h':
                 printUsage();
                 return 0;
@@ -105,9 +110,13 @@ int main(int argc, char** argv)
         printUsage();
         return 0;
     }
-
+    
     try
     {
+        ImageType imageType = imageFormat.empty() ?
+              determineImageTypeFromFilename(outputFile)
+            : determineImageTypeFromString(imageFormat);
+    
         VideoThumbnailer videoThumbnailer(thumbnailSize, workaroundIssues, maintainAspectRatio, imageQuality, smartFrameSelection);
         FilmStripFilter* filmStripFilter = NULL;
 
@@ -125,7 +134,7 @@ int main(int argc, char** argv)
         {
             videoThumbnailer.setSeekPercentage(seekPercentage);
         }
-        videoThumbnailer.generateThumbnail(inputFile, determineImageType(outputFile), outputFile);
+        videoThumbnailer.generateThumbnail(inputFile, imageType, outputFile);
 
         delete filmStripFilter;
     }
@@ -156,6 +165,7 @@ void printUsage()
          << "  -s<n>   : thumbnail size (default: 128)" << endl
          << "  -t<n|s> : time to seek to (percentage or absolute time hh:mm:ss) (default: 10%)" << endl
          << "  -q<n>   : image quality (0 = bad, 10 = best) (default: 8)" << endl
+         << "  -c      : override image format (jpeg or png) (default: determined by filename)" << endl
          << "  -a      : ignore aspect ratio and generate square thumbnail" << endl
          << "  -f      : create a movie strip overlay" << endl
          //<< "  -p      : use smarter frame selection (slower)" << endl
@@ -164,7 +174,25 @@ void printUsage()
          << "  -h      : display this help" << endl;
 }
 
-ImageType determineImageType(const std::string& filename)
+ImageType determineImageTypeFromString(const std::string& type)
+{
+    string lowercaseType = type;
+    StringOperations::lowercase(lowercaseType);
+    
+    if (lowercaseType == "png")
+    {
+        return Png;
+    }
+    
+    if (lowercaseType == "jpeg" || lowercaseType == "jpg")
+    {
+        return Jpeg;
+    }
+    
+    throw logic_error("Invalid image type specified");
+}
+
+ImageType determineImageTypeFromFilename(const std::string& filename)
 {
     string lowercaseFilename = filename;
     StringOperations::lowercase(lowercaseFilename);
