@@ -2,6 +2,7 @@ FFmpegThumbnailer
 
 version 1.?.?
 - Fixed segmentation fault when seek in video file fails
+- Command line option added to specify output format of the image regardless of the filename
 
 version 1.5.5
 - Fixed build issue with certain versions of autoconf
