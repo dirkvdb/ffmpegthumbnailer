@@ -1,7 +1,7 @@
 #summary Frequently asked questions
 #labels Featured
 
-  * How can I use ffmpegthumbnailer in Nautilus?
+  * *How can I use ffmpegthumbnailer in Nautilus?*
 Change the command value of the GConf key for each mimetype you want to assign to ffmpegthumbnailer. The keys are located in: `/desktop/gnome/thumbnailers/`
 
 So to use ffmpegthumbnailer to create thumbnails for avi files change the command value of 
