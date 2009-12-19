@@ -41,6 +41,7 @@ MovieDecoder::MovieDecoder(const string& filename, AVFormatContext* pavContext)
 , m_pVideoCodec(NULL)
 , m_pVideoStream(NULL)
 , m_pFrame(NULL)
+, m_pFrameBuffer(NULL)
 , m_pPacket(NULL)
 , m_FormatContextWasGiven(pavContext != NULL)
 , m_AllowSeek(filename != "-")
@@ -100,6 +101,12 @@ void MovieDecoder::destroy()
     {
         av_free(m_pFrame);
         m_pFrame = NULL;
+    }
+
+    if (m_pFrameBuffer)
+    {
+        av_free(m_pFrameBuffer);
+        m_pFrameBuffer = NULL;
     }
 }
 
@@ -335,15 +342,19 @@ void MovieDecoder::convertAndScaleFrame(PixelFormat format, int scaledSize, bool
     }
 
     AVFrame* convertedFrame = NULL;
+    uint8_t* convertedFrameBuffer = NULL;
 
-    createAVFrame(&convertedFrame, scaledWidth, scaledHeight, format);
+    createAVFrame(&convertedFrame, &convertedFrameBuffer, scaledWidth, scaledHeight, format);
     
     sws_scale(scaleContext, m_pFrame->data, m_pFrame->linesize, 0, m_pVideoCodecContext->height,
               convertedFrame->data, convertedFrame->linesize);
     sws_freeContext(scaleContext);
 
     av_free(m_pFrame);
-    m_pFrame = convertedFrame;
+    av_free(m_pFrameBuffer);
+    
+    m_pFrame        = convertedFrame;
+    m_pFrameBuffer  = convertedFrameBuffer;
 }
 
 void MovieDecoder::calculateDimensions(int squareSize, bool maintainAspectRatio, int& destWidth, int& destHeight)
@@ -378,11 +389,11 @@ void MovieDecoder::calculateDimensions(int squareSize, bool maintainAspectRatio,
     }
 }
 
-void MovieDecoder::createAVFrame(AVFrame** avFrame, int width, int height, PixelFormat format)
+void MovieDecoder::createAVFrame(AVFrame** avFrame, uint8_t** frameBuffer, int width, int height, PixelFormat format)
 {
     *avFrame = avcodec_alloc_frame();
 
-    int         numBytes = avpicture_get_size(format, width, height);
-    uint8_t*    pBuffer = reinterpret_cast<uint8_t*>(av_malloc(numBytes));
-    avpicture_fill((AVPicture*) *avFrame, pBuffer, format, width, height);
+    int numBytes = avpicture_get_size(format, width, height);
+    *frameBuffer = reinterpret_cast<uint8_t*>(av_malloc(numBytes));
+    avpicture_fill((AVPicture*) *avFrame, *frameBuffer, format, width, height);
 }
