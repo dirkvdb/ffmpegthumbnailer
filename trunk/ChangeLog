@@ -1,8 +1,9 @@
 FFmpegThumbnailer
 
-version 1.?.?
+version 1.5.6
 - Fixed segmentation fault when seek in video file fails
 - Command line option added to specify output format of the image regardless of the filename
+- Fixed memory leak in MovieDecoder (thanks to Ulrich Völkel)
 
 version 1.5.5
 - Fixed build issue with certain versions of autoconf

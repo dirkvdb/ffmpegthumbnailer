@@ -67,7 +67,7 @@ private:
     bool decodeVideoPacket();
     bool getVideoPacket();
     void convertAndScaleFrame(PixelFormat format, int scaledSize, bool maintainAspectRatio, int& scaledWidth, int& scaledHeight);
-    void createAVFrame(AVFrame** avFrame, int width, int height, PixelFormat format);
+    void createAVFrame(AVFrame** avFrame, uint8_t** frameBuffer, int width, int height, PixelFormat format);
     void calculateDimensions(int squareSize, bool maintainAspectRatio, int& destWidth, int& destHeight);
 
 private:
@@ -77,6 +77,7 @@ private:
     AVCodec*                m_pVideoCodec;
     AVStream*               m_pVideoStream;
     AVFrame*                m_pFrame;
+    uint8_t*                m_pFrameBuffer;
     AVPacket*               m_pPacket;
     bool                    m_FormatContextWasGiven;
     bool                    m_AllowSeek;
