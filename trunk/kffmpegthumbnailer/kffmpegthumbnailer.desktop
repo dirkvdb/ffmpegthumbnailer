@@ -1,7 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Type=Service
-Name=Video thumbnailer
+Name=Video files (kffmpegthumbnailer)
 X-KDE-ServiceTypes=ThumbCreator
 MimeType=video/jpeg;video/mp4;video/mpeg;video/quicktime;video/x-ms-asf;video/x-ms-wm;video/x-ms-wmv;video/x-msvideo;video/x-flv;application/x-flash-video;video/3gpp;video/x-matroska;
 X-KDE-Library=kffmpegthumbnailer
