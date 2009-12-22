@@ -1,15 +1,17 @@
 project(kffmpegthumbnailer)
 
 find_package(KDE4 REQUIRED)
+find_package(PkgConfig)
+
 include(KDE4Defaults)
 include(MacroOptionalAddSubdirectory)
-include(LibFindMacros)
+include(FindPkgConfig)
 
-libfind_pkg_check_modules(AVUTIL libavutil)
-libfind_pkg_check_modules(AVFORMAT libavformat)
-libfind_pkg_check_modules(AVCODEC libavcodec)
-libfind_pkg_check_modules(SWSCALE libswscale)
-libfind_pkg_check_modules(FFMPEG_THUMBNAILER libffmpegthumbnailer)
+pkg_check_modules(AVUTIL libavutil)
+pkg_check_modules(AVFORMAT libavformat)
+pkg_check_modules(AVCODEC libavcodec)
+pkg_check_modules(SWSCALE libswscale)
+pkg_check_modules(FFMPEG_THUMBNAILER libffmpegthumbnailer)
 
 include_directories( ${KDE4_INCLUDES} ${QT_INCLUDES} ${AVUTIL_INCLUDES} ${AVFORMAT_INCLUDES} ${AVCODEC_INCLUDES} ${SWSCALE_INCLUDES} ${FFMPEG_THUMBNAILER_INCLUDES})
 
