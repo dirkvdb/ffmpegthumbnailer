@@ -14,7 +14,7 @@
 //    along with this program; if not, write to the Free Software
 //    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-#include "kffmpeghumbnailer.h"
+#include "kffmpegthumbnailer.h"
 
 #include <QImage>
 
@@ -22,7 +22,7 @@ extern "C"
 {
     KDE_EXPORT ThumbCreator* new_creator()
     {
-        return new VideoThumbnailer();
+        return new KFFMpegThumbnailer();
     }
 }
 
@@ -50,7 +50,7 @@ bool KFFMpegThumbnailer::create(const QString& path, int width, int /*heigth*/, 
             return false;
         }
     }
-    catch (std:exception& e)
+    catch (std::exception& e)
     {
         return false;
     }

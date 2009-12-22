@@ -1,14 +1,23 @@
 project(kffmpegthumbnailer)
 
-libfind_pkg_check_modules(FFMPEG_THUMBNAILER libffmpegthumbnailer)
 find_package(KDE4 REQUIRED)
 include(KDE4Defaults)
 include(MacroOptionalAddSubdirectory)
+include(LibFindMacros)
 
-set(kffmpegthumbnailer_SRCS videothumbnail.cpp)
+libfind_pkg_check_modules(AVUTIL libavutil)
+libfind_pkg_check_modules(AVFORMAT libavformat)
+libfind_pkg_check_modules(AVCODEC libavcodec)
+libfind_pkg_check_modules(SWSCALE libswscale)
+libfind_pkg_check_modules(FFMPEG_THUMBNAILER libffmpegthumbnailer)
 
-kde4_add_plugin(kffmpegthumbnailer ${videothumbnail_SRCS})
-target_link_libraries(kffmpegthumbnailer ${KDE4_KIO_LIBS} $(FFMPEG_THUMBNAILER_LIBS))
+include_directories( ${KDE4_INCLUDES} ${QT_INCLUDES} ${AVUTIL_INCLUDES} ${AVFORMAT_INCLUDES} ${AVCODEC_INCLUDES} ${SWSCALE_INCLUDES} ${FFMPEG_THUMBNAILER_INCLUDES})
 
-install(TARGETS videothumbnail DESTINATION ${PLUGIN_INSTALL_DIR})
+set(kffmpegthumbnailer_SRCS kffmpegthumbnailer.cpp)
+STRING(REGEX REPLACE "-fno-exceptions " "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
+
+kde4_add_plugin(kffmpegthumbnailer ${kffmpegthumbnailer_SRCS})
+target_link_libraries(kffmpegthumbnailer ${KDE4_KIO_LIBS} ${AVUTIL_LIBRARIES} ${AVFORMAT_LIBRARIES} ${AVCODEC_LIBRARIES} ${SWSCALE_LIBRARIES} ${FFMPEG_THUMBNAILER_LIBRARIES})
+
+install(TARGETS kffmpegthumbnailer DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES kffmpegthumbnailer.desktop DESTINATION ${SERVICES_INSTALL_DIR})
