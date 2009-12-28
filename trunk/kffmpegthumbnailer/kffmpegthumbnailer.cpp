@@ -43,7 +43,7 @@ bool KFFMpegThumbnailer::create(const QString& path, int width, int /*heigth*/, 
         std::vector<uint8_t> pixelBuffer;
         
         m_Thumbnailer.setThumbnailSize(width);    
-        m_Thumbnailer.generateThumbnail(path.toStdString(), Png, pixelBuffer);
+        m_Thumbnailer.generateThumbnail(std::string(path.toUtf8()), Png, pixelBuffer);
         
         if (!img.loadFromData(&pixelBuffer.front(), pixelBuffer.size(), "PNG"))
         {

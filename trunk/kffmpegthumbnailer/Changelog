@@ -1,0 +1,7 @@
+KFFmpegThumbnailer
+
+version 1.0.1 (December 28, 2009)
+- Fixed thumbnails not being generated for filenames containing non-ascii characters (Thanks to fedux.c)
+
+version 1.0.0 (December 24, 2009)
+- Initial release
