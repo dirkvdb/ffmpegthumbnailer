@@ -1,5 +1,8 @@
 FFmpegThumbnailer
 
+version 1.5.?
+- Fixed some issues in package-config file (Thanks to ambrop7)
+
 version 1.5.6
 - Fixed segmentation fault when seek in video file fails
 - Command line option added to specify output format of the image regardless of the filename
