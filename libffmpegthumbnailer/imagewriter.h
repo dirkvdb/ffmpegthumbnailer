@@ -1,4 +1,4 @@
-//    Copyright (C) 2009 Dirk Vanden Boer <dirk.vdb@gmail.com>
+//    Copyright (C) 2010 Dirk Vanden Boer <dirk.vdb@gmail.com>
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -20,6 +20,9 @@
 #include <string>
 #include <inttypes.h>
 
+namespace ffmpegthumbnailer
+{
+
 class ImageWriter
 {
 public:
@@ -29,5 +32,7 @@ public:
 	virtual void setText(const std::string& key, const std::string& value) = 0;
 	virtual void writeFrame(uint8_t** rgbData, int width, int height, int quality) = 0;
 };
+
+}
 
 #endif

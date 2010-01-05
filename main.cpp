@@ -1,4 +1,4 @@
-//    Copyright (C) 2009 Dirk Vanden Boer <dirk.vdb@gmail.com>
+//    Copyright (C) 2010 Dirk Vanden Boer <dirk.vdb@gmail.com>
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -28,11 +28,12 @@
 #include "libffmpegthumbnailer/filmstripfilter.h"
 
 using namespace std;
+using namespace ffmpegthumbnailer;
 
 void printVersion();
 void printUsage();
-ImageType determineImageTypeFromString(const std::string& filename);
-ImageType determineImageTypeFromFilename(const std::string& filename);
+ThumbnailerImageType determineImageTypeFromString(const std::string& filename);
+ThumbnailerImageType determineImageTypeFromFilename(const std::string& filename);
 
 int main(int argc, char** argv)
 {
@@ -113,7 +114,7 @@ int main(int argc, char** argv)
     
     try
     {
-        ImageType imageType = imageFormat.empty() ?
+        ThumbnailerImageType imageType = imageFormat.empty() ?
               determineImageTypeFromFilename(outputFile)
             : determineImageTypeFromString(imageFormat);
     
@@ -174,7 +175,7 @@ void printUsage()
          << "  -h      : display this help" << endl;
 }
 
-ImageType determineImageTypeFromString(const std::string& type)
+ThumbnailerImageType determineImageTypeFromString(const std::string& type)
 {
     string lowercaseType = type;
     StringOperations::lowercase(lowercaseType);
@@ -192,7 +193,7 @@ ImageType determineImageTypeFromString(const std::string& type)
     throw logic_error("Invalid image type specified");
 }
 
-ImageType determineImageTypeFromFilename(const std::string& filename)
+ThumbnailerImageType determineImageTypeFromFilename(const std::string& filename)
 {
     string lowercaseFilename = filename;
     StringOperations::lowercase(lowercaseFilename);

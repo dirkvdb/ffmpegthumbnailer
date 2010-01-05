@@ -1,4 +1,4 @@
-//    Copyright (C) 2009 Dirk Vanden Boer <dirk.vdb@gmail.com>
+//    Copyright (C) 2010 Dirk Vanden Boer <dirk.vdb@gmail.com>
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -31,15 +31,15 @@ int main(int argc, char** argv)
         return -1;
     }
 
-    video_thumbnailer* thumbnailer = create_thumbnailer();
-    image_data* imageData = create_image_data();
+    video_thumbnailer* thumbnailer = video_thumbnailer_create();
+    image_data* imageData = video_thumbnailer_create_image_data();
 
     thumbnailer->seek_percentage        = 15;
     thumbnailer->overlay_film_strip     = 1;
     thumbnailer->thumbnail_size         = 256;
     thumbnailer->thumbnail_image_type   = Jpeg;
 
-    if (generate_thumbnail_to_buffer(thumbnailer, argv[1], imageData) == 0)
+    if (video_thumbnailer_generate_thumbnail_to_buffer(thumbnailer, argv[1], imageData) == 0)
     {
         FILE* imageFile = fopen("output.jpg", "wb");
         fwrite(imageData->image_data_ptr, 1 , imageData->image_data_size, imageFile);
@@ -50,8 +50,8 @@ int main(int argc, char** argv)
         printf("Failed to generate thumbnail\n");
     }
 
-    destroy_image_data(imageData);
-    destroy_thumbnailer(thumbnailer);
+    video_thumbnailer_destroy_image_data(imageData);
+    video_thumbnailer_destroy(thumbnailer);
 
     return 0;
 }

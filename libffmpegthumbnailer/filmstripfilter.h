@@ -1,4 +1,4 @@
-//    Copyright (C) 2009 Dirk Vanden Boer <dirk.vdb@gmail.com>
+//    Copyright (C) 2010 Dirk Vanden Boer <dirk.vdb@gmail.com>
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -19,10 +19,15 @@
 
 #include "ifilter.h"
 
+namespace ffmpegthumbnailer
+{
+
 class FilmStripFilter : public IFilter
 {
 public:
     void process(VideoFrame& videoFrame);
 };
+
+}
 
 #endif

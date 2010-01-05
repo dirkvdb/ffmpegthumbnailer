@@ -1,4 +1,4 @@
-//    Copyright (C) 2009 Dirk Vanden Boer <dirk.vdb@gmail.com>
+//    Copyright (C) 2010 Dirk Vanden Boer <dirk.vdb@gmail.com>
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -15,6 +15,9 @@
 //    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "filmstripfilter.h"
+
+namespace ffmpegthumbnailer
+{
 
 static const int FILMHOLE_WIDTH = 12;
 static const int FILMHOLE_HEIGHT = 10;
@@ -61,4 +64,6 @@ void FilmStripFilter::process(VideoFrame& videoFrame)
         frameIndex += videoFrame.lineSize;
         filmHoleIndex = (i % FILMHOLE_HEIGHT) * FILMHOLE_WIDTH * 3;
     }
+}
+
 }

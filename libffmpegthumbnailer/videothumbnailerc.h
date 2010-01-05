@@ -1,4 +1,4 @@
-//    Copyright (C) 2009 Dirk Vanden Boer <dirk.vdb@gmail.com>
+//    Copyright (C) 2010 Dirk Vanden Boer <dirk.vdb@gmail.com>
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ typedef struct video_thumbnailer_struct
     int                     overlay_film_strip;     /* default = 0 */
     int                     workaround_bugs;        /* default = 0 */
     int                     thumbnail_image_quality;/* default = 8 (0 is bad, 10 is best)*/
-    ImageType               thumbnail_image_type;   /* default = Png */
+    ThumbnailerImageType    thumbnail_image_type;   /* default = Png */
     struct AVFormatContext* av_format_context;      /* default = NULL */
     int                     maintain_aspect_ratio;  /* default = 1 */
 
@@ -52,19 +52,19 @@ typedef struct image_data_struct
 } image_data;
 
 /* create video_thumbnailer structure */
-video_thumbnailer* create_thumbnailer(void);
+video_thumbnailer* video_thumbnailer_create(void);
 /* destroy video_thumbnailer structure */
-void destroy_thumbnailer(video_thumbnailer* thumbnailer);
+void video_thumbnailer_destroy(video_thumbnailer* thumbnailer);
 
 /* create image_data structure */
-image_data* create_image_data(void);
+image_data* video_thumbnailer_create_image_data(void);
 /* destroy image_data structure */
-void destroy_image_data(image_data* data);
+void video_thumbnailer_destroy_image_data(image_data* data);
 
 /* generate thumbnail from video file (movie_filename), image data is stored in generated_image_data struct */
-int generate_thumbnail_to_buffer(video_thumbnailer* thumbnailer, const char* movie_filename, image_data* generated_image_data);
+int video_thumbnailer_generate_thumbnail_to_buffer(video_thumbnailer* thumbnailer, const char* movie_filename, image_data* generated_image_data);
 /* generate thumbnail from video file (movie_filename), image is written to output_fileName on disk*/
-int generate_thumbnail_to_file(video_thumbnailer* thumbnailer, const char* movie_filename, const char* output_fileName);
+int video_thumbnailer_generate_thumbnail_to_file(video_thumbnailer* thumbnailer, const char* movie_filename, const char* output_fileName);
 
 #ifdef __cplusplus
 }

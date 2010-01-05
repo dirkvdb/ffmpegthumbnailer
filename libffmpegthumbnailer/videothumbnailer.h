@@ -1,4 +1,4 @@
-//    Copyright (C) 2009 Dirk Vanden Boer <dirk.vdb@gmail.com>
+//    Copyright (C) 2010 Dirk Vanden Boer <dirk.vdb@gmail.com>
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -26,10 +26,14 @@
 #include "ifilter.h"
 #include "histogram.h"
 
+struct AVFormatContext;
+
+namespace ffmpegthumbnailer
+{
+
 class VideoFrame;
 class ImageWriter;
 class MovieDecoder;
-struct AVFormatContext;
 
 class VideoThumbnailer
 {
@@ -38,8 +42,8 @@ public:
     VideoThumbnailer(int thumbnailSize, bool workaroundIssues, bool maintainAspectRatio, int imageQuality, bool smartFrameSelection);
     ~VideoThumbnailer();
 
-    void generateThumbnail(const std::string& videoFile, ImageType type, const std::string& outputFile, AVFormatContext* pavContext = NULL);
-    void generateThumbnail(const std::string& videoFile, ImageType type, std::vector<uint8_t>& buffer, AVFormatContext* pavContext = NULL);
+    void generateThumbnail(const std::string& videoFile, ThumbnailerImageType type, const std::string& outputFile, AVFormatContext* pavContext = NULL);
+    void generateThumbnail(const std::string& videoFile, ThumbnailerImageType type, std::vector<uint8_t>& buffer, AVFormatContext* pavContext = NULL);
 
     void setThumbnailSize(int size);
     void setSeekPercentage(int percentage);
@@ -77,5 +81,7 @@ private:
     
     friend class VideoThumbnailerTest;
 };
+
+}
 
 #endif

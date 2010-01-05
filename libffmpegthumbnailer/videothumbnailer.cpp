@@ -1,4 +1,4 @@
-//    Copyright (C) 2009 Dirk Vanden Boer <dirk.vdb@gmail.com>
+//    Copyright (C) 2010 Dirk Vanden Boer <dirk.vdb@gmail.com>
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -37,6 +37,9 @@
 #include <sys/stat.h>
 
 using namespace std;
+
+namespace ffmpegthumbnailer
+{
 
 static const int SMART_FRAME_ATTEMPTS = 25;
 
@@ -173,14 +176,14 @@ void VideoThumbnailer::generateSmartThumbnail(MovieDecoder& movieDecoder, VideoF
     videoFrame = videoFrames[bestFrame];
 }
 
-void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageType type, const string& outputFile, AVFormatContext* pavContext)
+void VideoThumbnailer::generateThumbnail(const string& videoFile, ThumbnailerImageType type, const string& outputFile, AVFormatContext* pavContext)
 {
     ImageWriter* imageWriter = ImageWriterFactory<const string&>::createImageWriter(type, outputFile);
     generateThumbnail(videoFile, *imageWriter, pavContext);
     delete imageWriter;
 }
 
-void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageType type, vector<uint8_t>& buffer, AVFormatContext* pavContext)
+void VideoThumbnailer::generateThumbnail(const string& videoFile, ThumbnailerImageType type, vector<uint8_t>& buffer, AVFormatContext* pavContext)
 {
     buffer.clear();
     ImageWriter* imageWriter = ImageWriterFactory<vector<uint8_t>&>::createImageWriter(type, buffer);
@@ -369,4 +372,6 @@ int VideoThumbnailer::getBestThumbnailIndex(vector<VideoFrame>& videoFrames, con
 #endif
 
     return bestFrame;
+}
+
 }

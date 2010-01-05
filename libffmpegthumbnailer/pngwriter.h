@@ -1,4 +1,4 @@
-//    Copyright (C) 2009 Dirk Vanden Boer <dirk.vdb@gmail.com>
+//    Copyright (C) 2010 Dirk Vanden Boer <dirk.vdb@gmail.com>
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,6 +23,9 @@
 
 #include "imagewriter.h"
 
+namespace ffmpegthumbnailer
+{
+
 class PngWriter : public ImageWriter
 {
 public:
@@ -41,5 +44,7 @@ private:
 	png_structp             m_PngPtr;
 	png_infop 	            m_InfoPtr;
 };
+
+}
 
 #endif
