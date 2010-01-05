@@ -1,4 +1,4 @@
-//    Copyright (C) 2009 Dirk Vanden Boer <dirk.vdb@gmail.com>
+//    Copyright (C) 2010 Dirk Vanden Boer <dirk.vdb@gmail.com>
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -26,6 +26,9 @@ extern "C" {
 
 #include "imagewriter.h"
 
+namespace ffmpegthumbnailer
+{
+
 struct BufferWriter;
 
 class JpegWriter : public ImageWriter
@@ -47,5 +50,7 @@ private:
     jpeg_error_mgr          m_ErrorHandler;
     BufferWriter*           m_pBufferWriter;
 };
+
+}
 
 #endif

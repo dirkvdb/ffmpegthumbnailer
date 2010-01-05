@@ -1,4 +1,4 @@
-//    Copyright (C) 2009 Dirk Vanden Boer <dirk.vdb@gmail.com>
+//    Copyright (C) 2010 Dirk Vanden Boer <dirk.vdb@gmail.com>
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,7 +22,9 @@
 #include <iostream>
 #include <stdexcept>
 
-extern "C" video_thumbnailer* create_thumbnailer(void)
+using namespace ffmpegthumbnailer;
+
+extern "C" video_thumbnailer* video_thumbnailer_create(void)
 {
     video_thumbnailer* thumbnailer = new video_thumbnailer_struct();
 
@@ -41,7 +43,7 @@ extern "C" video_thumbnailer* create_thumbnailer(void)
     return thumbnailer;
 }
 
-extern "C" void destroy_thumbnailer(video_thumbnailer* thumbnailer)
+extern "C" void video_thumbnailer_destroy(video_thumbnailer* thumbnailer)
 {
     VideoThumbnailer* videoThumbnailer = reinterpret_cast<VideoThumbnailer*>(thumbnailer->thumbnailer);
     delete videoThumbnailer;
@@ -53,7 +55,7 @@ extern "C" void destroy_thumbnailer(video_thumbnailer* thumbnailer)
     delete thumbnailer;
 }
 
-extern "C" image_data* create_image_data(void)
+extern "C" image_data* video_thumbnailer_create_image_data(void)
 {
     image_data* data        = new image_data();
 
@@ -64,7 +66,7 @@ extern "C" image_data* create_image_data(void)
     return data;
 }
 
-extern "C" void destroy_image_data(image_data* data)
+extern "C" void video_thumbnailer_destroy_image_data(image_data* data)
 {
     data->image_data_ptr    = 0;
     data->image_data_size   = 0;
@@ -100,7 +102,7 @@ void setProperties(video_thumbnailer* thumbnailer)
     }
 }
 
-extern "C" int generate_thumbnail_to_buffer(video_thumbnailer* thumbnailer, const char* movie_filename, image_data* generated_image_data)
+extern "C" int video_thumbnailer_generate_thumbnail_to_buffer(video_thumbnailer* thumbnailer, const char* movie_filename, image_data* generated_image_data)
 {
     try
     {
@@ -121,7 +123,7 @@ extern "C" int generate_thumbnail_to_buffer(video_thumbnailer* thumbnailer, cons
     return 0;
 }
 
-extern "C" int generate_thumbnail_to_file(video_thumbnailer* thumbnailer, const char* movie_filename, const char* output_fileName)
+extern "C" int video_thumbnailer_generate_thumbnail_to_file(video_thumbnailer* thumbnailer, const char* movie_filename, const char* output_fileName)
 {
     try
     {

@@ -1,4 +1,4 @@
-//    Copyright (C) 2009 Dirk Vanden Boer <dirk.vdb@gmail.com>
+//    Copyright (C) 2010 Dirk Vanden Boer <dirk.vdb@gmail.com>
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -33,8 +33,8 @@ public:
     virtual Flags flags() const;
     
 private:
-    VideoThumbnailer    m_Thumbnailer;
-    FilmStripFilter     m_FilmStrip;
+    ffmpegthumbnailer::VideoThumbnailer    m_Thumbnailer;
+    ffmpegthumbnailer::FilmStripFilter     m_FilmStrip;
 };
 
 #endif

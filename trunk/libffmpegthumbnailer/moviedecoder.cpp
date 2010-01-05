@@ -1,4 +1,4 @@
-//    Copyright (C) 2009 Dirk Vanden Boer <dirk.vdb@gmail.com>
+//    Copyright (C) 2010 Dirk Vanden Boer <dirk.vdb@gmail.com>
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -33,6 +33,9 @@ extern "C" {
 }
 
 using namespace std;
+
+namespace ffmpegthumbnailer
+{
 
 MovieDecoder::MovieDecoder(const string& filename, AVFormatContext* pavContext)
 : m_VideoStream(-1)
@@ -396,4 +399,6 @@ void MovieDecoder::createAVFrame(AVFrame** avFrame, uint8_t** frameBuffer, int w
     int numBytes = avpicture_get_size(format, width, height);
     *frameBuffer = reinterpret_cast<uint8_t*>(av_malloc(numBytes));
     avpicture_fill((AVPicture*) *avFrame, *frameBuffer, format, width, height);
+}
+
 }
