@@ -8,6 +8,9 @@
 
 using namespace std;
 
+namespace ffmpegthumbnailer
+{
+
 class VideoThumbnailerTest : public testing::Test
 {
     protected:
@@ -117,4 +120,6 @@ TEST_F(VideoThumbnailerTest, FrameSelection)
 
     //This test is bad
     //EXPECT_EQ(getBestThumbnailIndex(videoFrames, histograms), 1);
+}
+
 }

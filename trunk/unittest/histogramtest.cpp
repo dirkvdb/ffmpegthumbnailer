@@ -6,6 +6,9 @@
 
 #include "libffmpegthumbnailer/histogram.h"
 
+namespace ffmpegthumbnailer
+{
+
 TEST(HistogramTest, CreationInt)
 {
     Histogram<int> hist;
@@ -28,4 +31,6 @@ TEST(HistogramTest, CreationFloat)
         EXPECT_EQ(0.0, hist.g[i]);
         EXPECT_EQ(0.0, hist.b[i]);
     }
+}
+
 }
