@@ -16,8 +16,9 @@
 
 #include "moviedecoder.h"
 #include <stdexcept>
+#include <algorithm>
 
-#include <assert.h>
+#include <cassert>
 #include <cstring>
 
 #ifdef HAVE_CONFIG_H
@@ -125,7 +126,7 @@ string MovieDecoder::getCodec()
 
 void MovieDecoder::initializeVideo()
 {
-    for(unsigned int i = 0; i < m_pFormatContext->nb_streams; i++)
+    for (unsigned int i = 0; i < m_pFormatContext->nb_streams; ++i)
     {
         if (m_pFormatContext->streams[i]->codec->codec_type == CODEC_TYPE_VIDEO)
         {
@@ -362,6 +363,12 @@ void MovieDecoder::convertAndScaleFrame(PixelFormat format, int scaledSize, bool
 
 void MovieDecoder::calculateDimensions(int squareSize, bool maintainAspectRatio, int& destWidth, int& destHeight)
 {
+    if (squareSize == 0)
+    {
+        // use original video size
+        squareSize = max(m_pVideoCodecContext->width, m_pVideoCodecContext->height);
+    }
+    
     if (!maintainAspectRatio)
     {
         destWidth = squareSize;
