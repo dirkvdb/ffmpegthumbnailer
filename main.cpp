@@ -163,7 +163,7 @@ void printUsage()
          << "Options:" << endl
          << "  -i<s>   : input file" << endl
          << "  -o<s>   : output file" << endl
-         << "  -s<n>   : thumbnail size (default: 128)" << endl
+         << "  -s<n>   : thumbnail size (use 0 for original size) (default: 128)" << endl
          << "  -t<n|s> : time to seek to (percentage or absolute time hh:mm:ss) (default: 10%)" << endl
          << "  -q<n>   : image quality (0 = bad, 10 = best) (default: 8)" << endl
          << "  -c      : override image format (jpeg or png) (default: determined by filename)" << endl
