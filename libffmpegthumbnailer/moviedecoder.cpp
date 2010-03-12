@@ -297,7 +297,7 @@ bool MovieDecoder::getVideoPacket()
 
     m_pPacket = new AVPacket();
 
-    while (framesAvailable && !frameDecoded && (attempts++ < 250))
+    while (framesAvailable && !frameDecoded && (attempts++ < 1000))
     {
         framesAvailable = av_read_frame(m_pFormatContext, m_pPacket) >= 0;
         if (framesAvailable)
