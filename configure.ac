@@ -70,7 +70,7 @@ AC_ARG_ENABLE(jpeg,
     [ enable_jpeg=$enableval ] )
 
 if test "$enable_jpeg" != "no"; then
-    AC_CHECK_HEADERS(jpeglib.h, HAVE_JPEG=yes, HABE_JPEG=no)
+    AC_CHECK_HEADERS(jpeglib.h, HAVE_JPEG=yes, HAVE_JPEG=no)
     if test $HAVE_JPEG = yes; then
         AC_DEFINE(HAVE_JPEG, [], "Jpeg output format enabled")
         JPEG_LIBS=-ljpeg
