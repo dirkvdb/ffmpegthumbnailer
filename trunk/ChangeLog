@@ -1,8 +1,9 @@
 FFmpegThumbnailer
 
-version 2.?.?
+version 2.0.1
 - Setting the thumbnail size to 0 will use the original video size (thanks to John Fremlin)
 - Fix for video files containing lots of audio packets before a video packet
+- Fixed libs pkgconfig file (thanks to magnus.tuominen)
 
 version 2.0.0
 - Fixed some issues in package-config file (Thanks to ambrop7)
