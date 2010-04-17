@@ -6,5 +6,6 @@ includedir=@includedir@
 Name: libffmpegthumbnailer
 Description: Generates thumbnails for movie files
 Version: @PACKAGE_VERSION@
-Libs: -L${libdir} -lffmpegthumbnailer @FFMPEG_LIBS@ @PNG_LIBS@ @JPEG_LIBS@
+Libs: -L${libdir} -lffmpegthumbnailer 
+Libs.private: @FFMPEG_LIBS@ @PNG_LIBS@ @JPEG_LIBS@
 Cflags: -I${includedir}
