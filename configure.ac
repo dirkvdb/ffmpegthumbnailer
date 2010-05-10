@@ -79,6 +79,9 @@ if test "$enable_jpeg" != "no"; then
 fi
 AM_CONDITIONAL(JPEG, test "$HAVE_JPEG" = "yes")
 
+
+CXXFLAGS=-D__STDC_CONSTANT_MACROS
+
 ########################################################################
 # Check debug mode
 ########################################################################
@@ -89,7 +92,7 @@ AC_ARG_ENABLE(debug,
 AM_CONDITIONAL(DEBUG, test "$enable_debug" = "yes")
 if test "$DEBUG" = "yes"; then
     AC_DEFINE(ENABLE_DEBUG, [], "Enable debug mode")
-    CXXFLAGS="-g -O1 -Wall -Werror -Wfatal-errors"
+    CXXFLAGS+=" -g -O1 -Wall -Werror -Wfatal-errors"
 fi
 
 AC_ARG_ENABLE(unittests,
