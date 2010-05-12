@@ -1,4 +1,7 @@
 FFmpegThumbnailer
+version 2.?.?
+- Fixed compilation error against latest ffmpeg
+- Size of the filmstrip overlay is dependant on thumbnail size
 
 version 2.0.1
 - Setting the thumbnail size to 0 will use the original video size (thanks to John Fremlin)

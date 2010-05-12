@@ -15,6 +15,7 @@ libffmpegthumbnailer_la_SOURCES =   libffmpegthumbnailer/moviedecoder.h \
                                     libffmpegthumbnailer/videoframe.h \
                                     libffmpegthumbnailer/histogram.h \
                                     libffmpegthumbnailer/grayscalefilter.h \
+                                    libffmpegthumbnailer/filmstrip.h \
                                     libffmpegthumbnailer/filmstripfilter.h \
                                     libffmpegthumbnailer/filmstripfilter.cpp
 
