@@ -16,7 +16,7 @@
 
 #include "pngwriter.h"
 #include <stdexcept>
-#include <assert.h>
+#include <cassert>
 
 using namespace std;
 
@@ -32,7 +32,7 @@ PngWriter::PngWriter(const string& outputFile)
 , m_InfoPtr(NULL)
 {
     init();
-	m_FilePtr = fopen(outputFile.c_str(), "wb");
+	m_FilePtr = outputFile == "-" ? stdout : fopen(outputFile.c_str(), "wb");
 	
 	if (!m_FilePtr)
     {
