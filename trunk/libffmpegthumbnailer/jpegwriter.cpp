@@ -18,7 +18,7 @@
 #include <stdexcept>
 #include <cstdio>
 #include <cstring>
-#include <assert.h>
+#include <cassert>
 #include <algorithm>
 
 using namespace std;
@@ -45,7 +45,7 @@ JpegWriter::JpegWriter(const string& outputFile)
 , m_pBufferWriter(NULL)
 {
     init();
-    m_pFile = fopen(outputFile.c_str(), "wb");
+	m_pFile = outputFile == "-" ? stdout : fopen(outputFile.c_str(), "wb");
 
     if (!m_pFile)
     {

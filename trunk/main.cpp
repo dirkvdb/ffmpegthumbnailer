@@ -112,6 +112,12 @@ int main(int argc, char** argv)
         return 0;
     }
     
+    if (outputFile == "-" && imageFormat.empty())
+    {
+        cerr << "When writing to stdout the image format needs to be specified (e.g.: -c png)" << endl;
+        return 0;
+    }
+    
     try
     {
         ThumbnailerImageType imageType = imageFormat.empty() ?

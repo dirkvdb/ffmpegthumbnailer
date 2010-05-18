@@ -48,7 +48,7 @@ MovieDecoder::MovieDecoder(const string& filename, AVFormatContext* pavContext)
 , m_pFrameBuffer(NULL)
 , m_pPacket(NULL)
 , m_FormatContextWasGiven(pavContext != NULL)
-, m_AllowSeek(filename != "-")
+, m_AllowSeek(true)
 {
     initialize(filename);
 }
@@ -65,6 +65,7 @@ void MovieDecoder::initialize(const string& filename)
     avcodec_register_all();
 
     string inputFile = filename == "-" ? "pipe:" : filename;
+    m_AllowSeek = filename != "-";
 
     if ((!m_FormatContextWasGiven) && av_open_input_file(&m_pFormatContext, inputFile.c_str(), NULL, 0, NULL) != 0)
     {
