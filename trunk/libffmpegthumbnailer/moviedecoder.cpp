@@ -113,6 +113,8 @@ void MovieDecoder::destroy()
         av_free(m_pFrameBuffer);
         m_pFrameBuffer = NULL;
     }
+
+    m_VideoStream = -1;
 }
 
 string MovieDecoder::getCodec()
