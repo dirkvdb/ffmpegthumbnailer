@@ -65,7 +65,7 @@ void MovieDecoder::initialize(const string& filename)
     avcodec_register_all();
 
     string inputFile = filename == "-" ? "pipe:" : filename;
-    m_AllowSeek = filename != "-";
+    m_AllowSeek = (filename != "-") && (filename.find("rtsp://") != 0);
 
     if ((!m_FormatContextWasGiven) && av_open_input_file(&m_pFormatContext, inputFile.c_str(), NULL, 0, NULL) != 0)
     {
