@@ -15,22 +15,16 @@
 //    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "moviedecoder.h"
+
+#include "videoframe.h"
+
 #include <stdexcept>
 #include <algorithm>
-
 #include <cassert>
 #include <cstring>
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 extern "C" {
-#if HAVE_FFMPEG_SWSCALE_H
-#include <ffmpeg/swscale.h>
-#else
 #include <libswscale/swscale.h>
-#endif
 }
 
 using namespace std;
@@ -271,12 +265,7 @@ bool MovieDecoder::decodeVideoPacket()
     
     int frameFinished;
     
-#if LIBAVCODEC_VERSION_MAJOR < 53
-    int bytesDecoded = avcodec_decode_video(m_pVideoCodecContext, m_pFrame, &frameFinished, m_pPacket->data, m_pPacket->size);
-#else
     int bytesDecoded = avcodec_decode_video2(m_pVideoCodecContext, m_pFrame, &frameFinished, m_pPacket);
-#endif
-
     if (bytesDecoded < 0)
     {
         throw logic_error("Failed to decode video frame: bytesDecoded < 0");
@@ -402,13 +391,14 @@ void MovieDecoder::calculateDimensions(int squareSize, bool maintainAspectRatio,
     }
 }
 
-void MovieDecoder::createAVFrame(AVFrame** avFrame, uint8_t** frameBuffer, int width, int height, PixelFormat format)
+void MovieDecoder::createAVFrame(AVFrame** pAvFrame, uint8_t** pFrameBuffer, int width, int height, PixelFormat format)
 {
-    *avFrame = avcodec_alloc_frame();
+    *pAvFrame = avcodec_alloc_frame();
 
     int numBytes = avpicture_get_size(format, width, height);
-    *frameBuffer = reinterpret_cast<uint8_t*>(av_malloc(numBytes));
-    avpicture_fill((AVPicture*) *avFrame, *frameBuffer, format, width, height);
+    *pFrameBuffer = reinterpret_cast<uint8_t*>(av_malloc(numBytes));
+    avpicture_fill((AVPicture*) *pAvFrame, *pFrameBuffer, format, width, height);
 }
 
 }
+

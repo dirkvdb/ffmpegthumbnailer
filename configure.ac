@@ -19,28 +19,21 @@ AC_CHECK_HEADERS(
     [AC_MSG_ERROR([Missing headers required to compile ffmpegthumbnailer])]
 )
 
-PKG_CHECK_MODULES(  FFMPEG, libavutil libavformat libavcodec libswscale, HAVE_FFMPEG=yes,
-                    AC_MSG_ERROR([ +Could not find ffmpeg (libavutil libavformat libavcodec libswscale) ])
-)
-
-#check if old style include paths for ffmpeg are used on the system
-AC_CHECK_HEADERS(ffmpeg/avcodec.h)
-AC_CHECK_HEADERS(ffmpeg/avformat.h)
-AC_CHECK_HEADERS(ffmpeg/avutil.h)
-AC_CHECK_HEADERS(ffmpeg/swscale.h)
-
-
-#PKG_CHECK_MODULES( PNG, libpng, HAVE_PNG=yes, AC_MSG_ERROR([ +Could not find libpng]) )
-
-AC_SUBST(FFMPEG_CFLAGS)
-AC_SUBST(FFMPEG_LIBS)
-#AC_SUBST(PNG_LIBS)
-
 AC_ARG_WITH(pkgconfigdir,
     AC_HELP_STRING([--with-pkgconfigdir],
     [Use the specified pkgconfig dir (default is libdir/pkgconfig)]),
     [pkgconfigdir=${withval}],
     [pkgconfigdir='${libdir}/pkgconfig'])
+
+#########################################################################
+# Check ffmpeg libraries
+#########################################################################
+PKG_CHECK_MODULES(  FFMPEG, libavutil libavformat libavcodec libswscale, HAVE_FFMPEG=yes,
+                    AC_MSG_ERROR([ +Could not find ffmpeg (libavutil libavformat libavcodec libswscale) ])
+)
+AC_CHECK_LIB(avcodec, avcodec_decode_video2,, AC_MSG_ERROR([ +Your version of libavcodec is too old ]))
+AC_SUBST(FFMPEG_CFLAGS)
+AC_SUBST(FFMPEG_LIBS)
 
 
 ########################################################################
@@ -79,7 +72,9 @@ if test "$enable_jpeg" != "no"; then
 fi
 AM_CONDITIONAL(JPEG, test "$HAVE_JPEG" = "yes")
 
-
+########################################################################
+# Compiler flags
+########################################################################
 CXXFLAGS=-D__STDC_CONSTANT_MACROS
 
 ########################################################################

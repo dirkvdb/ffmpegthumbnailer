@@ -20,6 +20,7 @@
 
 #include "videothumbnailer.h"
 
+#include "histogram.h"
 #include "moviedecoder.h"
 #include "stringoperations.h"
 #include "filmstripfilter.h"
@@ -112,9 +113,9 @@ int timeToSeconds(const std::string& time)
     return (hours * 3600) + (minutes * 60) + seconds;
 }
 
-void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageWriter& imageWriter, AVFormatContext* pavContext)
+void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageWriter& imageWriter, AVFormatContext* pAvContext)
 {
-    MovieDecoder movieDecoder(videoFile, pavContext);
+    MovieDecoder movieDecoder(videoFile, pAvContext);
     movieDecoder.decodeVideoFrame(); //before seeking, a frame has to be decoded
  
     if ((!m_WorkAroundIssues) || (movieDecoder.getCodec() != "h264")) //workaround for bug in older ffmpeg (100% cpu usage when seeking in h264 files)
@@ -176,18 +177,18 @@ void VideoThumbnailer::generateSmartThumbnail(MovieDecoder& movieDecoder, VideoF
     videoFrame = videoFrames[bestFrame];
 }
 
-void VideoThumbnailer::generateThumbnail(const string& videoFile, ThumbnailerImageType type, const string& outputFile, AVFormatContext* pavContext)
+void VideoThumbnailer::generateThumbnail(const string& videoFile, ThumbnailerImageType type, const string& outputFile, AVFormatContext* pAvContext)
 {
     ImageWriter* imageWriter = ImageWriterFactory<const string&>::createImageWriter(type, outputFile);
-    generateThumbnail(videoFile, *imageWriter, pavContext);
+    generateThumbnail(videoFile, *imageWriter, pAvContext);
     delete imageWriter;
 }
 
-void VideoThumbnailer::generateThumbnail(const string& videoFile, ThumbnailerImageType type, vector<uint8_t>& buffer, AVFormatContext* pavContext)
+void VideoThumbnailer::generateThumbnail(const string& videoFile, ThumbnailerImageType type, vector<uint8_t>& buffer, AVFormatContext* pAvContext)
 {
     buffer.clear();
     ImageWriter* imageWriter = ImageWriterFactory<vector<uint8_t>&>::createImageWriter(type, buffer);
-    generateThumbnail(videoFile, *imageWriter, pavContext);
+    generateThumbnail(videoFile, *imageWriter, pAvContext);
     delete imageWriter;
 }
 
@@ -273,18 +274,16 @@ string VideoThumbnailer::getExtension(const string& videoFilename)
     return extension;
 }
 
-void VideoThumbnailer::addFilter(IFilter* filter)
+void VideoThumbnailer::addFilter(IFilter* pFilter)
 {
-    m_Filters.push_back(filter);
+    m_Filters.push_back(pFilter);
 }
 
-void VideoThumbnailer::removeFilter(IFilter* filter)
+void VideoThumbnailer::removeFilter(IFilter* pFilter)
 {
-    for (vector<IFilter*>::iterator iter = m_Filters.begin();
-         iter != m_Filters.end();
-         ++iter)
+    for (vector<IFilter*>::iterator iter = m_Filters.begin(); iter != m_Filters.end(); ++iter)
     {
-        if (*iter == filter)
+        if (*iter == pFilter)
         {
             m_Filters.erase(iter);
             break;
@@ -299,9 +298,7 @@ void VideoThumbnailer::clearFilters()
 
 void VideoThumbnailer::applyFilters(VideoFrame& frameData)
 {
-    for (vector<IFilter*>::iterator iter = m_Filters.begin();
-         iter != m_Filters.end();
-         ++iter)
+    for (vector<IFilter*>::iterator iter = m_Filters.begin(); iter != m_Filters.end(); ++iter)
     {
         (*iter)->process(frameData);
     }
@@ -375,3 +372,4 @@ int VideoThumbnailer::getBestThumbnailIndex(vector<VideoFrame>& videoFrames, con
 }
 
 }
+

@@ -24,7 +24,6 @@
 
 #include "imagetypes.h"
 #include "ifilter.h"
-#include "histogram.h"
 
 struct AVFormatContext;
 
@@ -34,6 +33,8 @@ namespace ffmpegthumbnailer
 struct VideoFrame;
 class ImageWriter;
 class MovieDecoder;
+template <typename T>
+struct Histogram;
 
 class VideoThumbnailer
 {
@@ -42,8 +43,8 @@ public:
     VideoThumbnailer(int thumbnailSize, bool workaroundIssues, bool maintainAspectRatio, int imageQuality, bool smartFrameSelection);
     ~VideoThumbnailer();
 
-    void generateThumbnail(const std::string& videoFile, ThumbnailerImageType type, const std::string& outputFile, AVFormatContext* pavContext = NULL);
-    void generateThumbnail(const std::string& videoFile, ThumbnailerImageType type, std::vector<uint8_t>& buffer, AVFormatContext* pavContext = NULL);
+    void generateThumbnail(const std::string& videoFile, ThumbnailerImageType type, const std::string& outputFile, AVFormatContext* pAvContext = NULL);
+    void generateThumbnail(const std::string& videoFile, ThumbnailerImageType type, std::vector<uint8_t>& buffer, AVFormatContext* pAvContext = NULL);
 
     void setThumbnailSize(int size);
     void setSeekPercentage(int percentage);
@@ -52,12 +53,12 @@ public:
     void setImageQuality(int imageQuality);
     void setMaintainAspectRatio(bool enabled);
     void setSmartFrameSelection(bool enabled);
-    void addFilter(IFilter* filter);
-    void removeFilter(IFilter* filter);
+    void addFilter(IFilter* pFilter);
+    void removeFilter(IFilter* pFilter);
     void clearFilters();
 
 private:
-    void generateThumbnail(const std::string& videoFile, ImageWriter& imageWriter, AVFormatContext* pavContext = NULL);
+    void generateThumbnail(const std::string& videoFile, ImageWriter& imageWriter, AVFormatContext* pAvContext = NULL);
     void generateSmartThumbnail(MovieDecoder& movieDecoder, VideoFrame& videoFrame);
     void writeImage(const std::string& videoFile, ImageWriter& imageWriter, const VideoFrame& videoFrame, int duration, std::vector<uint8_t*>& rowPointers);
 

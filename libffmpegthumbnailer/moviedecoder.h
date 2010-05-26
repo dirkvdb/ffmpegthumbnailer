@@ -21,27 +21,15 @@
 #include <string>
 #include <vector>
 
-#include "videoframe.h"
-
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 extern "C" {
-#if HAVE_FFMPEG_AVCODEC_H
-#include <ffmpeg/avcodec.h>
-#else
 #include <libavcodec/avcodec.h>
-#endif
-#if HAVE_FFMPEG_AVFORMAT_H
-#include <ffmpeg/avformat.h>
-#else
 #include <libavformat/avformat.h>
-#endif
 }
 
 namespace ffmpegthumbnailer
 {
+
+struct VideoFrame;
 
 class MovieDecoder
 {
@@ -67,7 +55,7 @@ private:
     bool decodeVideoPacket();
     bool getVideoPacket();
     void convertAndScaleFrame(PixelFormat format, int scaledSize, bool maintainAspectRatio, int& scaledWidth, int& scaledHeight);
-    void createAVFrame(AVFrame** avFrame, uint8_t** frameBuffer, int width, int height, PixelFormat format);
+    void createAVFrame(AVFrame** pAvFrame, uint8_t** pFrameBuffer, int width, int height, PixelFormat format);
     void calculateDimensions(int squareSize, bool maintainAspectRatio, int& destWidth, int& destHeight);
 
 private:
@@ -86,3 +74,4 @@ private:
 }
 
 #endif
+
