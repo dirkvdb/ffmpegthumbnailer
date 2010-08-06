@@ -1,4 +1,4 @@
-AC_INIT([ffmpegthumbnailer], [2.0.2])
+AC_INIT([ffmpegthumbnailer], [2.0.3])
 AC_CONFIG_SRCDIR([main.cpp])
 AM_INIT_AUTOMAKE
 
@@ -35,11 +35,9 @@ AC_CHECK_LIB(avcodec, avcodec_decode_video2,, AC_MSG_ERROR([ +Your version of li
 AC_SUBST(FFMPEG_CFLAGS)
 AC_SUBST(FFMPEG_LIBS)
 
-
 ########################################################################
 # Check png support
 ########################################################################
-AM_CONDITIONAL(PNG, test "$HAVE_PNG" = "yes")
 AC_ARG_ENABLE(png,
     [  --enable-png            Support png output format],
     [ enable_png=$enableval ] )
@@ -57,7 +55,6 @@ AM_CONDITIONAL(PNG, test "$HAVE_PNG" = "yes")
 ########################################################################
 # Check jpeg support
 ########################################################################
-AM_CONDITIONAL(JPEG, test "$HAVE_JPEG" = "yes")
 AC_ARG_ENABLE(jpeg,
     [  --enable-jpeg           Support jpeg output format],
     [ enable_jpeg=$enableval ] )
@@ -71,6 +68,17 @@ if test "$enable_jpeg" != "no"; then
     fi
 fi
 AM_CONDITIONAL(JPEG, test "$HAVE_JPEG" = "yes")
+
+########################################################################
+# Check gnome-vfs support
+########################################################################
+AC_ARG_ENABLE(gnome-vfs,
+    [  --enable-gnome-vfs      Support for gnome-vfs file uris],
+    [ ENABLE_GNOME_VFS=$enableval ] )
+
+if test "$ENABLE_GNOME_VFS" = "yes"; then
+    AC_DEFINE(HAVE_GNOME_VFS, [], "Gnome-vfs file uri support enabled")
+fi
 
 ########################################################################
 # Compiler flags
@@ -128,6 +136,12 @@ if test "x$HAVE_JPEG" = xyes; then
     echo "jpeg support        : enabled"
 else
     echo "jpeg support        : disabled"
+fi
+
+if test "x$ENABLE_GNOME_VFS" = xyes; then
+    echo "gnome-vfs support   : enabled"
+else
+    echo "gnome-vfs support   : disabled"
 fi
 
 if test "x$ENABLE_UNITTEST" = xyes; then

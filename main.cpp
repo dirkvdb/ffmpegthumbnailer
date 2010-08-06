@@ -23,6 +23,10 @@
 #include <stdexcept>
 #include <stdlib.h>
 
+#ifdef HAVE_GNOME_VFS
+#include <dlfcn.h>
+#endif
+
 #include "libffmpegthumbnailer/videothumbnailer.h"
 #include "libffmpegthumbnailer/stringoperations.h"
 #include "libffmpegthumbnailer/filmstripfilter.h"
@@ -32,6 +36,7 @@ using namespace ffmpegthumbnailer;
 
 void printVersion();
 void printUsage();
+void tryGnomeVfsConvert(std::string& filename);
 ThumbnailerImageType determineImageTypeFromString(const std::string& filename);
 ThumbnailerImageType determineImageTypeFromFilename(const std::string& filename);
 
@@ -120,6 +125,9 @@ int main(int argc, char** argv)
     
     try
     {
+#ifdef HAVE_GNOME_VFS
+        tryGnomeVfsConvert(inputFile);
+#endif
         ThumbnailerImageType imageType = imageFormat.empty() ?
               determineImageTypeFromFilename(outputFile)
             : determineImageTypeFromString(imageFormat);
@@ -198,6 +206,36 @@ ThumbnailerImageType determineImageTypeFromString(const std::string& type)
     
     throw logic_error("Invalid image type specified");
 }
+
+
+#ifdef HAVE_GNOME_VFS
+typedef char* (*PathConvertFunc)(const char*);
+typedef void (*FreeFunc)(void*);
+
+void tryGnomeVfsConvert(std::string& filename)
+{
+    void* gnomeVfsLib = dlopen("libgnomevfs-2.so", RTLD_LAZY);
+    void* gLib = dlopen("libglib-2.0.so", RTLD_LAZY);
+
+    if (gnomeVfsLib && gLib)
+    {
+        PathConvertFunc convFunc = (PathConvertFunc) dlsym(gnomeVfsLib, "gnome_vfs_get_local_path_from_uri");
+        FreeFunc freeFunc = (FreeFunc) dlsym(gLib, "g_free");
+        if (convFunc && freeFunc)
+        {
+            char* pPath = convFunc(filename.c_str());
+            if (pPath)
+            {
+                filename = pPath;
+                freeFunc(pPath);
+            }
+        }
+    }
+
+    if (gLib) dlclose(gLib);
+    if (gnomeVfsLib) dlclose(gnomeVfsLib);
+}
+#endif
 
 ThumbnailerImageType determineImageTypeFromFilename(const std::string& filename)
 {
