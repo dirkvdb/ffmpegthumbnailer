@@ -1,4 +1,4 @@
-AC_INIT([ffmpegthumbnailer], [2.0.3])
+AC_INIT([ffmpegthumbnailer], [2.0.4])
 AC_CONFIG_SRCDIR([main.cpp])
 AM_INIT_AUTOMAKE
 
@@ -77,6 +77,8 @@ AC_ARG_ENABLE(gnome-vfs,
     [ ENABLE_GNOME_VFS=$enableval ] )
 
 if test "$ENABLE_GNOME_VFS" = "yes"; then
+    AC_CHECK_LIB([dl], [dlopen], DL_LIBS="-ldl")
+    AC_SUBST(DL_LIBS)
     AC_DEFINE(HAVE_GNOME_VFS, [], "Gnome-vfs file uri support enabled")
 fi
 
