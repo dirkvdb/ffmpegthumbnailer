@@ -5,6 +5,7 @@
 
 #include "libffmpegthumbnailer/videothumbnailer.h"
 #include "libffmpegthumbnailer/imagetypes.h"
+#include "libffmpegthumbnailer/histogram.h"
 
 using namespace std;
 
