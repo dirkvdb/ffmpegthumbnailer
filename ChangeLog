@@ -1,4 +1,7 @@
 FFmpegThumbnailer
+version 2.0.4
+- Fixed undefined references when compiling with certain LDFLAGS
+
 version 2.0.3
 - Writing to stdout is now supported
 - Support for gnome-vfs uris added. New configure flag (--enable-gnome-vfs),
