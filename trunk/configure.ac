@@ -26,6 +26,27 @@ AC_ARG_WITH(pkgconfigdir,
     [pkgconfigdir='${libdir}/pkgconfig'])
 
 #########################################################################
+# Enable -Wl,--as-needed with GNU ld to prevent overlinking of libraries
+#########################################################################
+AC_ARG_ENABLE([as-needed],
+  AC_HELP_STRING([--disable-as-needed],
+  [Disable overlinking protection]),
+  [enable_as_needed=$enableval], [enable_as_needed=yes])
+
+if test "x$enable_as_needed" != "xno"; then
+  AC_MSG_CHECKING([whether $LD accepts --as-needed])
+  case `$LD --as-needed -v 2>&1 </dev/null` in
+  *GNU* | *'with BFD'*)
+    LDFLAGS="$LDFLAGS -Wl,--as-needed"
+    AC_MSG_RESULT([yes])
+    ;;
+  *)
+    AC_MSG_RESULT([no])
+    ;;
+  esac
+fi
+
+#########################################################################
 # Check ffmpeg libraries
 #########################################################################
 PKG_CHECK_MODULES(  FFMPEG, libavutil libavformat libavcodec libswscale, HAVE_FFMPEG=yes,
