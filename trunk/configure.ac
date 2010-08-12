@@ -91,16 +91,16 @@ fi
 AM_CONDITIONAL(JPEG, test "$HAVE_JPEG" = "yes")
 
 ########################################################################
-# Check gnome-vfs support
+# Check gio support
 ########################################################################
-AC_ARG_ENABLE(gnome-vfs,
-    [  --enable-gnome-vfs      Support for gnome-vfs file uris],
-    [ ENABLE_GNOME_VFS=$enableval ] )
+AC_ARG_ENABLE(gio,
+    [  --enable-gio           Support for gio file uris],
+    [ ENABLE_GIO=$enableval ] )
 
-if test "$ENABLE_GNOME_VFS" = "yes"; then
+if test "$ENABLE_GIO" = "yes"; then
     AC_CHECK_LIB([dl], [dlopen], DL_LIBS="-ldl")
     AC_SUBST(DL_LIBS)
-    AC_DEFINE(HAVE_GNOME_VFS, [], "Gnome-vfs file uri support enabled")
+    AC_DEFINE(HAVE_GIO, [], "gio uri support enabled")
 fi
 
 ########################################################################
@@ -161,10 +161,10 @@ else
     echo "jpeg support        : disabled"
 fi
 
-if test "x$ENABLE_GNOME_VFS" = xyes; then
-    echo "gnome-vfs support   : enabled"
+if test "x$ENABLE_GIO" = xyes; then
+    echo "gio support         : enabled"
 else
-    echo "gnome-vfs support   : disabled"
+    echo "gio support         : disabled"
 fi
 
 if test "x$ENABLE_UNITTEST" = xyes; then
