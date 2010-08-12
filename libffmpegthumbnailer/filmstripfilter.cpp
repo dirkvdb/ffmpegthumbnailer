@@ -70,7 +70,7 @@ void FilmStripFilter::process(VideoFrame& videoFrame)
     int filmHoleIndex = 0;
     int offset = (videoFrame.width * 3) - 3;
  
-    for (uint32_t i = 0; i < videoFrame.height; ++i)
+    for (int32_t i = 0; i < videoFrame.height; ++i)
     {
         for (uint32_t j = 0; j < filmStripWidth * 3; j+=3)
         {

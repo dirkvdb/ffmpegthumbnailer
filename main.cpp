@@ -23,7 +23,7 @@
 #include <stdexcept>
 #include <stdlib.h>
 
-#ifdef HAVE_GNOME_VFS
+#ifdef HAVE_GIO
 #include <dlfcn.h>
 #endif
 
@@ -36,7 +36,7 @@ using namespace ffmpegthumbnailer;
 
 void printVersion();
 void printUsage();
-void tryGnomeVfsConvert(std::string& filename);
+void tryUriConvert(std::string& filename);
 ThumbnailerImageType determineImageTypeFromString(const std::string& filename);
 ThumbnailerImageType determineImageTypeFromFilename(const std::string& filename);
 
@@ -125,8 +125,8 @@ int main(int argc, char** argv)
     
     try
     {
-#ifdef HAVE_GNOME_VFS
-        tryGnomeVfsConvert(inputFile);
+#ifdef HAVE_GIO
+        tryUriConvert(inputFile);
 #endif
         ThumbnailerImageType imageType = imageFormat.empty() ?
               determineImageTypeFromFilename(outputFile)
@@ -208,32 +208,49 @@ ThumbnailerImageType determineImageTypeFromString(const std::string& type)
 }
 
 
-#ifdef HAVE_GNOME_VFS
-typedef char* (*PathConvertFunc)(const char*);
+#ifdef HAVE_GIO
+typedef void* (*FileCreateFunc)(const char*);
+typedef char* (*FileGetFunc)(void* file);
+typedef int (*IsNativeFunc)(void* file);
+typedef void (*InitFunc)(void);
 typedef void (*FreeFunc)(void*);
+typedef void (*UnrefFunc)(void*);
 
-void tryGnomeVfsConvert(std::string& filename)
+void tryUriConvert(std::string& filename)
 {
-    void* gnomeVfsLib = dlopen("libgnomevfs-2.so", RTLD_LAZY);
     void* gLib = dlopen("libglib-2.0.so", RTLD_LAZY);
+    void* gobjectLib = dlopen("libgobject-2.0.so", RTLD_LAZY);
+    void* gioLib = dlopen("libgio-2.0.so", RTLD_LAZY);
 
-    if (gnomeVfsLib && gLib)
-    {
-        PathConvertFunc convFunc = (PathConvertFunc) dlsym(gnomeVfsLib, "gnome_vfs_get_local_path_from_uri");
+    if (gioLib && gLib && gobjectLib)
+    {   
+        FileCreateFunc createFunc = (FileCreateFunc) dlsym(gioLib, "g_file_new_for_uri");
+        IsNativeFunc nativeFunc = (IsNativeFunc) dlsym(gioLib, "g_file_is_native");
+        FileGetFunc getFunc = (FileGetFunc) dlsym(gioLib, "g_file_get_path");
+        InitFunc initFunc = (InitFunc) dlsym(gobjectLib, "g_type_init");
+        UnrefFunc unrefFunc = (UnrefFunc) dlsym(gobjectLib, "g_object_unref");
         FreeFunc freeFunc = (FreeFunc) dlsym(gLib, "g_free");
-        if (convFunc && freeFunc)
+        if (createFunc && nativeFunc && getFunc && freeFunc && initFunc && unrefFunc)
         {
-            char* pPath = convFunc(filename.c_str());
-            if (pPath)
+            initFunc();
+            void* pFile = createFunc(filename.c_str());
+            if (nativeFunc(pFile))
             {
-                filename = pPath;
-                freeFunc(pPath);
+                char* pPath = getFunc(pFile);
+                if (pPath)
+                {
+                    filename = pPath;
+                    freeFunc(pPath);
+                }
             }
+
+            unrefFunc(pFile);
         }
     }
 
+    if (gioLib) dlclose(gioLib);
+    if (gobjectLib) dlclose(gobjectLib);
     if (gLib) dlclose(gLib);
-    if (gnomeVfsLib) dlclose(gnomeVfsLib);
 }
 #endif
 
