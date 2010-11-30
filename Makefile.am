@@ -38,7 +38,7 @@ nobase_include_HEADERS =    libffmpegthumbnailer/videothumbnailer.h \
 
 libffmpegthumbnailer_includedir         = $(includedir)/libffmpegthumbnailer
 libffmpegthumbnailer_la_CXXFLAGS        = $(AM_CXXFLAGS) $(FFMPEG_CFLAGS) $(PNG_CFLAGS)
-libffmpegthumbnailer_la_LDFLAGS         = -version-info 4:4:0
+libffmpegthumbnailer_la_LDFLAGS         = -version-info 4:5:0
 libffmpegthumbnailer_la_LIBADD          = $(DL_LIBS) $(FFMPEG_LIBS) $(PNG_LIBS) $(JPEG_LIBS)
 
 bin_PROGRAMS = ffmpegthumbnailer
