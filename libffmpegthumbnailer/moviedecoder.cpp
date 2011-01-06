@@ -63,11 +63,13 @@ void MovieDecoder::initialize(const string& filename)
 
     if ((!m_FormatContextWasGiven) && av_open_input_file(&m_pFormatContext, inputFile.c_str(), NULL, 0, NULL) != 0)
     {
+		destroy();
         throw logic_error(string("Could not open input file: ") + filename);
     }
 
     if (av_find_stream_info(m_pFormatContext) < 0)
     {
+		destroy();
         throw logic_error(string("Could not find stream information"));
     }
 
