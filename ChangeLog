@@ -1,4 +1,7 @@
 FFmpegThumbnailer
+version 2.0.6
+- Fixed memory leak
+
 version 2.0.5
 - New default linker flags
 - Use gio in stead of obsolete gnome-vfs for file uris
