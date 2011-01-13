@@ -104,9 +104,9 @@ if test "$ENABLE_GIO" = "yes"; then
 fi
 
 ########################################################################
-# Compiler flags
+# Preprocessor flags
 ########################################################################
-CXXFLAGS=-D__STDC_CONSTANT_MACROS
+CPPFLAGS="$CPPFLAGS -D__STDC_CONSTANT_MACROS"
 
 ########################################################################
 # Check debug mode
@@ -118,7 +118,7 @@ AC_ARG_ENABLE(debug,
 AM_CONDITIONAL(DEBUG, test "$enable_debug" = "yes")
 if test "$DEBUG" = "yes"; then
     AC_DEFINE(ENABLE_DEBUG, [], "Enable debug mode")
-    CXXFLAGS+=" -g -O1 -Wall -Werror -Wfatal-errors"
+    CXXFLAGS="$CXXFLAGS -g -O1 -Wall -Werror -Wfatal-errors"
 fi
 
 AC_ARG_ENABLE(unittests,
