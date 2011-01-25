@@ -49,7 +49,7 @@ PngWriter::PngWriter(std::vector<uint8_t>& outputBuffer)
 , m_InfoPtr(NULL)
 {
     init();
-    png_set_write_fn(m_PngPtr, (voidp) &outputBuffer, writeDataCallback, NULL);
+    png_set_write_fn(m_PngPtr, (png_voidp) &outputBuffer, writeDataCallback, NULL);
 }
 
 PngWriter::~PngWriter()
