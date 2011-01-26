@@ -24,6 +24,7 @@
 #include <cstring>
 
 extern "C" {
+#include <libavutil/opt.h>
 #include <libswscale/swscale.h>
 }
 
@@ -330,6 +331,37 @@ void MovieDecoder::getScaledVideoFrame(int scaledSize, bool maintainAspectRatio,
 void MovieDecoder::convertAndScaleFrame(PixelFormat format, int scaledSize, bool maintainAspectRatio, int& scaledWidth, int& scaledHeight)
 {
     calculateDimensions(scaledSize, maintainAspectRatio, scaledWidth, scaledHeight);
+
+#ifdef BLUBLIBLUBLABLA
+	// Enable this when it hits the released ffmpeg version
+    SwsContext* scaleContext = sws_alloc_context();
+    if (scaleContext == NULL)
+    {
+		throw std::logic_error("Failed to allocate scale context");
+	}
+	
+	av_set_int(scaleContext, "srcw", m_pVideoCodecContext->width);
+    av_set_int(scaleContext, "srch", m_pVideoCodecContext->height);
+    av_set_int(scaleContext, "src_format", m_pVideoCodecContext->pix_fmt);
+    av_set_int(scaleContext, "dstw", scaledWidth);
+    av_set_int(scaleContext, "dsth", scaledHeight);
+    av_set_int(scaleContext, "dst_format", format);
+	av_set_int(scaleContext, "sws_flags", SWS_BICUBIC);
+	
+	const int* coeff = sws_getCoefficients(SWS_CS_DEFAULT);
+    if (sws_setColorspaceDetails(scaleContext, coeff, m_pVideoCodecContext->pix_fmt, coeff, format, 0, 1<<16, 1<<16) < 0)
+    {
+		sws_freeContext(scaleContext);
+		throw std::logic_error("Failed to set colorspace details");
+	}
+
+	if (sws_init_context(scaleContext, NULL, NULL) < 0)
+	{
+		sws_freeContext(scaleContext);
+		throw std::logic_error("Failed to initialise scale context");
+	}
+#endif
+    
     SwsContext* scaleContext = sws_getContext(m_pVideoCodecContext->width, m_pVideoCodecContext->height,
                                               m_pVideoCodecContext->pix_fmt, scaledWidth, scaledHeight,
                                               format, SWS_BICUBIC, NULL, NULL, NULL);
