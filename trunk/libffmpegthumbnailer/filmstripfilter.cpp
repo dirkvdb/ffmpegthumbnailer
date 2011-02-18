@@ -17,6 +17,8 @@
 #include "filmstripfilter.h"
 #include "filmstrip.h"
 
+#include <cstddef>
+
 namespace ffmpegthumbnailer
 {
 
