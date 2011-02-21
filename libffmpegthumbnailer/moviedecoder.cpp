@@ -24,7 +24,9 @@
 #include <cstring>
 
 extern "C" {
+#ifdef LATEST_GREATEST_FFMPEG	
 #include <libavutil/opt.h>
+#endif
 #include <libswscale/swscale.h>
 }
 
@@ -332,7 +334,7 @@ void MovieDecoder::convertAndScaleFrame(PixelFormat format, int scaledSize, bool
 {
     calculateDimensions(scaledSize, maintainAspectRatio, scaledWidth, scaledHeight);
 
-#ifdef BLUBLIBLUBLABLA
+#ifdef LATEST_GREATEST_FFMPEG
 	// Enable this when it hits the released ffmpeg version
     SwsContext* scaleContext = sws_alloc_context();
     if (scaleContext == NULL)
