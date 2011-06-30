@@ -130,7 +130,11 @@ void MovieDecoder::initializeVideo()
 {
     for (unsigned int i = 0; i < m_pFormatContext->nb_streams; ++i)
     {
+#if LIBAVCODEC_VERSION_MAJOR < 53
         if (m_pFormatContext->streams[i]->codec->codec_type == CODEC_TYPE_VIDEO)
+#else
+        if (m_pFormatContext->streams[i]->codec->codec_type == AVMEDIA_TYPE_AUDIO)
+#endif
         {
             m_pVideoStream = m_pFormatContext->streams[i];
             m_VideoStream = i;
