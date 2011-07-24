@@ -130,7 +130,7 @@ if test "$ENABLE_UNITTEST" = "yes"; then
     [gtest/gtest.h],,
     [AC_MSG_ERROR([Missing gtest library, install the google unittest framework])])
 
-    UNITTEST_LIBS="$(gtest-config --libs)"
+    UNITTEST_LIBS="-lgtest"
     AC_SUBST(UNITTEST_LIBS)
 fi
 AM_CONDITIONAL(ENABLE_UNITTEST, test "$enable_unittests" = "yes")
