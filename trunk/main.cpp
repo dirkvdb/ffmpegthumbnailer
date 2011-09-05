@@ -243,10 +243,18 @@ void tryUriConvert(std::string& filename)
                     freeFunc(pPath);
                 }
             }
+            else
+            {
+				cerr << "Not a native file, thumbnailing will likely fail" << endl;
+			}
 
             unrefFunc(pFile);
         }
     }
+    else
+    {
+		cerr << "Failed to load gio libraries" << endl;
+	}
 
     if (gioLib) dlclose(gioLib);
     if (gobjectLib) dlclose(gobjectLib);
