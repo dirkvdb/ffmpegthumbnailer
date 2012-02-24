@@ -58,19 +58,26 @@ MovieDecoder::~MovieDecoder()
 void MovieDecoder::initialize(const string& filename)
 {
     av_register_all();
-    avcodec_init();
     avcodec_register_all();
 
     string inputFile = filename == "-" ? "pipe:" : filename;
     m_AllowSeek = (filename != "-") && (filename.find("rtsp://") != 0);
-
+    
+#if LIBAVCODEC_VERSION_MAJOR < 53
     if ((!m_FormatContextWasGiven) && av_open_input_file(&m_pFormatContext, inputFile.c_str(), NULL, 0, NULL) != 0)
+#else
+	if ((!m_FormatContextWasGiven) && avformat_open_input(&m_pFormatContext, inputFile.c_str(), NULL, NULL) != 0)
+#endif
     {
 		destroy();
         throw logic_error(string("Could not open input file: ") + filename);
     }
 
+#if LIBAVCODEC_VERSION_MAJOR < 53
     if (av_find_stream_info(m_pFormatContext) < 0)
+#else
+	if (avformat_find_stream_info(m_pFormatContext, NULL) < 0)
+#endif
     {
 		destroy();
         throw logic_error(string("Could not find stream information"));
@@ -90,8 +97,12 @@ void MovieDecoder::destroy()
 
     if ((!m_FormatContextWasGiven) && m_pFormatContext)
     {
+#if LIBAVCODEC_VERSION_MAJOR < 53
         av_close_input_file(m_pFormatContext);
         m_pFormatContext = NULL;
+#else
+        avformat_close_input(&m_pFormatContext);
+#endif
     }
 
     if (m_pPacket)
@@ -159,7 +170,11 @@ void MovieDecoder::initializeVideo()
 
     m_pVideoCodecContext->workaround_bugs = 1;
 
+#if LIBAVCODEC_VERSION_MAJOR < 53
     if (avcodec_open(m_pVideoCodecContext, m_pVideoCodec) < 0)
+#else
+	if (avcodec_open2(m_pVideoCodecContext, m_pVideoCodec, NULL) < 0)
+#endif
     {
         throw logic_error("Could not open video codec");
     }
