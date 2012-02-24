@@ -49,8 +49,8 @@ fi
 #########################################################################
 # Check ffmpeg libraries
 #########################################################################
-PKG_CHECK_MODULES(  FFMPEG, libavutil libavformat libavcodec libswscale, HAVE_FFMPEG=yes,
-                    AC_MSG_ERROR([ +Could not find ffmpeg (libavutil libavformat libavcodec libswscale) ])
+PKG_CHECK_MODULES(FFMPEG, libavutil libavformat libavcodec libswscale, HAVE_FFMPEG=yes,
+                  AC_MSG_ERROR([ +Could not find ffmpeg (libavutil libavformat libavcodec libswscale) ])
 )
 AC_CHECK_LIB(avcodec, avcodec_decode_video2,, AC_MSG_ERROR([ +Your version of libavcodec is too old ]))
 AC_SUBST(FFMPEG_CFLAGS)
