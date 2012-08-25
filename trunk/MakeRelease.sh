@@ -2,6 +2,7 @@
 
 project="ffmpegthumbnailer"
 password=$1
+option=$2
 
 if [ "$password" == "" ]
 then
@@ -25,7 +26,7 @@ builddir="out-$version"
 rm -rf $builddir
 mkdir -p $builddir
 cd $builddir
-../configure --enable-unittests --enable-silent-rules --enable-as-needed
+../configure --enable-unittests --enable-silent-rules --enable-as-needed --enable-thumbnailer
 if [ $? != 0 ]
 then
 	echo "Configure failed"
@@ -54,6 +55,12 @@ then
 fi
 
 cd ..
+
+if [ "$option" == "noupload" ]
+then
+    echo "Skipping upload"
+	exit 0
+fi
 
 #upload archive to google
 python2 googlecode_upload.py -s "Release $version" -p $project -u dirk.vdb -w $password -l "Featured,Type-Source,OpSys-Linux" $builddir/$project-$version.tar.gz
