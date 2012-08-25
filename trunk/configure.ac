@@ -1,4 +1,4 @@
-AC_INIT([ffmpegthumbnailer], [2.0.7])
+AC_INIT([ffmpegthumbnailer], [2.0.8])
 AC_CONFIG_SRCDIR([main.cpp])
 AM_INIT_AUTOMAKE
 
@@ -49,10 +49,7 @@ fi
 #########################################################################
 # Check ffmpeg libraries
 #########################################################################
-PKG_CHECK_MODULES(FFMPEG, libavutil libavformat libavcodec libswscale, HAVE_FFMPEG=yes,
-                  AC_MSG_ERROR([ +Could not find ffmpeg (libavutil libavformat libavcodec libswscale) ])
-)
-AC_CHECK_LIB(avcodec, avcodec_decode_video2,, AC_MSG_ERROR([ +Your version of libavcodec is too old ]))
+PKG_CHECK_MODULES(FFMPEG, libavutil libavformat [libavcodec >= 52.26.0] libswscale, HAVE_FFMPEG=yes)
 AC_SUBST(FFMPEG_CFLAGS)
 AC_SUBST(FFMPEG_LIBS)
 
@@ -104,6 +101,19 @@ if test "$ENABLE_GIO" = "yes"; then
 fi
 
 ########################################################################
+# Check thumbnailer support
+########################################################################
+AC_ARG_ENABLE(thumbnailer,
+    [  --enable-thumbnailer   Register ffmpegthumbnailer as thumbnailer],
+    [ ENABLE_THUMBNAILER=$enableval ] )
+
+#if test "$ENABLE_THUMBNAILER" = "yes"; then
+#    AC_DEFINE(REGISTER_THUMBNAILER, [], "thumbnailer support enabled")
+#fi
+
+AM_CONDITIONAL(ENABLE_THUMBNAILER, test "$ENABLE_THUMBNAILER" = "yes")
+
+########################################################################
 # Preprocessor flags
 ########################################################################
 CPPFLAGS="$CPPFLAGS -D__STDC_CONSTANT_MACROS"
@@ -150,33 +160,39 @@ echo
 echo "CONFIGURATION SUMMARY ----"
 
 if test "x$HAVE_PNG" = xyes; then
-    echo "png support         : enabled"
+    echo "png support          : enabled"
 else
-    echo "png support         : disabled"
+    echo "png support          : disabled"
 fi
 
 if test "x$HAVE_JPEG" = xyes; then
-    echo "jpeg support        : enabled"
+    echo "jpeg support         : enabled"
 else
-    echo "jpeg support        : disabled"
+    echo "jpeg support         : disabled"
 fi
 
 if test "x$ENABLE_GIO" = xyes; then
-    echo "gio support         : enabled"
+    echo "gio support          : enabled"
 else
-    echo "gio support         : disabled"
+    echo "gio support          : disabled"
+fi
+
+if test "x$ENABLE_THUMBNAILER" = xyes; then
+    echo "register thumbnailer : enabled"
+else
+    echo "register thumbnailer : disabled"
 fi
 
 if test "x$ENABLE_UNITTEST" = xyes; then
-    echo "unittests           : enabled"
+    echo "unittests            : enabled"
 else
-    echo "unittests           : disabled"
+    echo "unittests            : disabled"
 fi
 
 if test "x$DEBUG" = xyes; then
-    echo "debug mode          : enabled"
+    echo "debug mode           : enabled"
 else
-    echo "debug mode          : disabled"
+    echo "debug mode           : disabled"
 fi
 
 

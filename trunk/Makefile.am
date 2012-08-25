@@ -38,7 +38,7 @@ nobase_include_HEADERS =    libffmpegthumbnailer/videothumbnailer.h \
 
 libffmpegthumbnailer_includedir         = $(includedir)/libffmpegthumbnailer
 libffmpegthumbnailer_la_CXXFLAGS        = $(AM_CXXFLAGS) $(FFMPEG_CFLAGS) $(PNG_CFLAGS)
-libffmpegthumbnailer_la_LDFLAGS         = -version-info 4:7:0
+libffmpegthumbnailer_la_LDFLAGS         = -version-info 4:8:0
 libffmpegthumbnailer_la_LIBADD          = $(FFMPEG_LIBS) $(PNG_LIBS) $(JPEG_LIBS)
 
 bin_PROGRAMS = ffmpegthumbnailer
@@ -59,6 +59,12 @@ testrunner_SOURCES =    unittest/testrunner.cpp \
 testrunner_CXXFLAGS =   $(AM_CXXFLAGS) '-DTEST_DATADIR="$(top_srcdir)/unittest"'
 testrunner_LDFLAGS  =   libffmpegthumbnailer.la
 testrunner_LDADD    =   $(UNITTEST_LIBS)
+
+if ENABLE_THUMBNAILER
+thumbnailerdir		=	$(datadir)/thumbnailers
+thumbnailer_DATA	= 	dist/ffmpegthumbnailer.thumbnailer
+EXTRA_DIST			= 	$(thumbnailer_DATA)
+endif
 
 pkgconfigdir = @pkgconfigdir@
 pkgconfig_DATA = libffmpegthumbnailer.pc

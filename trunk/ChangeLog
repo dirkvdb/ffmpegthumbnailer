@@ -1,4 +1,8 @@
-FFmpegThumbnailer
+FFmpegThumbnailer 2.0.8
+- Better ffmpeg detection
+- Fix build issue with recent ffmpeg
+- Optionally register ffmpegthumbnailer as gnome3 thumbnailer (--enable-thumbnailer)
+
 version 2.0.7
 - Fix build issue with recent gcc
 - Fix build issue with recent ffmpeg
