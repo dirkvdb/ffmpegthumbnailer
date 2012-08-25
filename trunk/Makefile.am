@@ -63,8 +63,9 @@ testrunner_LDADD    =   $(UNITTEST_LIBS)
 if ENABLE_THUMBNAILER
 thumbnailerdir		=	$(datadir)/thumbnailers
 thumbnailer_DATA	= 	dist/ffmpegthumbnailer.thumbnailer
-EXTRA_DIST			= 	$(thumbnailer_DATA)
 endif
+
+EXTRA_DIST			= 	$(thumbnailer_DATA)
 
 pkgconfigdir = @pkgconfigdir@
 pkgconfig_DATA = libffmpegthumbnailer.pc
