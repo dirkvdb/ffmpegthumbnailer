@@ -1,0 +1,127 @@
+FFmpegThumbnailer 2.0.8
+- Better ffmpeg detection
+- Fix build issue with recent ffmpeg
+- Optionally register ffmpegthumbnailer as gnome3 thumbnailer (--enable-thumbnailer)
+
+version 2.0.7
+- Fix build issue with recent gcc
+- Fix build issue with recent ffmpeg
+
+version 2.0.6
+- Fixed memory leak
+
+version 2.0.5
+- New default linker flags
+- Use gio in stead of obsolete gnome-vfs for file uris
+
+version 2.0.4
+- Fixed undefined references when compiling with certain LDFLAGS
+
+version 2.0.3
+- Writing to stdout is now supported
+- Support for gnome-vfs uris added. New configure flag (--enable-gnome-vfs),
+this puts a runtime dependancy on libgnome-vfs-2.0
+
+version 2.0.2
+- Fixed compilation error against latest ffmpeg
+- Size of the filmstrip overlay is dependant on thumbnail size
+
+version 2.0.1
+- Setting the thumbnail size to 0 will use the original video size (thanks to John Fremlin)
+- Fix for video files containing lots of audio packets before a video packet
+- Fixed libs pkgconfig file (thanks to magnus.tuominen)
+
+version 2.0.0
+- Fixed some issues in package-config file (Thanks to ambrop7)
+- C++ library has been put in a namespace
+- C library functions have been renamed
+
+version 1.5.6
+- Fixed segmentation fault when seek in video file fails
+- Command line option added to specify output format of the image regardless of the filename
+- Fixed memory leak in MovieDecoder (thanks to Ulrich Völkel)
+
+version 1.5.5
+- Fixed build issue with certain versions of autoconf
+- Fixed build issue with recent versions of gcc
+- Fixed thumbnail generation for ogm files
+- Fixed ffmpegthumbnailer hanging on certain filetypes caused by AVFMT_FLAG_GENPTS flag of video decoder
+
+version 1.5.4
+- Fixed support for large files
+
+version 1.5.3
+- Memory alignment fix causing segmentation in ffmpeg with altivec enabled
+
+version 1.5.2
+- Fixed soname version
+
+version 1.5.1
+- Optional compilation of jpeg and png support
+- Fixed ffmpeg CFLAGS issue (causing compilation errors on Fedora)
+- Fixed build error against latest ffmpeg (verified against ffmpeg revision 18769)
+- Fixed missing include files for library usage (thanks to gustavo.boiko)
+
+version 1.5.0
+- Aspect ratio bug fix (Thanks to S. Eguchi)
+- Support input files from stdin (will ignore seek time)
+- Fixed build error against latest ffmpeg (verified against ffmpeg release 0.5)
+
+version 1.4.0
+- Filter support added that allows library users to implement filters that will be applied to the frame data
+- Fixed compilation error with gcc 4.4
+
+version 1.3.0
+- Option added to ignore aspect ratio and generate square thumbnails
+- Quality option added for jpeg thumbnails
+- Man page added (thanks to Lionel Le Folgoc)
+- Added option to seek to absolute time in stead of percentage
+
+version 1.2.6
+- Fixed seeking in large files due to integer overflow (Thanks to AWaters1)
+- Fixed possible linker error (Thanks to pressh)
+
+version 1.2.5
+- Fixed crash when thumbnailing raw avi files
+
+version 1.2.4
+- Fixed missing includes when compiling with gcc 4.3 (thanks to Samuli Suominen)
+
+version 1.2.3
+- ffmegthumbnailer now compiles against latest ffmpeg revisions (thanks to Alexis Ballier)
+
+version 1.2.2
+- Fixed linker errors when using certain ldflags
+
+version 1.2.1
+- Fixed compilation error in c interface when compiled with c compiler
+- Error handling added to c interface
+
+version 1.2.0
+- Option to output files in jpeg
+- ffmpegthumbnailer can now be accessed as a library (libffmpegthumbnailer) by other applications
+
+version 1.1.5
+- Support for large files (files larger than 2Gb)
+- Seeking in h264 files is enabled again, use -w option from commandline to disable this if you have 100% cpu usage (using older versions of ffmpeg)
+- Give up reading packets from a file after a number of attempts to avoid a hanging ffmpegthumbnailer for certain file types (noticed on h264 and ac3 in vob container)
+
+version 1.1.4
+- License information added to source files
+
+version 1.1.3
+- Use PkgConfig for ffmpeg to avoid build problems
+
+version 1.1.2
+- Fixed compilation error when using latest ffmpeg (thanks to Samuli Suominen)
+
+version 1.1.1
+- Fixed compilation error when using latest ffmpeg
+- Disabled seeking in h264 files, because this causes 100% CPU usage in ffmpeglib (workaround)
+
+version 1.1
+- Updated command line argument parser
+- Possibility to add a movie strip overlay
+
+version 1.0
+- Initial release of the FFmpegThumbnailer

@@ -1,0 +1,11 @@
+Basic Installation
+==================
+
+kffmpegthumbnailer requires the ffmpegthumbnailer library to be installed on your system.
+
+In the source directory execute the following commands:
+cmake . -DCMAKE_INSTALL_PREFIX=`kde4-config --prefix`
+make
+sudo make install
+
+kffmpegthumbnailer should now appear in the list of available previewers

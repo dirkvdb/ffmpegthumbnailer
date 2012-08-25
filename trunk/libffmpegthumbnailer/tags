@@ -1,0 +1,657 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+BufferWriter	jpegwriter.cpp	/^struct BufferWriter$/;"	s	namespace:ffmpegthumbnailer	file:
+FILMHOLE_HEIGHT	filmstripfilter.cpp	/^static const int FILMHOLE_HEIGHT = 10;$/;"	m	namespace:ffmpegthumbnailer	file:
+FILMHOLE_WIDTH	filmstripfilter.cpp	/^static const int FILMHOLE_WIDTH = 12;$/;"	m	namespace:ffmpegthumbnailer	file:
+FILMSTRIPFILTER_H	filmstripfilter.h	18;"	d
+FilmStripFilter	filmstripfilter.h	/^class FilmStripFilter : public IFilter$/;"	c	namespace:ffmpegthumbnailer	inherits:IFilter
+GRAYSCALEFILTER_H	grayscalefilter.h	18;"	d
+GrayScaleFilter	grayscalefilter.h	/^class GrayScaleFilter : public IFilter$/;"	c	namespace:ffmpegthumbnailer	inherits:IFilter
+HISTOGRAM_H	histogram.h	18;"	d
+Histogram	histogram.h	/^    Histogram()$/;"	f	struct:ffmpegthumbnailer::Histogram	access:public	signature:()
+Histogram	histogram.h	/^struct Histogram$/;"	s	namespace:ffmpegthumbnailer
+IFILTER_H	ifilter.h	18;"	d
+IFilter	ifilter.h	/^class IFilter$/;"	c	namespace:ffmpegthumbnailer
+IMAGE_TYPES_H	imagetypes.h	18;"	d
+IMAGE_WRITER_FACTORY_H	imagewriterfactory.h	18;"	d
+IMAGE_WRITER_H	imagewriter.h	18;"	d
+ImageWriter	imagewriter.h	/^    ImageWriter() {}$/;"	f	class:ffmpegthumbnailer::ImageWriter	access:public	signature:()
+ImageWriter	imagewriter.h	/^class ImageWriter$/;"	c	namespace:ffmpegthumbnailer
+ImageWriterFactory	imagewriterfactory.h	/^class ImageWriterFactory$/;"	c	namespace:ffmpegthumbnailer
+JPEG_WORK_BUFFER_SIZE	jpegwriter.cpp	/^const static int JPEG_WORK_BUFFER_SIZE = 8192;$/;"	m	namespace:ffmpegthumbnailer	file:
+JPEG_WRITER_H	jpegwriter.h	18;"	d
+Jpeg	imagetypes.h	/^    Jpeg,$/;"	e	enum:ThumbnailerImageTypeEnum
+JpegWriter	jpegwriter.cpp	/^JpegWriter::JpegWriter(const string& outputFile)$/;"	f	class:ffmpegthumbnailer::JpegWriter	signature:(const string& outputFile)
+JpegWriter	jpegwriter.cpp	/^JpegWriter::JpegWriter(std::vector<uint8_t>& outputBuffer)$/;"	f	class:ffmpegthumbnailer::JpegWriter	signature:(std::vector<uint8_t>& outputBuffer)
+JpegWriter	jpegwriter.h	/^    JpegWriter(const std::string& outputFile);$/;"	p	class:ffmpegthumbnailer::JpegWriter	access:public	signature:(const std::string& outputFile)
+JpegWriter	jpegwriter.h	/^    JpegWriter(std::vector<uint8_t>& outputBuffer);$/;"	p	class:ffmpegthumbnailer::JpegWriter	access:public	signature:(std::vector<uint8_t>& outputBuffer)
+JpegWriter	jpegwriter.h	/^class JpegWriter : public ImageWriter$/;"	c	namespace:ffmpegthumbnailer	inherits:ImageWriter
+MOVIEDECODER_H	moviedecoder.h	18;"	d
+MovieDecoder	moviedecoder.cpp	/^MovieDecoder::MovieDecoder(const string& filename, AVFormatContext* pavContext)$/;"	f	class:ffmpegthumbnailer::MovieDecoder	signature:(const string& filename, AVFormatContext* pavContext)
+MovieDecoder	moviedecoder.h	/^    MovieDecoder(const std::string& filename, AVFormatContext* pavContext = NULL);$/;"	p	class:ffmpegthumbnailer::MovieDecoder	access:public	signature:(const std::string& filename, AVFormatContext* pavContext = NULL)
+MovieDecoder	moviedecoder.h	/^class MovieDecoder$/;"	c	namespace:ffmpegthumbnailer
+PNG_WRITER_H	pngwriter.h	18;"	d
+Png	imagetypes.h	/^    Png,$/;"	e	enum:ThumbnailerImageTypeEnum
+PngWriter	pngwriter.cpp	/^PngWriter::PngWriter(const string& outputFile)$/;"	f	class:ffmpegthumbnailer::PngWriter	signature:(const string& outputFile)
+PngWriter	pngwriter.cpp	/^PngWriter::PngWriter(std::vector<uint8_t>& outputBuffer)$/;"	f	class:ffmpegthumbnailer::PngWriter	signature:(std::vector<uint8_t>& outputBuffer)
+PngWriter	pngwriter.h	/^	PngWriter(const std::string& outputFile);$/;"	p	class:ffmpegthumbnailer::PngWriter	access:public	signature:(const std::string& outputFile)
+PngWriter	pngwriter.h	/^    PngWriter(std::vector<uint8_t>& outputBuffer);$/;"	p	class:ffmpegthumbnailer::PngWriter	access:public	signature:(std::vector<uint8_t>& outputBuffer)
+PngWriter	pngwriter.h	/^class PngWriter : public ImageWriter$/;"	c	namespace:ffmpegthumbnailer	inherits:ImageWriter
+SMART_FRAME_ATTEMPTS	videothumbnailer.cpp	/^static const int SMART_FRAME_ATTEMPTS = 25;$/;"	m	namespace:ffmpegthumbnailer	file:
+STRING_OPERATIONS_H	stringoperations.h	18;"	d
+StringOperations	stringoperations.h	/^class StringOperations$/;"	c	namespace:ffmpegthumbnailer
+ThumbnailerImageType	imagetypes.h	/^} ThumbnailerImageType;$/;"	t	typeref:enum:ThumbnailerImageTypeEnum
+ThumbnailerImageTypeEnum	imagetypes.h	/^typedef enum ThumbnailerImageTypeEnum$/;"	g
+ToLower	stringoperations.h	/^    class ToLower$/;"	c	class:ffmpegthumbnailer::StringOperations	access:private
+Unknown	imagetypes.h	/^    Unknown$/;"	e	enum:ThumbnailerImageTypeEnum
+VIDEOFRAME_H	videoframe.h	18;"	d
+VIDEO_THUMBNAILERC_H	videothumbnailerc.h	18;"	d
+VIDEO_THUMBNAILER_H	videothumbnailer.h	18;"	d
+VideoFrame	videoframe.h	/^    VideoFrame()$/;"	f	struct:ffmpegthumbnailer::VideoFrame	access:public	signature:()
+VideoFrame	videoframe.h	/^    VideoFrame(int width, int height, int lineSize)$/;"	f	struct:ffmpegthumbnailer::VideoFrame	access:public	signature:(int width, int height, int lineSize)
+VideoFrame	videoframe.h	/^struct VideoFrame$/;"	s	namespace:ffmpegthumbnailer
+VideoThumbnailer	videothumbnailer.cpp	/^VideoThumbnailer::VideoThumbnailer()$/;"	f	class:ffmpegthumbnailer::VideoThumbnailer	signature:()
+VideoThumbnailer	videothumbnailer.cpp	/^VideoThumbnailer::VideoThumbnailer(int thumbnailSize, bool workaroundIssues, bool maintainAspectRatio, int imageQuality, bool smartFrameSelection)$/;"	f	class:ffmpegthumbnailer::VideoThumbnailer	signature:(int thumbnailSize, bool workaroundIssues, bool maintainAspectRatio, int imageQuality, bool smartFrameSelection)
+VideoThumbnailer	videothumbnailer.h	/^    VideoThumbnailer();$/;"	p	class:ffmpegthumbnailer::VideoThumbnailer	access:public	signature:()
+VideoThumbnailer	videothumbnailer.h	/^    VideoThumbnailer(int thumbnailSize, bool workaroundIssues, bool maintainAspectRatio, int imageQuality, bool smartFrameSelection);$/;"	p	class:ffmpegthumbnailer::VideoThumbnailer	access:public	signature:(int thumbnailSize, bool workaroundIssues, bool maintainAspectRatio, int imageQuality, bool smartFrameSelection)
+VideoThumbnailer	videothumbnailer.h	/^class VideoThumbnailer$/;"	c	namespace:ffmpegthumbnailer
+addFilter	videothumbnailer.cpp	/^void VideoThumbnailer::addFilter(IFilter* filter)$/;"	f	class:ffmpegthumbnailer::VideoThumbnailer	signature:(IFilter* filter)
+addFilter	videothumbnailer.h	/^    void addFilter(IFilter* filter);$/;"	p	class:ffmpegthumbnailer::VideoThumbnailer	access:public	signature:(IFilter* filter)
+applyFilters	videothumbnailer.cpp	/^void VideoThumbnailer::applyFilters(VideoFrame& frameData)$/;"	f	class:ffmpegthumbnailer::VideoThumbnailer	signature:(VideoFrame& frameData)
+applyFilters	videothumbnailer.h	/^    void applyFilters(VideoFrame& frameData);$/;"	p	class:ffmpegthumbnailer::VideoThumbnailer	access:private	signature:(VideoFrame& frameData)
+ascpectDenominator	moviedecoder.cpp	/^        int ascpectDenominator  = m_pVideoCodecContext->sample_aspect_ratio.den;$/;"	l
+ascpectNominator	moviedecoder.cpp	/^        int ascpectNominator    = m_pVideoCodecContext->sample_aspect_ratio.num;$/;"	l
+attempts	moviedecoder.cpp	/^    int attempts = 0;$/;"	l
+av_format_context	videothumbnailerc.h	/^    struct AVFormatContext* av_format_context;      \/* default = NULL *\/$/;"	m	struct:video_thumbnailer_struct	typeref:struct:video_thumbnailer_struct::AVFormatContext	access:public
+avgHistogram	videothumbnailer.cpp	/^    Histogram<float> avgHistogram;$/;"	l
+b	histogram.h	/^    T b[256];$/;"	m	struct:ffmpegthumbnailer::Histogram	access:public
+bestFrame	videothumbnailer.cpp	/^    int bestFrame = -1;$/;"	l
+bestFrame	videothumbnailer.cpp	/^    int bestFrame = getBestThumbnailIndex(videoFrames, histograms);$/;"	l
+bufWriter	jpegwriter.cpp	/^    BufferWriter* bufWriter = reinterpret_cast<BufferWriter*>(pCompressionInfo->dest);$/;"	l
+bytesDecoded	moviedecoder.cpp	/^    int bytesDecoded = avcodec_decode_video(m_pVideoCodecContext, m_pFrame, &frameFinished, m_pPacket->data, m_pPacket->size);$/;"	l
+bytesDecoded	moviedecoder.cpp	/^    int bytesDecoded = avcodec_decode_video2(m_pVideoCodecContext, m_pFrame, &frameFinished, m_pPacket);$/;"	l
+calculateDimensions	moviedecoder.cpp	/^void MovieDecoder::calculateDimensions(int squareSize, bool maintainAspectRatio, int& destWidth, int& destHeight)$/;"	f	class:ffmpegthumbnailer::MovieDecoder	signature:(int squareSize, bool maintainAspectRatio, int& destWidth, int& destHeight)
+calculateDimensions	moviedecoder.h	/^    void calculateDimensions(int squareSize, bool maintainAspectRatio, int& destWidth, int& destHeight);$/;"	p	class:ffmpegthumbnailer::MovieDecoder	access:private	signature:(int squareSize, bool maintainAspectRatio, int& destWidth, int& destHeight)
+clear	moviedecoder.cpp	/^    videoFrame.frameData.clear();$/;"	p	file:	signature:()
+clear	videothumbnailer.cpp	/^    buffer.clear();$/;"	p	file:	signature:()
+clear	videothumbnailer.cpp	/^    m_Filters.clear();$/;"	p	file:	signature:()
+clear	videothumbnailer.cpp	/^    m_SeekTime.clear();$/;"	p	file:	signature:()
+clearFilters	videothumbnailer.cpp	/^void VideoThumbnailer::clearFilters()$/;"	f	class:ffmpegthumbnailer::VideoThumbnailer	signature:()
+clearFilters	videothumbnailer.h	/^    void clearFilters();$/;"	p	class:ffmpegthumbnailer::VideoThumbnailer	access:public	signature:()
+convertAndScaleFrame	moviedecoder.cpp	/^void MovieDecoder::convertAndScaleFrame(PixelFormat format, int scaledSize, bool maintainAspectRatio, int& scaledWidth, int& scaledHeight)$/;"	f	class:ffmpegthumbnailer::MovieDecoder	signature:(PixelFormat format, int scaledSize, bool maintainAspectRatio, int& scaledWidth, int& scaledHeight)
+convertAndScaleFrame	moviedecoder.h	/^    void convertAndScaleFrame(PixelFormat format, int scaledSize, bool maintainAspectRatio, int& scaledWidth, int& scaledHeight);$/;"	p	class:ffmpegthumbnailer::MovieDecoder	access:private	signature:(PixelFormat format, int scaledSize, bool maintainAspectRatio, int& scaledWidth, int& scaledHeight)
+convertedFrame	moviedecoder.cpp	/^    AVFrame* convertedFrame = NULL;$/;"	l
+convertedFrameBuffer	moviedecoder.cpp	/^    uint8_t* convertedFrameBuffer = NULL;$/;"	l
+count	moviedecoder.cpp	/^        int count = 0;$/;"	l
+createAVFrame	moviedecoder.cpp	/^void MovieDecoder::createAVFrame(AVFrame** avFrame, uint8_t** frameBuffer, int width, int height, PixelFormat format)$/;"	f	class:ffmpegthumbnailer::MovieDecoder	signature:(AVFrame** avFrame, uint8_t** frameBuffer, int width, int height, PixelFormat format)
+createAVFrame	moviedecoder.h	/^    void createAVFrame(AVFrame** avFrame, uint8_t** frameBuffer, int width, int height, PixelFormat format);$/;"	p	class:ffmpegthumbnailer::MovieDecoder	access:private	signature:(AVFrame** avFrame, uint8_t** frameBuffer, int width, int height, PixelFormat format)
+createImageWriter	imagewriterfactory.h	/^    static ImageWriter* createImageWriter(ThumbnailerImageType imageType, T output)$/;"	f	class:ffmpegthumbnailer::ImageWriterFactory	access:public	signature:(ThumbnailerImageType imageType, T output)
+currentFilmHoleIndex	filmstripfilter.cpp	/^            int currentFilmHoleIndex = filmHoleIndex + j;$/;"	l
+data	videothumbnailerc.cpp	/^    image_data* data        = new image_data();$/;"	l
+dataVector	videothumbnailerc.cpp	/^        std::vector<uint8_t>* dataVector    = reinterpret_cast<std::vector<uint8_t>* >(generated_image_data->internal_data);$/;"	l
+dataVector	videothumbnailerc.cpp	/^    std::vector<uint8_t>* dataVector = reinterpret_cast<std::vector<uint8_t>* >(data->internal_data);$/;"	l
+datacount	jpegwriter.cpp	/^    size_t datacount = JPEG_WORK_BUFFER_SIZE - bufWriter->m_DestMgr.free_in_buffer;$/;"	l
+decodeVideoFrame	moviedecoder.cpp	/^void MovieDecoder::decodeVideoFrame()$/;"	f	class:ffmpegthumbnailer::MovieDecoder	signature:()
+decodeVideoFrame	moviedecoder.h	/^    void decodeVideoFrame();$/;"	p	class:ffmpegthumbnailer::MovieDecoder	access:public	signature:()
+decodeVideoFrame	videothumbnailer.cpp	/^        movieDecoder.decodeVideoFrame();$/;"	p	file:	signature:()
+decodeVideoFrame	videothumbnailer.cpp	/^    movieDecoder.decodeVideoFrame(); \/\/before seeking, a frame has to be decoded$/;"	p	file:	signature:()
+decodeVideoPacket	moviedecoder.cpp	/^bool MovieDecoder::decodeVideoPacket()$/;"	f	class:ffmpegthumbnailer::MovieDecoder	signature:()
+decodeVideoPacket	moviedecoder.h	/^    bool decodeVideoPacket();$/;"	p	class:ffmpegthumbnailer::MovieDecoder	access:private	signature:()
+destroy	moviedecoder.cpp	/^void MovieDecoder::destroy()$/;"	f	class:ffmpegthumbnailer::MovieDecoder	signature:()
+destroy	moviedecoder.h	/^    void destroy();$/;"	p	class:ffmpegthumbnailer::MovieDecoder	access:public	signature:()
+dos2unix	stringoperations.cpp	/^string& StringOperations::dos2unix(string& line)$/;"	f	class:ffmpegthumbnailer::StringOperations	signature:(string& line)
+dos2unix	stringoperations.h	/^    static std::string& dos2unix(std::string& line);$/;"	p	class:ffmpegthumbnailer::StringOperations	access:public	signature:(std::string& line)
+endl	videothumbnailer.cpp	/^        outputFile << "frames\/Frame" << setfill('0') << setw(3) << i << "_" << rmse << endl;$/;"	l
+endl	videothumbnailer.cpp	/^    cout << "Best frame was: " << bestFrame << "(RMSE: " << minRMSE << ")" << endl;$/;"	l
+erase	stringoperations.cpp	/^        line.erase(pos, 1);$/;"	p	file:	signature:(pos, 1)
+erase	videothumbnailer.cpp	/^            m_Filters.erase(iter);$/;"	p	file:	signature:(iter)
+error	videothumbnailer.cpp	/^            float error = fabsf(avgHistogram.r[j] - histograms[i].r[j])$/;"	l
+extension	videothumbnailer.cpp	/^    string extension = getExtension(videoFile);$/;"	l
+extension	videothumbnailer.cpp	/^    string extension;$/;"	l
+ffmpegthumbnailer	filmstripfilter.cpp	/^namespace ffmpegthumbnailer$/;"	n	file:
+ffmpegthumbnailer	filmstripfilter.h	/^namespace ffmpegthumbnailer$/;"	n
+ffmpegthumbnailer	grayscalefilter.h	/^namespace ffmpegthumbnailer$/;"	n
+ffmpegthumbnailer	histogram.h	/^namespace ffmpegthumbnailer$/;"	n
+ffmpegthumbnailer	ifilter.h	/^namespace ffmpegthumbnailer$/;"	n
+ffmpegthumbnailer	imagewriter.h	/^namespace ffmpegthumbnailer$/;"	n
+ffmpegthumbnailer	imagewriterfactory.h	/^namespace ffmpegthumbnailer$/;"	n
+ffmpegthumbnailer	jpegwriter.cpp	/^namespace ffmpegthumbnailer$/;"	n	file:
+ffmpegthumbnailer	jpegwriter.h	/^namespace ffmpegthumbnailer$/;"	n
+ffmpegthumbnailer	moviedecoder.cpp	/^namespace ffmpegthumbnailer$/;"	n	file:
+ffmpegthumbnailer	moviedecoder.h	/^namespace ffmpegthumbnailer$/;"	n
+ffmpegthumbnailer	pngwriter.cpp	/^namespace ffmpegthumbnailer$/;"	n	file:
+ffmpegthumbnailer	pngwriter.h	/^namespace ffmpegthumbnailer$/;"	n
+ffmpegthumbnailer	stringoperations.cpp	/^namespace ffmpegthumbnailer$/;"	n	file:
+ffmpegthumbnailer	stringoperations.h	/^namespace ffmpegthumbnailer$/;"	n
+ffmpegthumbnailer	videoframe.h	/^namespace ffmpegthumbnailer$/;"	n
+ffmpegthumbnailer	videothumbnailer.cpp	/^namespace ffmpegthumbnailer$/;"	n	file:
+ffmpegthumbnailer	videothumbnailer.h	/^namespace ffmpegthumbnailer$/;"	n
+ffmpegthumbnailer::BufferWriter	jpegwriter.cpp	/^struct BufferWriter$/;"	s	namespace:ffmpegthumbnailer	file:
+ffmpegthumbnailer::BufferWriter::m_DestMgr	jpegwriter.cpp	/^    jpeg_destination_mgr    m_DestMgr;$/;"	m	struct:ffmpegthumbnailer::BufferWriter	file:	access:public
+ffmpegthumbnailer::BufferWriter::m_pDataBuffer	jpegwriter.cpp	/^    uint8_t*                m_pDataBuffer;$/;"	m	struct:ffmpegthumbnailer::BufferWriter	file:	access:public
+ffmpegthumbnailer::BufferWriter::m_pDataSink	jpegwriter.cpp	/^    std::vector<uint8_t>*   m_pDataSink;$/;"	m	struct:ffmpegthumbnailer::BufferWriter	file:	access:public
+ffmpegthumbnailer::FILMHOLE_HEIGHT	filmstripfilter.cpp	/^static const int FILMHOLE_HEIGHT = 10;$/;"	m	namespace:ffmpegthumbnailer	file:
+ffmpegthumbnailer::FILMHOLE_WIDTH	filmstripfilter.cpp	/^static const int FILMHOLE_WIDTH = 12;$/;"	m	namespace:ffmpegthumbnailer	file:
+ffmpegthumbnailer::FilmStripFilter	filmstripfilter.h	/^class FilmStripFilter : public IFilter$/;"	c	namespace:ffmpegthumbnailer	inherits:IFilter
+ffmpegthumbnailer::FilmStripFilter::process	filmstripfilter.cpp	/^void FilmStripFilter::process(VideoFrame& videoFrame)$/;"	f	class:ffmpegthumbnailer::FilmStripFilter	signature:(VideoFrame& videoFrame)
+ffmpegthumbnailer::FilmStripFilter::process	filmstripfilter.h	/^    void process(VideoFrame& videoFrame);$/;"	p	class:ffmpegthumbnailer::FilmStripFilter	access:public	signature:(VideoFrame& videoFrame)
+ffmpegthumbnailer::GrayScaleFilter	grayscalefilter.h	/^class GrayScaleFilter : public IFilter$/;"	c	namespace:ffmpegthumbnailer	inherits:IFilter
+ffmpegthumbnailer::GrayScaleFilter::grayValue	grayscalefilter.h	/^                uint8_t grayValue = (  videoFrame.frameData[pixelIndex]$/;"	l
+ffmpegthumbnailer::GrayScaleFilter::pixelIndex	grayscalefilter.h	/^                int pixelIndex = (i * videoFrame.lineSize) + (j * 3);$/;"	l
+ffmpegthumbnailer::GrayScaleFilter::process	grayscalefilter.h	/^    void process(VideoFrame& videoFrame)$/;"	f	class:ffmpegthumbnailer::GrayScaleFilter	access:public	signature:(VideoFrame& videoFrame)
+ffmpegthumbnailer::Histogram	histogram.h	/^struct Histogram$/;"	s	namespace:ffmpegthumbnailer
+ffmpegthumbnailer::Histogram::Histogram	histogram.h	/^    Histogram()$/;"	f	struct:ffmpegthumbnailer::Histogram	access:public	signature:()
+ffmpegthumbnailer::Histogram::b	histogram.h	/^    T b[256];$/;"	m	struct:ffmpegthumbnailer::Histogram	access:public
+ffmpegthumbnailer::Histogram::g	histogram.h	/^    T g[256];$/;"	m	struct:ffmpegthumbnailer::Histogram	access:public
+ffmpegthumbnailer::Histogram::r	histogram.h	/^    T r[256];$/;"	m	struct:ffmpegthumbnailer::Histogram	access:public
+ffmpegthumbnailer::IFilter	ifilter.h	/^class IFilter$/;"	c	namespace:ffmpegthumbnailer
+ffmpegthumbnailer::IFilter::process	ifilter.h	/^    virtual void process(VideoFrame& frameData) = 0;$/;"	p	class:ffmpegthumbnailer::IFilter	access:public	signature:(VideoFrame& frameData)
+ffmpegthumbnailer::ImageWriter	imagewriter.h	/^class ImageWriter$/;"	c	namespace:ffmpegthumbnailer
+ffmpegthumbnailer::ImageWriter::ImageWriter	imagewriter.h	/^    ImageWriter() {}$/;"	f	class:ffmpegthumbnailer::ImageWriter	access:public	signature:()
+ffmpegthumbnailer::ImageWriter::setText	imagewriter.h	/^	virtual void setText(const std::string& key, const std::string& value) = 0;$/;"	p	class:ffmpegthumbnailer::ImageWriter	access:public	signature:(const std::string& key, const std::string& value)
+ffmpegthumbnailer::ImageWriter::writeFrame	imagewriter.h	/^	virtual void writeFrame(uint8_t** rgbData, int width, int height, int quality) = 0;$/;"	p	class:ffmpegthumbnailer::ImageWriter	access:public	signature:(uint8_t** rgbData, int width, int height, int quality)
+ffmpegthumbnailer::ImageWriter::~ImageWriter	imagewriter.h	/^    virtual ~ImageWriter() {}$/;"	f	class:ffmpegthumbnailer::ImageWriter	access:public	signature:()
+ffmpegthumbnailer::ImageWriterFactory	imagewriterfactory.h	/^class ImageWriterFactory$/;"	c	namespace:ffmpegthumbnailer
+ffmpegthumbnailer::ImageWriterFactory::createImageWriter	imagewriterfactory.h	/^    static ImageWriter* createImageWriter(ThumbnailerImageType imageType, T output)$/;"	f	class:ffmpegthumbnailer::ImageWriterFactory	access:public	signature:(ThumbnailerImageType imageType, T output)
+ffmpegthumbnailer::JPEG_WORK_BUFFER_SIZE	jpegwriter.cpp	/^const static int JPEG_WORK_BUFFER_SIZE = 8192;$/;"	m	namespace:ffmpegthumbnailer	file:
+ffmpegthumbnailer::JpegWriter	jpegwriter.h	/^class JpegWriter : public ImageWriter$/;"	c	namespace:ffmpegthumbnailer	inherits:ImageWriter
+ffmpegthumbnailer::JpegWriter::JpegWriter	jpegwriter.cpp	/^JpegWriter::JpegWriter(const string& outputFile)$/;"	f	class:ffmpegthumbnailer::JpegWriter	signature:(const string& outputFile)
+ffmpegthumbnailer::JpegWriter::JpegWriter	jpegwriter.cpp	/^JpegWriter::JpegWriter(std::vector<uint8_t>& outputBuffer)$/;"	f	class:ffmpegthumbnailer::JpegWriter	signature:(std::vector<uint8_t>& outputBuffer)
+ffmpegthumbnailer::JpegWriter::JpegWriter	jpegwriter.h	/^    JpegWriter(const std::string& outputFile);$/;"	p	class:ffmpegthumbnailer::JpegWriter	access:public	signature:(const std::string& outputFile)
+ffmpegthumbnailer::JpegWriter::JpegWriter	jpegwriter.h	/^    JpegWriter(std::vector<uint8_t>& outputBuffer);$/;"	p	class:ffmpegthumbnailer::JpegWriter	access:public	signature:(std::vector<uint8_t>& outputBuffer)
+ffmpegthumbnailer::JpegWriter::init	jpegwriter.cpp	/^void JpegWriter::init()$/;"	f	class:ffmpegthumbnailer::JpegWriter	signature:()
+ffmpegthumbnailer::JpegWriter::init	jpegwriter.h	/^    void init();$/;"	p	class:ffmpegthumbnailer::JpegWriter	access:private	signature:()
+ffmpegthumbnailer::JpegWriter::m_Compression	jpegwriter.h	/^    jpeg_compress_struct    m_Compression;$/;"	m	class:ffmpegthumbnailer::JpegWriter	access:private
+ffmpegthumbnailer::JpegWriter::m_ErrorHandler	jpegwriter.h	/^    jpeg_error_mgr          m_ErrorHandler;$/;"	m	class:ffmpegthumbnailer::JpegWriter	access:private
+ffmpegthumbnailer::JpegWriter::m_pBufferWriter	jpegwriter.h	/^    BufferWriter*           m_pBufferWriter;$/;"	m	class:ffmpegthumbnailer::JpegWriter	access:private
+ffmpegthumbnailer::JpegWriter::m_pFile	jpegwriter.h	/^    FILE*                   m_pFile;$/;"	m	class:ffmpegthumbnailer::JpegWriter	access:private
+ffmpegthumbnailer::JpegWriter::setText	jpegwriter.cpp	/^void JpegWriter::setText(const string& \/*key*\/, const string& \/*value*\/)$/;"	f	class:ffmpegthumbnailer::JpegWriter	signature:(const string& , const string& )
+ffmpegthumbnailer::JpegWriter::setText	jpegwriter.h	/^    void setText(const std::string& key, const std::string& value);$/;"	p	class:ffmpegthumbnailer::JpegWriter	access:public	signature:(const std::string& key, const std::string& value)
+ffmpegthumbnailer::JpegWriter::writeFrame	jpegwriter.cpp	/^void JpegWriter::writeFrame(uint8_t** rgbData, int width, int height, int quality)$/;"	f	class:ffmpegthumbnailer::JpegWriter	signature:(uint8_t** rgbData, int width, int height, int quality)
+ffmpegthumbnailer::JpegWriter::writeFrame	jpegwriter.h	/^    void writeFrame(uint8_t** rgbData, int width, int height, int quality);$/;"	p	class:ffmpegthumbnailer::JpegWriter	access:public	signature:(uint8_t** rgbData, int width, int height, int quality)
+ffmpegthumbnailer::JpegWriter::~JpegWriter	jpegwriter.cpp	/^JpegWriter::~JpegWriter()$/;"	f	class:ffmpegthumbnailer::JpegWriter	signature:()
+ffmpegthumbnailer::JpegWriter::~JpegWriter	jpegwriter.h	/^    ~JpegWriter();$/;"	p	class:ffmpegthumbnailer::JpegWriter	access:public	signature:()
+ffmpegthumbnailer::MovieDecoder	moviedecoder.h	/^class MovieDecoder$/;"	c	namespace:ffmpegthumbnailer
+ffmpegthumbnailer::MovieDecoder::MovieDecoder	moviedecoder.cpp	/^MovieDecoder::MovieDecoder(const string& filename, AVFormatContext* pavContext)$/;"	f	class:ffmpegthumbnailer::MovieDecoder	signature:(const string& filename, AVFormatContext* pavContext)
+ffmpegthumbnailer::MovieDecoder::MovieDecoder	moviedecoder.h	/^    MovieDecoder(const std::string& filename, AVFormatContext* pavContext = NULL);$/;"	p	class:ffmpegthumbnailer::MovieDecoder	access:public	signature:(const std::string& filename, AVFormatContext* pavContext = NULL)
+ffmpegthumbnailer::MovieDecoder::calculateDimensions	moviedecoder.cpp	/^void MovieDecoder::calculateDimensions(int squareSize, bool maintainAspectRatio, int& destWidth, int& destHeight)$/;"	f	class:ffmpegthumbnailer::MovieDecoder	signature:(int squareSize, bool maintainAspectRatio, int& destWidth, int& destHeight)
+ffmpegthumbnailer::MovieDecoder::calculateDimensions	moviedecoder.h	/^    void calculateDimensions(int squareSize, bool maintainAspectRatio, int& destWidth, int& destHeight);$/;"	p	class:ffmpegthumbnailer::MovieDecoder	access:private	signature:(int squareSize, bool maintainAspectRatio, int& destWidth, int& destHeight)
+ffmpegthumbnailer::MovieDecoder::convertAndScaleFrame	moviedecoder.cpp	/^void MovieDecoder::convertAndScaleFrame(PixelFormat format, int scaledSize, bool maintainAspectRatio, int& scaledWidth, int& scaledHeight)$/;"	f	class:ffmpegthumbnailer::MovieDecoder	signature:(PixelFormat format, int scaledSize, bool maintainAspectRatio, int& scaledWidth, int& scaledHeight)
+ffmpegthumbnailer::MovieDecoder::convertAndScaleFrame	moviedecoder.h	/^    void convertAndScaleFrame(PixelFormat format, int scaledSize, bool maintainAspectRatio, int& scaledWidth, int& scaledHeight);$/;"	p	class:ffmpegthumbnailer::MovieDecoder	access:private	signature:(PixelFormat format, int scaledSize, bool maintainAspectRatio, int& scaledWidth, int& scaledHeight)
+ffmpegthumbnailer::MovieDecoder::createAVFrame	moviedecoder.cpp	/^void MovieDecoder::createAVFrame(AVFrame** avFrame, uint8_t** frameBuffer, int width, int height, PixelFormat format)$/;"	f	class:ffmpegthumbnailer::MovieDecoder	signature:(AVFrame** avFrame, uint8_t** frameBuffer, int width, int height, PixelFormat format)
+ffmpegthumbnailer::MovieDecoder::createAVFrame	moviedecoder.h	/^    void createAVFrame(AVFrame** avFrame, uint8_t** frameBuffer, int width, int height, PixelFormat format);$/;"	p	class:ffmpegthumbnailer::MovieDecoder	access:private	signature:(AVFrame** avFrame, uint8_t** frameBuffer, int width, int height, PixelFormat format)
+ffmpegthumbnailer::MovieDecoder::decodeVideoFrame	moviedecoder.cpp	/^void MovieDecoder::decodeVideoFrame()$/;"	f	class:ffmpegthumbnailer::MovieDecoder	signature:()
+ffmpegthumbnailer::MovieDecoder::decodeVideoFrame	moviedecoder.h	/^    void decodeVideoFrame();$/;"	p	class:ffmpegthumbnailer::MovieDecoder	access:public	signature:()
+ffmpegthumbnailer::MovieDecoder::decodeVideoPacket	moviedecoder.cpp	/^bool MovieDecoder::decodeVideoPacket()$/;"	f	class:ffmpegthumbnailer::MovieDecoder	signature:()
+ffmpegthumbnailer::MovieDecoder::decodeVideoPacket	moviedecoder.h	/^    bool decodeVideoPacket();$/;"	p	class:ffmpegthumbnailer::MovieDecoder	access:private	signature:()
+ffmpegthumbnailer::MovieDecoder::destroy	moviedecoder.cpp	/^void MovieDecoder::destroy()$/;"	f	class:ffmpegthumbnailer::MovieDecoder	signature:()
+ffmpegthumbnailer::MovieDecoder::destroy	moviedecoder.h	/^    void destroy();$/;"	p	class:ffmpegthumbnailer::MovieDecoder	access:public	signature:()
+ffmpegthumbnailer::MovieDecoder::getCodec	moviedecoder.cpp	/^string MovieDecoder::getCodec()$/;"	f	class:ffmpegthumbnailer::MovieDecoder	signature:()
+ffmpegthumbnailer::MovieDecoder::getCodec	moviedecoder.h	/^    std::string getCodec();$/;"	p	class:ffmpegthumbnailer::MovieDecoder	access:public	signature:()
+ffmpegthumbnailer::MovieDecoder::getDuration	moviedecoder.cpp	/^int MovieDecoder::getDuration()$/;"	f	class:ffmpegthumbnailer::MovieDecoder	signature:()
+ffmpegthumbnailer::MovieDecoder::getDuration	moviedecoder.h	/^    int getDuration();$/;"	p	class:ffmpegthumbnailer::MovieDecoder	access:public	signature:()
+ffmpegthumbnailer::MovieDecoder::getHeight	moviedecoder.cpp	/^int MovieDecoder::getHeight()$/;"	f	class:ffmpegthumbnailer::MovieDecoder	signature:()
+ffmpegthumbnailer::MovieDecoder::getHeight	moviedecoder.h	/^    int getHeight();$/;"	p	class:ffmpegthumbnailer::MovieDecoder	access:public	signature:()
+ffmpegthumbnailer::MovieDecoder::getScaledVideoFrame	moviedecoder.cpp	/^void MovieDecoder::getScaledVideoFrame(int scaledSize, bool maintainAspectRatio, VideoFrame& videoFrame)$/;"	f	class:ffmpegthumbnailer::MovieDecoder	signature:(int scaledSize, bool maintainAspectRatio, VideoFrame& videoFrame)
+ffmpegthumbnailer::MovieDecoder::getScaledVideoFrame	moviedecoder.h	/^    void getScaledVideoFrame(int scaledSize, bool maintainAspectRatio, VideoFrame& videoFrame);$/;"	p	class:ffmpegthumbnailer::MovieDecoder	access:public	signature:(int scaledSize, bool maintainAspectRatio, VideoFrame& videoFrame)
+ffmpegthumbnailer::MovieDecoder::getVideoPacket	moviedecoder.cpp	/^bool MovieDecoder::getVideoPacket()$/;"	f	class:ffmpegthumbnailer::MovieDecoder	signature:()
+ffmpegthumbnailer::MovieDecoder::getVideoPacket	moviedecoder.h	/^    bool getVideoPacket();$/;"	p	class:ffmpegthumbnailer::MovieDecoder	access:private	signature:()
+ffmpegthumbnailer::MovieDecoder::getWidth	moviedecoder.cpp	/^int MovieDecoder::getWidth()$/;"	f	class:ffmpegthumbnailer::MovieDecoder	signature:()
+ffmpegthumbnailer::MovieDecoder::getWidth	moviedecoder.h	/^    int getWidth();$/;"	p	class:ffmpegthumbnailer::MovieDecoder	access:public	signature:()
+ffmpegthumbnailer::MovieDecoder::initialize	moviedecoder.cpp	/^void MovieDecoder::initialize(const string& filename)$/;"	f	class:ffmpegthumbnailer::MovieDecoder	signature:(const string& filename)
+ffmpegthumbnailer::MovieDecoder::initialize	moviedecoder.h	/^    void initialize(const std::string& filename);$/;"	p	class:ffmpegthumbnailer::MovieDecoder	access:public	signature:(const std::string& filename)
+ffmpegthumbnailer::MovieDecoder::initializeVideo	moviedecoder.cpp	/^void MovieDecoder::initializeVideo()$/;"	f	class:ffmpegthumbnailer::MovieDecoder	signature:()
+ffmpegthumbnailer::MovieDecoder::initializeVideo	moviedecoder.h	/^    void initializeVideo();$/;"	p	class:ffmpegthumbnailer::MovieDecoder	access:private	signature:()
+ffmpegthumbnailer::MovieDecoder::m_AllowSeek	moviedecoder.h	/^    bool                    m_AllowSeek;$/;"	m	class:ffmpegthumbnailer::MovieDecoder	access:private
+ffmpegthumbnailer::MovieDecoder::m_FormatContextWasGiven	moviedecoder.h	/^    bool                    m_FormatContextWasGiven;$/;"	m	class:ffmpegthumbnailer::MovieDecoder	access:private
+ffmpegthumbnailer::MovieDecoder::m_VideoStream	moviedecoder.h	/^    int                     m_VideoStream;$/;"	m	class:ffmpegthumbnailer::MovieDecoder	access:private
+ffmpegthumbnailer::MovieDecoder::m_pFormatContext	moviedecoder.h	/^    AVFormatContext*        m_pFormatContext;$/;"	m	class:ffmpegthumbnailer::MovieDecoder	access:private
+ffmpegthumbnailer::MovieDecoder::m_pFrame	moviedecoder.h	/^    AVFrame*                m_pFrame;$/;"	m	class:ffmpegthumbnailer::MovieDecoder	access:private
+ffmpegthumbnailer::MovieDecoder::m_pFrameBuffer	moviedecoder.h	/^    uint8_t*                m_pFrameBuffer;$/;"	m	class:ffmpegthumbnailer::MovieDecoder	access:private
+ffmpegthumbnailer::MovieDecoder::m_pPacket	moviedecoder.h	/^    AVPacket*               m_pPacket;$/;"	m	class:ffmpegthumbnailer::MovieDecoder	access:private
+ffmpegthumbnailer::MovieDecoder::m_pVideoCodec	moviedecoder.h	/^    AVCodec*                m_pVideoCodec;$/;"	m	class:ffmpegthumbnailer::MovieDecoder	access:private
+ffmpegthumbnailer::MovieDecoder::m_pVideoCodecContext	moviedecoder.h	/^    AVCodecContext*         m_pVideoCodecContext;$/;"	m	class:ffmpegthumbnailer::MovieDecoder	access:private
+ffmpegthumbnailer::MovieDecoder::m_pVideoStream	moviedecoder.h	/^    AVStream*               m_pVideoStream;$/;"	m	class:ffmpegthumbnailer::MovieDecoder	access:private
+ffmpegthumbnailer::MovieDecoder::seek	moviedecoder.cpp	/^void MovieDecoder::seek(int timeInSeconds)$/;"	f	class:ffmpegthumbnailer::MovieDecoder	signature:(int timeInSeconds)
+ffmpegthumbnailer::MovieDecoder::seek	moviedecoder.h	/^    void seek(int timeInSeconds);$/;"	p	class:ffmpegthumbnailer::MovieDecoder	access:public	signature:(int timeInSeconds)
+ffmpegthumbnailer::MovieDecoder::~MovieDecoder	moviedecoder.cpp	/^MovieDecoder::~MovieDecoder()$/;"	f	class:ffmpegthumbnailer::MovieDecoder	signature:()
+ffmpegthumbnailer::MovieDecoder::~MovieDecoder	moviedecoder.h	/^    ~MovieDecoder();$/;"	p	class:ffmpegthumbnailer::MovieDecoder	access:public	signature:()
+ffmpegthumbnailer::PngWriter	pngwriter.h	/^class PngWriter : public ImageWriter$/;"	c	namespace:ffmpegthumbnailer	inherits:ImageWriter
+ffmpegthumbnailer::PngWriter::PngWriter	pngwriter.cpp	/^PngWriter::PngWriter(const string& outputFile)$/;"	f	class:ffmpegthumbnailer::PngWriter	signature:(const string& outputFile)
+ffmpegthumbnailer::PngWriter::PngWriter	pngwriter.cpp	/^PngWriter::PngWriter(std::vector<uint8_t>& outputBuffer)$/;"	f	class:ffmpegthumbnailer::PngWriter	signature:(std::vector<uint8_t>& outputBuffer)
+ffmpegthumbnailer::PngWriter::PngWriter	pngwriter.h	/^	PngWriter(const std::string& outputFile);$/;"	p	class:ffmpegthumbnailer::PngWriter	access:public	signature:(const std::string& outputFile)
+ffmpegthumbnailer::PngWriter::PngWriter	pngwriter.h	/^    PngWriter(std::vector<uint8_t>& outputBuffer);$/;"	p	class:ffmpegthumbnailer::PngWriter	access:public	signature:(std::vector<uint8_t>& outputBuffer)
+ffmpegthumbnailer::PngWriter::init	pngwriter.cpp	/^void PngWriter::init()$/;"	f	class:ffmpegthumbnailer::PngWriter	signature:()
+ffmpegthumbnailer::PngWriter::init	pngwriter.h	/^    void init();$/;"	p	class:ffmpegthumbnailer::PngWriter	access:private	signature:()
+ffmpegthumbnailer::PngWriter::m_FilePtr	pngwriter.h	/^	FILE* 		            m_FilePtr;$/;"	m	class:ffmpegthumbnailer::PngWriter	access:private
+ffmpegthumbnailer::PngWriter::m_InfoPtr	pngwriter.h	/^	png_infop 	            m_InfoPtr;$/;"	m	class:ffmpegthumbnailer::PngWriter	access:private
+ffmpegthumbnailer::PngWriter::m_PngPtr	pngwriter.h	/^	png_structp             m_PngPtr;$/;"	m	class:ffmpegthumbnailer::PngWriter	access:private
+ffmpegthumbnailer::PngWriter::setText	pngwriter.cpp	/^void PngWriter::setText(const string& key, const string& value)$/;"	f	class:ffmpegthumbnailer::PngWriter	signature:(const string& key, const string& value)
+ffmpegthumbnailer::PngWriter::setText	pngwriter.h	/^	void setText(const std::string& key, const std::string& value);$/;"	p	class:ffmpegthumbnailer::PngWriter	access:public	signature:(const std::string& key, const std::string& value)
+ffmpegthumbnailer::PngWriter::writeFrame	pngwriter.cpp	/^void PngWriter::writeFrame(uint8_t** rgbData, int width, int height, int \/*quality*\/)$/;"	f	class:ffmpegthumbnailer::PngWriter	signature:(uint8_t** rgbData, int width, int height, int )
+ffmpegthumbnailer::PngWriter::writeFrame	pngwriter.h	/^	void writeFrame(uint8_t** rgbData, int width, int height, int quality);$/;"	p	class:ffmpegthumbnailer::PngWriter	access:public	signature:(uint8_t** rgbData, int width, int height, int quality)
+ffmpegthumbnailer::PngWriter::~PngWriter	pngwriter.cpp	/^PngWriter::~PngWriter()$/;"	f	class:ffmpegthumbnailer::PngWriter	signature:()
+ffmpegthumbnailer::PngWriter::~PngWriter	pngwriter.h	/^	~PngWriter();$/;"	p	class:ffmpegthumbnailer::PngWriter	access:public	signature:()
+ffmpegthumbnailer::SMART_FRAME_ATTEMPTS	videothumbnailer.cpp	/^static const int SMART_FRAME_ATTEMPTS = 25;$/;"	m	namespace:ffmpegthumbnailer	file:
+ffmpegthumbnailer::StringOperations	stringoperations.h	/^class StringOperations$/;"	c	namespace:ffmpegthumbnailer
+ffmpegthumbnailer::StringOperations::ToLower	stringoperations.h	/^    class ToLower$/;"	c	class:ffmpegthumbnailer::StringOperations	access:private
+ffmpegthumbnailer::StringOperations::ToLower::operator ()	stringoperations.h	/^        char operator() (char c) const$/;"	f	class:ffmpegthumbnailer::StringOperations::ToLower	access:public	signature:(char c) const
+ffmpegthumbnailer::StringOperations::dos2unix	stringoperations.cpp	/^string& StringOperations::dos2unix(string& line)$/;"	f	class:ffmpegthumbnailer::StringOperations	signature:(string& line)
+ffmpegthumbnailer::StringOperations::dos2unix	stringoperations.h	/^    static std::string& dos2unix(std::string& line);$/;"	p	class:ffmpegthumbnailer::StringOperations	access:public	signature:(std::string& line)
+ffmpegthumbnailer::StringOperations::lowercase	stringoperations.cpp	/^string& StringOperations::lowercase(string& aString)$/;"	f	class:ffmpegthumbnailer::StringOperations	signature:(string& aString)
+ffmpegthumbnailer::StringOperations::lowercase	stringoperations.h	/^    static std::string& lowercase(std::string& aString);$/;"	p	class:ffmpegthumbnailer::StringOperations	access:public	signature:(std::string& aString)
+ffmpegthumbnailer::StringOperations::numeric	stringoperations.h	/^        ss << numeric;$/;"	l
+ffmpegthumbnailer::StringOperations::replace	stringoperations.cpp	/^string& StringOperations::replace(string& aString, const string& toSearch, const string& toReplace)$/;"	f	class:ffmpegthumbnailer::StringOperations	signature:(string& aString, const string& toSearch, const string& toReplace)
+ffmpegthumbnailer::StringOperations::replace	stringoperations.h	/^    static std::string& replace(std::string& aString, const std::string& toSearch, const std::string& toReplace);$/;"	p	class:ffmpegthumbnailer::StringOperations	access:public	signature:(std::string& aString, const std::string& toSearch, const std::string& toReplace)
+ffmpegthumbnailer::StringOperations::ss	stringoperations.h	/^        std::stringstream ss;$/;"	l
+ffmpegthumbnailer::StringOperations::toString	stringoperations.h	/^    static std::string toString(const T& numeric)$/;"	f	class:ffmpegthumbnailer::StringOperations	access:public	signature:(const T& numeric)
+ffmpegthumbnailer::StringOperations::tokenize	stringoperations.cpp	/^vector<string> StringOperations::tokenize(const string& str, const string& delimiter)$/;"	f	class:ffmpegthumbnailer::StringOperations	signature:(const string& str, const string& delimiter)
+ffmpegthumbnailer::StringOperations::tokenize	stringoperations.h	/^    static std::vector<std::string> tokenize(const std::string& str, const std::string& delimiter);$/;"	p	class:ffmpegthumbnailer::StringOperations	access:public	signature:(const std::string& str, const std::string& delimiter)
+ffmpegthumbnailer::VideoFrame	videoframe.h	/^struct VideoFrame$/;"	s	namespace:ffmpegthumbnailer
+ffmpegthumbnailer::VideoFrame::VideoFrame	videoframe.h	/^    VideoFrame()$/;"	f	struct:ffmpegthumbnailer::VideoFrame	access:public	signature:()
+ffmpegthumbnailer::VideoFrame::VideoFrame	videoframe.h	/^    VideoFrame(int width, int height, int lineSize)$/;"	f	struct:ffmpegthumbnailer::VideoFrame	access:public	signature:(int width, int height, int lineSize)
+ffmpegthumbnailer::VideoFrame::frameData	videoframe.h	/^    std::vector<uint8_t> frameData;$/;"	m	struct:ffmpegthumbnailer::VideoFrame	access:public
+ffmpegthumbnailer::VideoFrame::height	videoframe.h	/^    int height;$/;"	m	struct:ffmpegthumbnailer::VideoFrame	access:public
+ffmpegthumbnailer::VideoFrame::lineSize	videoframe.h	/^    int lineSize;$/;"	m	struct:ffmpegthumbnailer::VideoFrame	access:public
+ffmpegthumbnailer::VideoFrame::width	videoframe.h	/^    int width;$/;"	m	struct:ffmpegthumbnailer::VideoFrame	access:public
+ffmpegthumbnailer::VideoThumbnailer	videothumbnailer.h	/^class VideoThumbnailer$/;"	c	namespace:ffmpegthumbnailer
+ffmpegthumbnailer::VideoThumbnailer::VideoThumbnailer	videothumbnailer.cpp	/^VideoThumbnailer::VideoThumbnailer()$/;"	f	class:ffmpegthumbnailer::VideoThumbnailer	signature:()
+ffmpegthumbnailer::VideoThumbnailer::VideoThumbnailer	videothumbnailer.cpp	/^VideoThumbnailer::VideoThumbnailer(int thumbnailSize, bool workaroundIssues, bool maintainAspectRatio, int imageQuality, bool smartFrameSelection)$/;"	f	class:ffmpegthumbnailer::VideoThumbnailer	signature:(int thumbnailSize, bool workaroundIssues, bool maintainAspectRatio, int imageQuality, bool smartFrameSelection)
+ffmpegthumbnailer::VideoThumbnailer::VideoThumbnailer	videothumbnailer.h	/^    VideoThumbnailer();$/;"	p	class:ffmpegthumbnailer::VideoThumbnailer	access:public	signature:()
+ffmpegthumbnailer::VideoThumbnailer::VideoThumbnailer	videothumbnailer.h	/^    VideoThumbnailer(int thumbnailSize, bool workaroundIssues, bool maintainAspectRatio, int imageQuality, bool smartFrameSelection);$/;"	p	class:ffmpegthumbnailer::VideoThumbnailer	access:public	signature:(int thumbnailSize, bool workaroundIssues, bool maintainAspectRatio, int imageQuality, bool smartFrameSelection)
+ffmpegthumbnailer::VideoThumbnailer::addFilter	videothumbnailer.cpp	/^void VideoThumbnailer::addFilter(IFilter* filter)$/;"	f	class:ffmpegthumbnailer::VideoThumbnailer	signature:(IFilter* filter)
+ffmpegthumbnailer::VideoThumbnailer::addFilter	videothumbnailer.h	/^    void addFilter(IFilter* filter);$/;"	p	class:ffmpegthumbnailer::VideoThumbnailer	access:public	signature:(IFilter* filter)
+ffmpegthumbnailer::VideoThumbnailer::applyFilters	videothumbnailer.cpp	/^void VideoThumbnailer::applyFilters(VideoFrame& frameData)$/;"	f	class:ffmpegthumbnailer::VideoThumbnailer	signature:(VideoFrame& frameData)
+ffmpegthumbnailer::VideoThumbnailer::applyFilters	videothumbnailer.h	/^    void applyFilters(VideoFrame& frameData);$/;"	p	class:ffmpegthumbnailer::VideoThumbnailer	access:private	signature:(VideoFrame& frameData)
+ffmpegthumbnailer::VideoThumbnailer::clearFilters	videothumbnailer.cpp	/^void VideoThumbnailer::clearFilters()$/;"	f	class:ffmpegthumbnailer::VideoThumbnailer	signature:()
+ffmpegthumbnailer::VideoThumbnailer::clearFilters	videothumbnailer.h	/^    void clearFilters();$/;"	p	class:ffmpegthumbnailer::VideoThumbnailer	access:public	signature:()
+ffmpegthumbnailer::VideoThumbnailer::generateHistogram	videothumbnailer.cpp	/^void VideoThumbnailer::generateHistogram(const VideoFrame& videoFrame, Histogram<int>& histogram)$/;"	f	class:ffmpegthumbnailer::VideoThumbnailer	signature:(const VideoFrame& videoFrame, Histogram<int>& histogram)
+ffmpegthumbnailer::VideoThumbnailer::generateHistogram	videothumbnailer.h	/^    void generateHistogram(const VideoFrame& videoFrame, Histogram<int>& histogram);$/;"	p	class:ffmpegthumbnailer::VideoThumbnailer	access:private	signature:(const VideoFrame& videoFrame, Histogram<int>& histogram)
+ffmpegthumbnailer::VideoThumbnailer::generateSmartThumbnail	videothumbnailer.cpp	/^void VideoThumbnailer::generateSmartThumbnail(MovieDecoder& movieDecoder, VideoFrame& videoFrame)$/;"	f	class:ffmpegthumbnailer::VideoThumbnailer	signature:(MovieDecoder& movieDecoder, VideoFrame& videoFrame)
+ffmpegthumbnailer::VideoThumbnailer::generateSmartThumbnail	videothumbnailer.h	/^    void generateSmartThumbnail(MovieDecoder& movieDecoder, VideoFrame& videoFrame);$/;"	p	class:ffmpegthumbnailer::VideoThumbnailer	access:private	signature:(MovieDecoder& movieDecoder, VideoFrame& videoFrame)
+ffmpegthumbnailer::VideoThumbnailer::generateThumbnail	videothumbnailer.cpp	/^void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageWriter& imageWriter, AVFormatContext* pavContext)$/;"	f	class:ffmpegthumbnailer::VideoThumbnailer	signature:(const string& videoFile, ImageWriter& imageWriter, AVFormatContext* pavContext)
+ffmpegthumbnailer::VideoThumbnailer::generateThumbnail	videothumbnailer.cpp	/^void VideoThumbnailer::generateThumbnail(const string& videoFile, ThumbnailerImageType type, const string& outputFile, AVFormatContext* pavContext)$/;"	f	class:ffmpegthumbnailer::VideoThumbnailer	signature:(const string& videoFile, ThumbnailerImageType type, const string& outputFile, AVFormatContext* pavContext)
+ffmpegthumbnailer::VideoThumbnailer::generateThumbnail	videothumbnailer.cpp	/^void VideoThumbnailer::generateThumbnail(const string& videoFile, ThumbnailerImageType type, vector<uint8_t>& buffer, AVFormatContext* pavContext)$/;"	f	class:ffmpegthumbnailer::VideoThumbnailer	signature:(const string& videoFile, ThumbnailerImageType type, vector<uint8_t>& buffer, AVFormatContext* pavContext)
+ffmpegthumbnailer::VideoThumbnailer::generateThumbnail	videothumbnailer.h	/^    void generateThumbnail(const std::string& videoFile, ImageWriter& imageWriter, AVFormatContext* pavContext = NULL);$/;"	p	class:ffmpegthumbnailer::VideoThumbnailer	access:private	signature:(const std::string& videoFile, ImageWriter& imageWriter, AVFormatContext* pavContext = NULL)
+ffmpegthumbnailer::VideoThumbnailer::generateThumbnail	videothumbnailer.h	/^    void generateThumbnail(const std::string& videoFile, ThumbnailerImageType type, const std::string& outputFile, AVFormatContext* pavContext = NULL);$/;"	p	class:ffmpegthumbnailer::VideoThumbnailer	access:public	signature:(const std::string& videoFile, ThumbnailerImageType type, const std::string& outputFile, AVFormatContext* pavContext = NULL)
+ffmpegthumbnailer::VideoThumbnailer::generateThumbnail	videothumbnailer.h	/^    void generateThumbnail(const std::string& videoFile, ThumbnailerImageType type, std::vector<uint8_t>& buffer, AVFormatContext* pavContext = NULL);$/;"	p	class:ffmpegthumbnailer::VideoThumbnailer	access:public	signature:(const std::string& videoFile, ThumbnailerImageType type, std::vector<uint8_t>& buffer, AVFormatContext* pavContext = NULL)
+ffmpegthumbnailer::VideoThumbnailer::getBestThumbnailIndex	videothumbnailer.cpp	/^int VideoThumbnailer::getBestThumbnailIndex(vector<VideoFrame>& videoFrames, const vector<Histogram<int> >& histograms)$/;"	f	class:ffmpegthumbnailer::VideoThumbnailer	signature:(vector<VideoFrame>& videoFrames, const vector<Histogram<int> >& histograms)
+ffmpegthumbnailer::VideoThumbnailer::getBestThumbnailIndex	videothumbnailer.h	/^    int getBestThumbnailIndex(std::vector<VideoFrame>& videoFrames, const std::vector<Histogram<int> >& histograms);$/;"	p	class:ffmpegthumbnailer::VideoThumbnailer	access:private	signature:(std::vector<VideoFrame>& videoFrames, const std::vector<Histogram<int> >& histograms)
+ffmpegthumbnailer::VideoThumbnailer::getExtension	videothumbnailer.cpp	/^string VideoThumbnailer::getExtension(const string& videoFilename)$/;"	f	class:ffmpegthumbnailer::VideoThumbnailer	signature:(const string& videoFilename)
+ffmpegthumbnailer::VideoThumbnailer::getExtension	videothumbnailer.h	/^    std::string getExtension(const std::string& videoFilename);$/;"	p	class:ffmpegthumbnailer::VideoThumbnailer	access:private	signature:(const std::string& videoFilename)
+ffmpegthumbnailer::VideoThumbnailer::getMimeType	videothumbnailer.cpp	/^string VideoThumbnailer::getMimeType(const string& videoFile)$/;"	f	class:ffmpegthumbnailer::VideoThumbnailer	signature:(const string& videoFile)
+ffmpegthumbnailer::VideoThumbnailer::getMimeType	videothumbnailer.h	/^    std::string getMimeType(const std::string& videoFile);$/;"	p	class:ffmpegthumbnailer::VideoThumbnailer	access:private	signature:(const std::string& videoFile)
+ffmpegthumbnailer::VideoThumbnailer::m_Filters	videothumbnailer.h	/^    std::vector<IFilter*>       m_Filters;$/;"	m	class:ffmpegthumbnailer::VideoThumbnailer	access:private
+ffmpegthumbnailer::VideoThumbnailer::m_ImageQuality	videothumbnailer.h	/^    int                         m_ImageQuality;$/;"	m	class:ffmpegthumbnailer::VideoThumbnailer	access:private
+ffmpegthumbnailer::VideoThumbnailer::m_MaintainAspectRatio	videothumbnailer.h	/^    bool                        m_MaintainAspectRatio;$/;"	m	class:ffmpegthumbnailer::VideoThumbnailer	access:private
+ffmpegthumbnailer::VideoThumbnailer::m_OverlayFilmStrip	videothumbnailer.h	/^    bool                        m_OverlayFilmStrip;$/;"	m	class:ffmpegthumbnailer::VideoThumbnailer	access:private
+ffmpegthumbnailer::VideoThumbnailer::m_SeekPercentage	videothumbnailer.h	/^    uint16_t                    m_SeekPercentage;$/;"	m	class:ffmpegthumbnailer::VideoThumbnailer	access:private
+ffmpegthumbnailer::VideoThumbnailer::m_SeekTime	videothumbnailer.h	/^    std::string                 m_SeekTime;$/;"	m	class:ffmpegthumbnailer::VideoThumbnailer	access:private
+ffmpegthumbnailer::VideoThumbnailer::m_SmartFrameSelection	videothumbnailer.h	/^    bool                        m_SmartFrameSelection;$/;"	m	class:ffmpegthumbnailer::VideoThumbnailer	access:private
+ffmpegthumbnailer::VideoThumbnailer::m_ThumbnailSize	videothumbnailer.h	/^    int                         m_ThumbnailSize;$/;"	m	class:ffmpegthumbnailer::VideoThumbnailer	access:private
+ffmpegthumbnailer::VideoThumbnailer::m_WorkAroundIssues	videothumbnailer.h	/^    bool                        m_WorkAroundIssues;$/;"	m	class:ffmpegthumbnailer::VideoThumbnailer	access:private
+ffmpegthumbnailer::VideoThumbnailer::removeFilter	videothumbnailer.cpp	/^void VideoThumbnailer::removeFilter(IFilter* filter)$/;"	f	class:ffmpegthumbnailer::VideoThumbnailer	signature:(IFilter* filter)
+ffmpegthumbnailer::VideoThumbnailer::removeFilter	videothumbnailer.h	/^    void removeFilter(IFilter* filter);$/;"	p	class:ffmpegthumbnailer::VideoThumbnailer	access:public	signature:(IFilter* filter)
+ffmpegthumbnailer::VideoThumbnailer::setImageQuality	videothumbnailer.cpp	/^void VideoThumbnailer::setImageQuality(int imageQuality)$/;"	f	class:ffmpegthumbnailer::VideoThumbnailer	signature:(int imageQuality)
+ffmpegthumbnailer::VideoThumbnailer::setImageQuality	videothumbnailer.h	/^    void setImageQuality(int imageQuality);$/;"	p	class:ffmpegthumbnailer::VideoThumbnailer	access:public	signature:(int imageQuality)
+ffmpegthumbnailer::VideoThumbnailer::setMaintainAspectRatio	videothumbnailer.cpp	/^void VideoThumbnailer::setMaintainAspectRatio(bool enabled)$/;"	f	class:ffmpegthumbnailer::VideoThumbnailer	signature:(bool enabled)
+ffmpegthumbnailer::VideoThumbnailer::setMaintainAspectRatio	videothumbnailer.h	/^    void setMaintainAspectRatio(bool enabled);$/;"	p	class:ffmpegthumbnailer::VideoThumbnailer	access:public	signature:(bool enabled)
+ffmpegthumbnailer::VideoThumbnailer::setSeekPercentage	videothumbnailer.cpp	/^void VideoThumbnailer::setSeekPercentage(int percentage)$/;"	f	class:ffmpegthumbnailer::VideoThumbnailer	signature:(int percentage)
+ffmpegthumbnailer::VideoThumbnailer::setSeekPercentage	videothumbnailer.h	/^    void setSeekPercentage(int percentage);$/;"	p	class:ffmpegthumbnailer::VideoThumbnailer	access:public	signature:(int percentage)
+ffmpegthumbnailer::VideoThumbnailer::setSeekTime	videothumbnailer.cpp	/^void VideoThumbnailer::setSeekTime(const std::string& seekTime)$/;"	f	class:ffmpegthumbnailer::VideoThumbnailer	signature:(const std::string& seekTime)
+ffmpegthumbnailer::VideoThumbnailer::setSeekTime	videothumbnailer.h	/^    void setSeekTime(const std::string& seekTime);$/;"	p	class:ffmpegthumbnailer::VideoThumbnailer	access:public	signature:(const std::string& seekTime)
+ffmpegthumbnailer::VideoThumbnailer::setSmartFrameSelection	videothumbnailer.cpp	/^void VideoThumbnailer::setSmartFrameSelection(bool enabled)$/;"	f	class:ffmpegthumbnailer::VideoThumbnailer	signature:(bool enabled)
+ffmpegthumbnailer::VideoThumbnailer::setSmartFrameSelection	videothumbnailer.h	/^    void setSmartFrameSelection(bool enabled);$/;"	p	class:ffmpegthumbnailer::VideoThumbnailer	access:public	signature:(bool enabled)
+ffmpegthumbnailer::VideoThumbnailer::setThumbnailSize	videothumbnailer.cpp	/^void VideoThumbnailer::setThumbnailSize(int size)$/;"	f	class:ffmpegthumbnailer::VideoThumbnailer	signature:(int size)
+ffmpegthumbnailer::VideoThumbnailer::setThumbnailSize	videothumbnailer.h	/^    void setThumbnailSize(int size);$/;"	p	class:ffmpegthumbnailer::VideoThumbnailer	access:public	signature:(int size)
+ffmpegthumbnailer::VideoThumbnailer::setWorkAroundIssues	videothumbnailer.cpp	/^void VideoThumbnailer::setWorkAroundIssues(bool workAround)$/;"	f	class:ffmpegthumbnailer::VideoThumbnailer	signature:(bool workAround)
+ffmpegthumbnailer::VideoThumbnailer::setWorkAroundIssues	videothumbnailer.h	/^    void setWorkAroundIssues(bool workAround);$/;"	p	class:ffmpegthumbnailer::VideoThumbnailer	access:public	signature:(bool workAround)
+ffmpegthumbnailer::VideoThumbnailer::writeImage	videothumbnailer.cpp	/^void VideoThumbnailer::writeImage(const string& videoFile, ImageWriter& imageWriter, const VideoFrame& videoFrame, int duration, vector<uint8_t*>& rowPointers)$/;"	f	class:ffmpegthumbnailer::VideoThumbnailer	signature:(const string& videoFile, ImageWriter& imageWriter, const VideoFrame& videoFrame, int duration, vector<uint8_t*>& rowPointers)
+ffmpegthumbnailer::VideoThumbnailer::writeImage	videothumbnailer.h	/^    void writeImage(const std::string& videoFile, ImageWriter& imageWriter, const VideoFrame& videoFrame, int duration, std::vector<uint8_t*>& rowPointers);$/;"	p	class:ffmpegthumbnailer::VideoThumbnailer	access:private	signature:(const std::string& videoFile, ImageWriter& imageWriter, const VideoFrame& videoFrame, int duration, std::vector<uint8_t*>& rowPointers)
+ffmpegthumbnailer::VideoThumbnailer::~VideoThumbnailer	videothumbnailer.cpp	/^VideoThumbnailer::~VideoThumbnailer()$/;"	f	class:ffmpegthumbnailer::VideoThumbnailer	signature:()
+ffmpegthumbnailer::VideoThumbnailer::~VideoThumbnailer	videothumbnailer.h	/^    ~VideoThumbnailer();$/;"	p	class:ffmpegthumbnailer::VideoThumbnailer	access:public	signature:()
+ffmpegthumbnailer::ascpectDenominator	moviedecoder.cpp	/^        int ascpectDenominator  = m_pVideoCodecContext->sample_aspect_ratio.den;$/;"	l
+ffmpegthumbnailer::ascpectNominator	moviedecoder.cpp	/^        int ascpectNominator    = m_pVideoCodecContext->sample_aspect_ratio.num;$/;"	l
+ffmpegthumbnailer::attempts	moviedecoder.cpp	/^    int attempts = 0;$/;"	l
+ffmpegthumbnailer::avgHistogram	videothumbnailer.cpp	/^    Histogram<float> avgHistogram;$/;"	l
+ffmpegthumbnailer::bestFrame	videothumbnailer.cpp	/^    int bestFrame = -1;$/;"	l
+ffmpegthumbnailer::bestFrame	videothumbnailer.cpp	/^    int bestFrame = getBestThumbnailIndex(videoFrames, histograms);$/;"	l
+ffmpegthumbnailer::bufWriter	jpegwriter.cpp	/^    BufferWriter* bufWriter = reinterpret_cast<BufferWriter*>(pCompressionInfo->dest);$/;"	l
+ffmpegthumbnailer::bytesDecoded	moviedecoder.cpp	/^    int bytesDecoded = avcodec_decode_video(m_pVideoCodecContext, m_pFrame, &frameFinished, m_pPacket->data, m_pPacket->size);$/;"	l
+ffmpegthumbnailer::bytesDecoded	moviedecoder.cpp	/^    int bytesDecoded = avcodec_decode_video2(m_pVideoCodecContext, m_pFrame, &frameFinished, m_pPacket);$/;"	l
+ffmpegthumbnailer::clear	moviedecoder.cpp	/^    videoFrame.frameData.clear();$/;"	p	file:	signature:()
+ffmpegthumbnailer::clear	videothumbnailer.cpp	/^    buffer.clear();$/;"	p	file:	signature:()
+ffmpegthumbnailer::clear	videothumbnailer.cpp	/^    m_Filters.clear();$/;"	p	file:	signature:()
+ffmpegthumbnailer::clear	videothumbnailer.cpp	/^    m_SeekTime.clear();$/;"	p	file:	signature:()
+ffmpegthumbnailer::convertedFrame	moviedecoder.cpp	/^    AVFrame* convertedFrame = NULL;$/;"	l
+ffmpegthumbnailer::convertedFrameBuffer	moviedecoder.cpp	/^    uint8_t* convertedFrameBuffer = NULL;$/;"	l
+ffmpegthumbnailer::count	moviedecoder.cpp	/^        int count = 0;$/;"	l
+ffmpegthumbnailer::currentFilmHoleIndex	filmstripfilter.cpp	/^            int currentFilmHoleIndex = filmHoleIndex + j;$/;"	l
+ffmpegthumbnailer::datacount	jpegwriter.cpp	/^    size_t datacount = JPEG_WORK_BUFFER_SIZE - bufWriter->m_DestMgr.free_in_buffer;$/;"	l
+ffmpegthumbnailer::decodeVideoFrame	videothumbnailer.cpp	/^        movieDecoder.decodeVideoFrame();$/;"	p	file:	signature:()
+ffmpegthumbnailer::decodeVideoFrame	videothumbnailer.cpp	/^    movieDecoder.decodeVideoFrame(); \/\/before seeking, a frame has to be decoded$/;"	p	file:	signature:()
+ffmpegthumbnailer::endl	videothumbnailer.cpp	/^        outputFile << "frames\/Frame" << setfill('0') << setw(3) << i << "_" << rmse << endl;$/;"	l
+ffmpegthumbnailer::endl	videothumbnailer.cpp	/^    cout << "Best frame was: " << bestFrame << "(RMSE: " << minRMSE << ")" << endl;$/;"	l
+ffmpegthumbnailer::erase	stringoperations.cpp	/^        line.erase(pos, 1);$/;"	p	file:	signature:(pos, 1)
+ffmpegthumbnailer::erase	videothumbnailer.cpp	/^            m_Filters.erase(iter);$/;"	p	file:	signature:(iter)
+ffmpegthumbnailer::error	videothumbnailer.cpp	/^            float error = fabsf(avgHistogram.r[j] - histograms[i].r[j])$/;"	l
+ffmpegthumbnailer::extension	videothumbnailer.cpp	/^    string extension = getExtension(videoFile);$/;"	l
+ffmpegthumbnailer::extension	videothumbnailer.cpp	/^    string extension;$/;"	l
+ffmpegthumbnailer::filmHole	filmstripfilter.cpp	/^static const uint8_t filmHole[FILMHOLE_WIDTH * FILMHOLE_HEIGHT * 3] = {$/;"	m	namespace:ffmpegthumbnailer	file:
+ffmpegthumbnailer::filmHoleIndex	filmstripfilter.cpp	/^    int filmHoleIndex = 0;$/;"	l
+ffmpegthumbnailer::foundPos	stringoperations.cpp	/^    size_t foundPos;$/;"	l
+ffmpegthumbnailer::frameDecoded	moviedecoder.cpp	/^    bool frameDecoded = false;$/;"	l
+ffmpegthumbnailer::frameFinished	moviedecoder.cpp	/^    bool frameFinished = false;$/;"	l
+ffmpegthumbnailer::frameFinished	moviedecoder.cpp	/^    int frameFinished;$/;"	l
+ffmpegthumbnailer::frameIndex	filmstripfilter.cpp	/^    int frameIndex = 0;$/;"	l
+ffmpegthumbnailer::framesAvailable	moviedecoder.cpp	/^    bool framesAvailable = true;$/;"	l
+ffmpegthumbnailer::getScaledVideoFrame	videothumbnailer.cpp	/^        movieDecoder.getScaledVideoFrame(m_ThumbnailSize, m_MaintainAspectRatio, videoFrame);$/;"	p	file:	signature:(m_ThumbnailSize, m_MaintainAspectRatio, videoFrame)
+ffmpegthumbnailer::getScaledVideoFrame	videothumbnailer.cpp	/^        movieDecoder.getScaledVideoFrame(m_ThumbnailSize, m_MaintainAspectRatio, videoFrames[i]);$/;"	p	file:	signature:(m_ThumbnailSize, m_MaintainAspectRatio, videoFrames[i])
+ffmpegthumbnailer::gotFrame	moviedecoder.cpp	/^    bool gotFrame = 0;$/;"	l
+ffmpegthumbnailer::histograms	videothumbnailer.cpp	/^    vector<Histogram<int> > histograms(SMART_FRAME_ATTEMPTS);$/;"	p	file:	signature:(SMART_FRAME_ATTEMPTS)
+ffmpegthumbnailer::hours	videothumbnailer.cpp	/^    int hours, minutes, seconds;$/;"	l
+ffmpegthumbnailer::imageWriter	videothumbnailer.cpp	/^        ImageWriter* imageWriter = ImageWriterFactory<const string&>::createImageWriter(Png, outputFile.str());$/;"	l
+ffmpegthumbnailer::imageWriter	videothumbnailer.cpp	/^    ImageWriter* imageWriter = ImageWriterFactory<const string&>::createImageWriter(type, outputFile);$/;"	l
+ffmpegthumbnailer::imageWriter	videothumbnailer.cpp	/^    ImageWriter* imageWriter = ImageWriterFactory<vector<uint8_t>&>::createImageWriter(type, buffer);$/;"	l
+ffmpegthumbnailer::inputFile	moviedecoder.cpp	/^    string inputFile = filename == "-" ? "pipe:" : filename;$/;"	l
+ffmpegthumbnailer::jpegDestroyDestination	jpegwriter.cpp	/^static void jpegDestroyDestination(j_compress_ptr pCompressionInfo);$/;"	p	namespace:ffmpegthumbnailer	file:	signature:(j_compress_ptr pCompressionInfo)
+ffmpegthumbnailer::jpegDestroyDestination	jpegwriter.cpp	/^void jpegDestroyDestination(j_compress_ptr pCompressionInfo)$/;"	f	namespace:ffmpegthumbnailer	signature:(j_compress_ptr pCompressionInfo)
+ffmpegthumbnailer::jpegFlushWorkBuffer	jpegwriter.cpp	/^boolean jpegFlushWorkBuffer(j_compress_ptr pCompressionInfo)$/;"	f	namespace:ffmpegthumbnailer	signature:(j_compress_ptr pCompressionInfo)
+ffmpegthumbnailer::jpegFlushWorkBuffer	jpegwriter.cpp	/^static boolean jpegFlushWorkBuffer(j_compress_ptr pCompressionInfo);$/;"	p	namespace:ffmpegthumbnailer	file:	signature:(j_compress_ptr pCompressionInfo)
+ffmpegthumbnailer::jpegInitDestination	jpegwriter.cpp	/^static void jpegInitDestination(j_compress_ptr pCompressionInfo);$/;"	p	namespace:ffmpegthumbnailer	file:	signature:(j_compress_ptr pCompressionInfo)
+ffmpegthumbnailer::jpegInitDestination	jpegwriter.cpp	/^void jpegInitDestination(j_compress_ptr pCompressionInfo)$/;"	f	namespace:ffmpegthumbnailer	signature:(j_compress_ptr pCompressionInfo)
+ffmpegthumbnailer::keyFrameAttempts	moviedecoder.cpp	/^    int keyFrameAttempts = 0;$/;"	l
+ffmpegthumbnailer::mimeType	videothumbnailer.cpp	/^        string mimeType = getMimeType(videoFile);$/;"	l
+ffmpegthumbnailer::minRMSE	videothumbnailer.cpp	/^    float minRMSE = FLT_MAX;$/;"	l
+ffmpegthumbnailer::minutes	videothumbnailer.cpp	/^    int hours, minutes, seconds;$/;"	l
+ffmpegthumbnailer::movieDecoder	videothumbnailer.cpp	/^    MovieDecoder movieDecoder(videoFile, pavContext);$/;"	p	file:	signature:(videoFile, pavContext)
+ffmpegthumbnailer::numBytes	moviedecoder.cpp	/^    int numBytes = avpicture_get_size(format, width, height);$/;"	l
+ffmpegthumbnailer::offset	filmstripfilter.cpp	/^    int offset = (videoFrame.width * 3) - 3;$/;"	l
+ffmpegthumbnailer::outputBuffer	pngwriter.cpp	/^    vector<uint8_t>& outputBuffer = *(reinterpret_cast<vector<uint8_t>* >(png_get_io_ptr(png_ptr)));$/;"	l
+ffmpegthumbnailer::outputFile	videothumbnailer.cpp	/^        stringstream outputFile;$/;"	l
+ffmpegthumbnailer::pixelIndex	videothumbnailer.cpp	/^        int pixelIndex = i * videoFrame.lineSize;$/;"	l
+ffmpegthumbnailer::pngText	pngwriter.cpp	/^	png_text pngText;$/;"	l
+ffmpegthumbnailer::pos	stringoperations.cpp	/^    size_t          pos = 0;$/;"	l
+ffmpegthumbnailer::pos	stringoperations.cpp	/^    size_t pos = line.find_last_of('\\r');$/;"	l
+ffmpegthumbnailer::pos	videothumbnailer.cpp	/^    string::size_type pos = videoFilename.rfind('.');$/;"	l
+ffmpegthumbnailer::prevBufSize	pngwriter.cpp	/^    int prevBufSize = outputBuffer.size();$/;"	l
+ffmpegthumbnailer::prevSize	jpegwriter.cpp	/^    size_t prevSize = bufWriter->m_pDataSink->size();$/;"	l
+ffmpegthumbnailer::process	videothumbnailer.cpp	/^        (*iter)->process(frameData);$/;"	p	file:	signature:(frameData)
+ffmpegthumbnailer::push_back	stringoperations.cpp	/^        tokens.push_back(tempString.substr(0, pos));$/;"	p	file:	signature:(tempString.substr(0, pos))
+ffmpegthumbnailer::push_back	stringoperations.cpp	/^    tokens.push_back(tempString);$/;"	p	file:	signature:(tempString)
+ffmpegthumbnailer::push_back	videothumbnailer.cpp	/^    m_Filters.push_back(filter);$/;"	p	file:	signature:(filter)
+ffmpegthumbnailer::replace	stringoperations.cpp	/^        aString.replace(foundPos, toSearch.length(), toReplace);$/;"	p	file:	signature:(foundPos, toSearch.length(), toReplace)
+ffmpegthumbnailer::resize	moviedecoder.cpp	/^    videoFrame.frameData.resize(videoFrame.lineSize * videoFrame.height);$/;"	p	file:	signature:(videoFrame.lineSize * videoFrame.height)
+ffmpegthumbnailer::resize	pngwriter.cpp	/^    outputBuffer.resize(outputBuffer.size() + length);$/;"	p	file:	signature:(outputBuffer.size() + length)
+ffmpegthumbnailer::ret	moviedecoder.cpp	/^    int ret = av_seek_frame(m_pFormatContext, -1, timestamp, 0);$/;"	l
+ffmpegthumbnailer::rmse	videothumbnailer.cpp	/^        float rmse = 0.0;$/;"	l
+ffmpegthumbnailer::rowPointers	videothumbnailer.cpp	/^        vector<uint8_t*> rowPointers;$/;"	l
+ffmpegthumbnailer::rowPointers	videothumbnailer.cpp	/^    vector<uint8_t*> rowPointers;$/;"	l
+ffmpegthumbnailer::scaleContext	moviedecoder.cpp	/^    SwsContext* scaleContext = sws_getContext(m_pVideoCodecContext->width, m_pVideoCodecContext->height,$/;"	l
+ffmpegthumbnailer::scaledHeight	moviedecoder.cpp	/^    int scaledWidth, scaledHeight;$/;"	l
+ffmpegthumbnailer::scaledWidth	moviedecoder.cpp	/^    int scaledWidth, scaledHeight;$/;"	l
+ffmpegthumbnailer::secondToSeekTo	videothumbnailer.cpp	/^            int secondToSeekTo = m_SeekTime.empty() ?$/;"	l
+ffmpegthumbnailer::seconds	videothumbnailer.cpp	/^    int hours, minutes, seconds;$/;"	l
+ffmpegthumbnailer::seek	videothumbnailer.cpp	/^            movieDecoder.seek(secondToSeekTo);$/;"	p	file:	signature:(secondToSeekTo)
+ffmpegthumbnailer::srcHeight	moviedecoder.cpp	/^        int srcHeight           = m_pVideoCodecContext->height;$/;"	l
+ffmpegthumbnailer::srcWidth	moviedecoder.cpp	/^        int srcWidth            = m_pVideoCodecContext->width;$/;"	l
+ffmpegthumbnailer::startPos	stringoperations.cpp	/^    size_t startPos = 0;$/;"	l
+ffmpegthumbnailer::statInfo	videothumbnailer.cpp	/^        struct stat statInfo;$/;"	l
+ffmpegthumbnailer::tempString	stringoperations.cpp	/^    string          tempString = str;$/;"	l
+ffmpegthumbnailer::timeToSeconds	videothumbnailer.cpp	/^int timeToSeconds(const std::string& time)$/;"	f	namespace:ffmpegthumbnailer	signature:(const std::string& time)
+ffmpegthumbnailer::timestamp	moviedecoder.cpp	/^    int64_t timestamp = AV_TIME_BASE * static_cast<int64_t>(timeInSeconds);$/;"	l
+ffmpegthumbnailer::tokens	stringoperations.cpp	/^    vector<string>  tokens;$/;"	l
+ffmpegthumbnailer::videoFrame	videothumbnailer.cpp	/^    VideoFrame  videoFrame;$/;"	l
+ffmpegthumbnailer::videoFrames	videothumbnailer.cpp	/^    vector<VideoFrame> videoFrames(SMART_FRAME_ATTEMPTS);$/;"	p	file:	signature:(SMART_FRAME_ATTEMPTS)
+ffmpegthumbnailer::writeDataCallback	pngwriter.cpp	/^static void writeDataCallback(png_structp png_ptr, png_bytep data, png_size_t length);$/;"	p	namespace:ffmpegthumbnailer	file:	signature:(png_structp png_ptr, png_bytep data, png_size_t length)
+ffmpegthumbnailer::writeDataCallback	pngwriter.cpp	/^void writeDataCallback(png_structp png_ptr, png_bytep data, png_size_t length)$/;"	f	namespace:ffmpegthumbnailer	signature:(png_structp png_ptr, png_bytep data, png_size_t length)
+filmHole	filmstripfilter.cpp	/^static const uint8_t filmHole[FILMHOLE_WIDTH * FILMHOLE_HEIGHT * 3] = {$/;"	m	namespace:ffmpegthumbnailer	file:
+filmHoleIndex	filmstripfilter.cpp	/^    int filmHoleIndex = 0;$/;"	l
+filmStripFilter	videothumbnailerc.cpp	/^    FilmStripFilter* filmStripFilter = reinterpret_cast<FilmStripFilter*>(thumbnailer->filter);$/;"	l
+filter	videothumbnailerc.h	/^    void*                   filter;                 \/* for internal use only *\/$/;"	m	struct:video_thumbnailer_struct	access:public
+foundPos	stringoperations.cpp	/^    size_t foundPos;$/;"	l
+frameData	videoframe.h	/^    std::vector<uint8_t> frameData;$/;"	m	struct:ffmpegthumbnailer::VideoFrame	access:public
+frameDecoded	moviedecoder.cpp	/^    bool frameDecoded = false;$/;"	l
+frameFinished	moviedecoder.cpp	/^    bool frameFinished = false;$/;"	l
+frameFinished	moviedecoder.cpp	/^    int frameFinished;$/;"	l
+frameIndex	filmstripfilter.cpp	/^    int frameIndex = 0;$/;"	l
+framesAvailable	moviedecoder.cpp	/^    bool framesAvailable = true;$/;"	l
+g	histogram.h	/^    T g[256];$/;"	m	struct:ffmpegthumbnailer::Histogram	access:public
+generateHistogram	videothumbnailer.cpp	/^void VideoThumbnailer::generateHistogram(const VideoFrame& videoFrame, Histogram<int>& histogram)$/;"	f	class:ffmpegthumbnailer::VideoThumbnailer	signature:(const VideoFrame& videoFrame, Histogram<int>& histogram)
+generateHistogram	videothumbnailer.h	/^    void generateHistogram(const VideoFrame& videoFrame, Histogram<int>& histogram);$/;"	p	class:ffmpegthumbnailer::VideoThumbnailer	access:private	signature:(const VideoFrame& videoFrame, Histogram<int>& histogram)
+generateSmartThumbnail	videothumbnailer.cpp	/^void VideoThumbnailer::generateSmartThumbnail(MovieDecoder& movieDecoder, VideoFrame& videoFrame)$/;"	f	class:ffmpegthumbnailer::VideoThumbnailer	signature:(MovieDecoder& movieDecoder, VideoFrame& videoFrame)
+generateSmartThumbnail	videothumbnailer.h	/^    void generateSmartThumbnail(MovieDecoder& movieDecoder, VideoFrame& videoFrame);$/;"	p	class:ffmpegthumbnailer::VideoThumbnailer	access:private	signature:(MovieDecoder& movieDecoder, VideoFrame& videoFrame)
+generateThumbnail	videothumbnailer.cpp	/^void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageWriter& imageWriter, AVFormatContext* pavContext)$/;"	f	class:ffmpegthumbnailer::VideoThumbnailer	signature:(const string& videoFile, ImageWriter& imageWriter, AVFormatContext* pavContext)
+generateThumbnail	videothumbnailer.cpp	/^void VideoThumbnailer::generateThumbnail(const string& videoFile, ThumbnailerImageType type, const string& outputFile, AVFormatContext* pavContext)$/;"	f	class:ffmpegthumbnailer::VideoThumbnailer	signature:(const string& videoFile, ThumbnailerImageType type, const string& outputFile, AVFormatContext* pavContext)
+generateThumbnail	videothumbnailer.cpp	/^void VideoThumbnailer::generateThumbnail(const string& videoFile, ThumbnailerImageType type, vector<uint8_t>& buffer, AVFormatContext* pavContext)$/;"	f	class:ffmpegthumbnailer::VideoThumbnailer	signature:(const string& videoFile, ThumbnailerImageType type, vector<uint8_t>& buffer, AVFormatContext* pavContext)
+generateThumbnail	videothumbnailer.h	/^    void generateThumbnail(const std::string& videoFile, ImageWriter& imageWriter, AVFormatContext* pavContext = NULL);$/;"	p	class:ffmpegthumbnailer::VideoThumbnailer	access:private	signature:(const std::string& videoFile, ImageWriter& imageWriter, AVFormatContext* pavContext = NULL)
+generateThumbnail	videothumbnailer.h	/^    void generateThumbnail(const std::string& videoFile, ThumbnailerImageType type, const std::string& outputFile, AVFormatContext* pavContext = NULL);$/;"	p	class:ffmpegthumbnailer::VideoThumbnailer	access:public	signature:(const std::string& videoFile, ThumbnailerImageType type, const std::string& outputFile, AVFormatContext* pavContext = NULL)
+generateThumbnail	videothumbnailer.h	/^    void generateThumbnail(const std::string& videoFile, ThumbnailerImageType type, std::vector<uint8_t>& buffer, AVFormatContext* pavContext = NULL);$/;"	p	class:ffmpegthumbnailer::VideoThumbnailer	access:public	signature:(const std::string& videoFile, ThumbnailerImageType type, std::vector<uint8_t>& buffer, AVFormatContext* pavContext = NULL)
+generateThumbnail	videothumbnailerc.cpp	/^        videoThumbnailer->generateThumbnail(movie_filename, thumbnailer->thumbnail_image_type, *dataVector, thumbnailer->av_format_context);$/;"	p	file:	signature:(movie_filename, thumbnailer->thumbnail_image_type, *dataVector, thumbnailer->av_format_context)
+generateThumbnail	videothumbnailerc.cpp	/^        videoThumbnailer->generateThumbnail(movie_filename, thumbnailer->thumbnail_image_type, output_fileName, thumbnailer->av_format_context);$/;"	p	file:	signature:(movie_filename, thumbnailer->thumbnail_image_type, output_fileName, thumbnailer->av_format_context)
+getBestThumbnailIndex	videothumbnailer.cpp	/^int VideoThumbnailer::getBestThumbnailIndex(vector<VideoFrame>& videoFrames, const vector<Histogram<int> >& histograms)$/;"	f	class:ffmpegthumbnailer::VideoThumbnailer	signature:(vector<VideoFrame>& videoFrames, const vector<Histogram<int> >& histograms)
+getBestThumbnailIndex	videothumbnailer.h	/^    int getBestThumbnailIndex(std::vector<VideoFrame>& videoFrames, const std::vector<Histogram<int> >& histograms);$/;"	p	class:ffmpegthumbnailer::VideoThumbnailer	access:private	signature:(std::vector<VideoFrame>& videoFrames, const std::vector<Histogram<int> >& histograms)
+getCodec	moviedecoder.cpp	/^string MovieDecoder::getCodec()$/;"	f	class:ffmpegthumbnailer::MovieDecoder	signature:()
+getCodec	moviedecoder.h	/^    std::string getCodec();$/;"	p	class:ffmpegthumbnailer::MovieDecoder	access:public	signature:()
+getDuration	moviedecoder.cpp	/^int MovieDecoder::getDuration()$/;"	f	class:ffmpegthumbnailer::MovieDecoder	signature:()
+getDuration	moviedecoder.h	/^    int getDuration();$/;"	p	class:ffmpegthumbnailer::MovieDecoder	access:public	signature:()
+getExtension	videothumbnailer.cpp	/^string VideoThumbnailer::getExtension(const string& videoFilename)$/;"	f	class:ffmpegthumbnailer::VideoThumbnailer	signature:(const string& videoFilename)
+getExtension	videothumbnailer.h	/^    std::string getExtension(const std::string& videoFilename);$/;"	p	class:ffmpegthumbnailer::VideoThumbnailer	access:private	signature:(const std::string& videoFilename)
+getHeight	moviedecoder.cpp	/^int MovieDecoder::getHeight()$/;"	f	class:ffmpegthumbnailer::MovieDecoder	signature:()
+getHeight	moviedecoder.h	/^    int getHeight();$/;"	p	class:ffmpegthumbnailer::MovieDecoder	access:public	signature:()
+getMimeType	videothumbnailer.cpp	/^string VideoThumbnailer::getMimeType(const string& videoFile)$/;"	f	class:ffmpegthumbnailer::VideoThumbnailer	signature:(const string& videoFile)
+getMimeType	videothumbnailer.h	/^    std::string getMimeType(const std::string& videoFile);$/;"	p	class:ffmpegthumbnailer::VideoThumbnailer	access:private	signature:(const std::string& videoFile)
+getScaledVideoFrame	moviedecoder.cpp	/^void MovieDecoder::getScaledVideoFrame(int scaledSize, bool maintainAspectRatio, VideoFrame& videoFrame)$/;"	f	class:ffmpegthumbnailer::MovieDecoder	signature:(int scaledSize, bool maintainAspectRatio, VideoFrame& videoFrame)
+getScaledVideoFrame	moviedecoder.h	/^    void getScaledVideoFrame(int scaledSize, bool maintainAspectRatio, VideoFrame& videoFrame);$/;"	p	class:ffmpegthumbnailer::MovieDecoder	access:public	signature:(int scaledSize, bool maintainAspectRatio, VideoFrame& videoFrame)
+getScaledVideoFrame	videothumbnailer.cpp	/^        movieDecoder.getScaledVideoFrame(m_ThumbnailSize, m_MaintainAspectRatio, videoFrame);$/;"	p	file:	signature:(m_ThumbnailSize, m_MaintainAspectRatio, videoFrame)
+getScaledVideoFrame	videothumbnailer.cpp	/^        movieDecoder.getScaledVideoFrame(m_ThumbnailSize, m_MaintainAspectRatio, videoFrames[i]);$/;"	p	file:	signature:(m_ThumbnailSize, m_MaintainAspectRatio, videoFrames[i])
+getVideoPacket	moviedecoder.cpp	/^bool MovieDecoder::getVideoPacket()$/;"	f	class:ffmpegthumbnailer::MovieDecoder	signature:()
+getVideoPacket	moviedecoder.h	/^    bool getVideoPacket();$/;"	p	class:ffmpegthumbnailer::MovieDecoder	access:private	signature:()
+getWidth	moviedecoder.cpp	/^int MovieDecoder::getWidth()$/;"	f	class:ffmpegthumbnailer::MovieDecoder	signature:()
+getWidth	moviedecoder.h	/^    int getWidth();$/;"	p	class:ffmpegthumbnailer::MovieDecoder	access:public	signature:()
+gotFrame	moviedecoder.cpp	/^    bool gotFrame = 0;$/;"	l
+grayValue	grayscalefilter.h	/^                uint8_t grayValue = (  videoFrame.frameData[pixelIndex]$/;"	l
+height	videoframe.h	/^    int height;$/;"	m	struct:ffmpegthumbnailer::VideoFrame	access:public
+histograms	videothumbnailer.cpp	/^    vector<Histogram<int> > histograms(SMART_FRAME_ATTEMPTS);$/;"	p	file:	signature:(SMART_FRAME_ATTEMPTS)
+hours	videothumbnailer.cpp	/^    int hours, minutes, seconds;$/;"	l
+imageWriter	videothumbnailer.cpp	/^        ImageWriter* imageWriter = ImageWriterFactory<const string&>::createImageWriter(Png, outputFile.str());$/;"	l
+imageWriter	videothumbnailer.cpp	/^    ImageWriter* imageWriter = ImageWriterFactory<const string&>::createImageWriter(type, outputFile);$/;"	l
+imageWriter	videothumbnailer.cpp	/^    ImageWriter* imageWriter = ImageWriterFactory<vector<uint8_t>&>::createImageWriter(type, buffer);$/;"	l
+image_data	videothumbnailerc.h	/^} image_data;$/;"	t	typeref:struct:image_data_struct
+image_data_ptr	videothumbnailerc.h	/^    uint8_t*    image_data_ptr;       \/* points to the image data after call to generate_thumbnail_to_buffer *\/$/;"	m	struct:image_data_struct	access:public
+image_data_size	videothumbnailerc.h	/^    int         image_data_size;      \/* contains the size of the image data after call to generate_thumbnail_to_buffer *\/$/;"	m	struct:image_data_struct	access:public
+image_data_struct	videothumbnailerc.h	/^typedef struct image_data_struct$/;"	s
+image_data_struct::image_data_ptr	videothumbnailerc.h	/^    uint8_t*    image_data_ptr;       \/* points to the image data after call to generate_thumbnail_to_buffer *\/$/;"	m	struct:image_data_struct	access:public
+image_data_struct::image_data_size	videothumbnailerc.h	/^    int         image_data_size;      \/* contains the size of the image data after call to generate_thumbnail_to_buffer *\/$/;"	m	struct:image_data_struct	access:public
+image_data_struct::internal_data	videothumbnailerc.h	/^    void*       internal_data;        \/* for internal use only *\/$/;"	m	struct:image_data_struct	access:public
+init	jpegwriter.cpp	/^void JpegWriter::init()$/;"	f	class:ffmpegthumbnailer::JpegWriter	signature:()
+init	jpegwriter.h	/^    void init();$/;"	p	class:ffmpegthumbnailer::JpegWriter	access:private	signature:()
+init	pngwriter.cpp	/^void PngWriter::init()$/;"	f	class:ffmpegthumbnailer::PngWriter	signature:()
+init	pngwriter.h	/^    void init();$/;"	p	class:ffmpegthumbnailer::PngWriter	access:private	signature:()
+initialize	moviedecoder.cpp	/^void MovieDecoder::initialize(const string& filename)$/;"	f	class:ffmpegthumbnailer::MovieDecoder	signature:(const string& filename)
+initialize	moviedecoder.h	/^    void initialize(const std::string& filename);$/;"	p	class:ffmpegthumbnailer::MovieDecoder	access:public	signature:(const std::string& filename)
+initializeVideo	moviedecoder.cpp	/^void MovieDecoder::initializeVideo()$/;"	f	class:ffmpegthumbnailer::MovieDecoder	signature:()
+initializeVideo	moviedecoder.h	/^    void initializeVideo();$/;"	p	class:ffmpegthumbnailer::MovieDecoder	access:private	signature:()
+inputFile	moviedecoder.cpp	/^    string inputFile = filename == "-" ? "pipe:" : filename;$/;"	l
+internal_data	videothumbnailerc.h	/^    void*       internal_data;        \/* for internal use only *\/$/;"	m	struct:image_data_struct	access:public
+jpegDestroyDestination	jpegwriter.cpp	/^static void jpegDestroyDestination(j_compress_ptr pCompressionInfo);$/;"	p	namespace:ffmpegthumbnailer	file:	signature:(j_compress_ptr pCompressionInfo)
+jpegDestroyDestination	jpegwriter.cpp	/^void jpegDestroyDestination(j_compress_ptr pCompressionInfo)$/;"	f	namespace:ffmpegthumbnailer	signature:(j_compress_ptr pCompressionInfo)
+jpegFlushWorkBuffer	jpegwriter.cpp	/^boolean jpegFlushWorkBuffer(j_compress_ptr pCompressionInfo)$/;"	f	namespace:ffmpegthumbnailer	signature:(j_compress_ptr pCompressionInfo)
+jpegFlushWorkBuffer	jpegwriter.cpp	/^static boolean jpegFlushWorkBuffer(j_compress_ptr pCompressionInfo);$/;"	p	namespace:ffmpegthumbnailer	file:	signature:(j_compress_ptr pCompressionInfo)
+jpegInitDestination	jpegwriter.cpp	/^static void jpegInitDestination(j_compress_ptr pCompressionInfo);$/;"	p	namespace:ffmpegthumbnailer	file:	signature:(j_compress_ptr pCompressionInfo)
+jpegInitDestination	jpegwriter.cpp	/^void jpegInitDestination(j_compress_ptr pCompressionInfo)$/;"	f	namespace:ffmpegthumbnailer	signature:(j_compress_ptr pCompressionInfo)
+keyFrameAttempts	moviedecoder.cpp	/^    int keyFrameAttempts = 0;$/;"	l
+lineSize	videoframe.h	/^    int lineSize;$/;"	m	struct:ffmpegthumbnailer::VideoFrame	access:public
+lowercase	stringoperations.cpp	/^string& StringOperations::lowercase(string& aString)$/;"	f	class:ffmpegthumbnailer::StringOperations	signature:(string& aString)
+lowercase	stringoperations.h	/^    static std::string& lowercase(std::string& aString);$/;"	p	class:ffmpegthumbnailer::StringOperations	access:public	signature:(std::string& aString)
+m_AllowSeek	moviedecoder.h	/^    bool                    m_AllowSeek;$/;"	m	class:ffmpegthumbnailer::MovieDecoder	access:private
+m_Compression	jpegwriter.h	/^    jpeg_compress_struct    m_Compression;$/;"	m	class:ffmpegthumbnailer::JpegWriter	access:private
+m_DestMgr	jpegwriter.cpp	/^    jpeg_destination_mgr    m_DestMgr;$/;"	m	struct:ffmpegthumbnailer::BufferWriter	file:	access:public
+m_ErrorHandler	jpegwriter.h	/^    jpeg_error_mgr          m_ErrorHandler;$/;"	m	class:ffmpegthumbnailer::JpegWriter	access:private
+m_FilePtr	pngwriter.h	/^	FILE* 		            m_FilePtr;$/;"	m	class:ffmpegthumbnailer::PngWriter	access:private
+m_Filters	videothumbnailer.h	/^    std::vector<IFilter*>       m_Filters;$/;"	m	class:ffmpegthumbnailer::VideoThumbnailer	access:private
+m_FormatContextWasGiven	moviedecoder.h	/^    bool                    m_FormatContextWasGiven;$/;"	m	class:ffmpegthumbnailer::MovieDecoder	access:private
+m_ImageQuality	videothumbnailer.h	/^    int                         m_ImageQuality;$/;"	m	class:ffmpegthumbnailer::VideoThumbnailer	access:private
+m_InfoPtr	pngwriter.h	/^	png_infop 	            m_InfoPtr;$/;"	m	class:ffmpegthumbnailer::PngWriter	access:private
+m_MaintainAspectRatio	videothumbnailer.h	/^    bool                        m_MaintainAspectRatio;$/;"	m	class:ffmpegthumbnailer::VideoThumbnailer	access:private
+m_OverlayFilmStrip	videothumbnailer.h	/^    bool                        m_OverlayFilmStrip;$/;"	m	class:ffmpegthumbnailer::VideoThumbnailer	access:private
+m_PngPtr	pngwriter.h	/^	png_structp             m_PngPtr;$/;"	m	class:ffmpegthumbnailer::PngWriter	access:private
+m_SeekPercentage	videothumbnailer.h	/^    uint16_t                    m_SeekPercentage;$/;"	m	class:ffmpegthumbnailer::VideoThumbnailer	access:private
+m_SeekTime	videothumbnailer.h	/^    std::string                 m_SeekTime;$/;"	m	class:ffmpegthumbnailer::VideoThumbnailer	access:private
+m_SmartFrameSelection	videothumbnailer.h	/^    bool                        m_SmartFrameSelection;$/;"	m	class:ffmpegthumbnailer::VideoThumbnailer	access:private
+m_ThumbnailSize	videothumbnailer.h	/^    int                         m_ThumbnailSize;$/;"	m	class:ffmpegthumbnailer::VideoThumbnailer	access:private
+m_VideoStream	moviedecoder.h	/^    int                     m_VideoStream;$/;"	m	class:ffmpegthumbnailer::MovieDecoder	access:private
+m_WorkAroundIssues	videothumbnailer.h	/^    bool                        m_WorkAroundIssues;$/;"	m	class:ffmpegthumbnailer::VideoThumbnailer	access:private
+m_pBufferWriter	jpegwriter.h	/^    BufferWriter*           m_pBufferWriter;$/;"	m	class:ffmpegthumbnailer::JpegWriter	access:private
+m_pDataBuffer	jpegwriter.cpp	/^    uint8_t*                m_pDataBuffer;$/;"	m	struct:ffmpegthumbnailer::BufferWriter	file:	access:public
+m_pDataSink	jpegwriter.cpp	/^    std::vector<uint8_t>*   m_pDataSink;$/;"	m	struct:ffmpegthumbnailer::BufferWriter	file:	access:public
+m_pFile	jpegwriter.h	/^    FILE*                   m_pFile;$/;"	m	class:ffmpegthumbnailer::JpegWriter	access:private
+m_pFormatContext	moviedecoder.h	/^    AVFormatContext*        m_pFormatContext;$/;"	m	class:ffmpegthumbnailer::MovieDecoder	access:private
+m_pFrame	moviedecoder.h	/^    AVFrame*                m_pFrame;$/;"	m	class:ffmpegthumbnailer::MovieDecoder	access:private
+m_pFrameBuffer	moviedecoder.h	/^    uint8_t*                m_pFrameBuffer;$/;"	m	class:ffmpegthumbnailer::MovieDecoder	access:private
+m_pPacket	moviedecoder.h	/^    AVPacket*               m_pPacket;$/;"	m	class:ffmpegthumbnailer::MovieDecoder	access:private
+m_pVideoCodec	moviedecoder.h	/^    AVCodec*                m_pVideoCodec;$/;"	m	class:ffmpegthumbnailer::MovieDecoder	access:private
+m_pVideoCodecContext	moviedecoder.h	/^    AVCodecContext*         m_pVideoCodecContext;$/;"	m	class:ffmpegthumbnailer::MovieDecoder	access:private
+m_pVideoStream	moviedecoder.h	/^    AVStream*               m_pVideoStream;$/;"	m	class:ffmpegthumbnailer::MovieDecoder	access:private
+maintain_aspect_ratio	videothumbnailerc.h	/^    int                     maintain_aspect_ratio;  \/* default = 1 *\/$/;"	m	struct:video_thumbnailer_struct	access:public
+mimeType	videothumbnailer.cpp	/^        string mimeType = getMimeType(videoFile);$/;"	l
+minRMSE	videothumbnailer.cpp	/^    float minRMSE = FLT_MAX;$/;"	l
+minutes	videothumbnailer.cpp	/^    int hours, minutes, seconds;$/;"	l
+movieDecoder	videothumbnailer.cpp	/^    MovieDecoder movieDecoder(videoFile, pavContext);$/;"	p	file:	signature:(videoFile, pavContext)
+numBytes	moviedecoder.cpp	/^    int numBytes = avpicture_get_size(format, width, height);$/;"	l
+numeric	stringoperations.h	/^        ss << numeric;$/;"	l
+offset	filmstripfilter.cpp	/^    int offset = (videoFrame.width * 3) - 3;$/;"	l
+operator ()	stringoperations.h	/^        char operator() (char c) const$/;"	f	class:ffmpegthumbnailer::StringOperations::ToLower	access:public	signature:(char c) const
+outputBuffer	pngwriter.cpp	/^    vector<uint8_t>& outputBuffer = *(reinterpret_cast<vector<uint8_t>* >(png_get_io_ptr(png_ptr)));$/;"	l
+outputFile	videothumbnailer.cpp	/^        stringstream outputFile;$/;"	l
+overlay_film_strip	videothumbnailerc.h	/^    int                     overlay_film_strip;     \/* default = 0 *\/$/;"	m	struct:video_thumbnailer_struct	access:public
+pixelIndex	grayscalefilter.h	/^                int pixelIndex = (i * videoFrame.lineSize) + (j * 3);$/;"	l
+pixelIndex	videothumbnailer.cpp	/^        int pixelIndex = i * videoFrame.lineSize;$/;"	l
+pngText	pngwriter.cpp	/^	png_text pngText;$/;"	l
+pos	stringoperations.cpp	/^    size_t          pos = 0;$/;"	l
+pos	stringoperations.cpp	/^    size_t pos = line.find_last_of('\\r');$/;"	l
+pos	videothumbnailer.cpp	/^    string::size_type pos = videoFilename.rfind('.');$/;"	l
+prevBufSize	pngwriter.cpp	/^    int prevBufSize = outputBuffer.size();$/;"	l
+prevSize	jpegwriter.cpp	/^    size_t prevSize = bufWriter->m_pDataSink->size();$/;"	l
+process	filmstripfilter.cpp	/^void FilmStripFilter::process(VideoFrame& videoFrame)$/;"	f	class:ffmpegthumbnailer::FilmStripFilter	signature:(VideoFrame& videoFrame)
+process	filmstripfilter.h	/^    void process(VideoFrame& videoFrame);$/;"	p	class:ffmpegthumbnailer::FilmStripFilter	access:public	signature:(VideoFrame& videoFrame)
+process	grayscalefilter.h	/^    void process(VideoFrame& videoFrame)$/;"	f	class:ffmpegthumbnailer::GrayScaleFilter	access:public	signature:(VideoFrame& videoFrame)
+process	ifilter.h	/^    virtual void process(VideoFrame& frameData) = 0;$/;"	p	class:ffmpegthumbnailer::IFilter	access:public	signature:(VideoFrame& frameData)
+process	videothumbnailer.cpp	/^        (*iter)->process(frameData);$/;"	p	file:	signature:(frameData)
+push_back	stringoperations.cpp	/^        tokens.push_back(tempString.substr(0, pos));$/;"	p	file:	signature:(tempString.substr(0, pos))
+push_back	stringoperations.cpp	/^    tokens.push_back(tempString);$/;"	p	file:	signature:(tempString)
+push_back	videothumbnailer.cpp	/^    m_Filters.push_back(filter);$/;"	p	file:	signature:(filter)
+r	histogram.h	/^    T r[256];$/;"	m	struct:ffmpegthumbnailer::Histogram	access:public
+removeFilter	videothumbnailer.cpp	/^void VideoThumbnailer::removeFilter(IFilter* filter)$/;"	f	class:ffmpegthumbnailer::VideoThumbnailer	signature:(IFilter* filter)
+removeFilter	videothumbnailer.h	/^    void removeFilter(IFilter* filter);$/;"	p	class:ffmpegthumbnailer::VideoThumbnailer	access:public	signature:(IFilter* filter)
+replace	stringoperations.cpp	/^        aString.replace(foundPos, toSearch.length(), toReplace);$/;"	p	file:	signature:(foundPos, toSearch.length(), toReplace)
+replace	stringoperations.cpp	/^string& StringOperations::replace(string& aString, const string& toSearch, const string& toReplace)$/;"	f	class:ffmpegthumbnailer::StringOperations	signature:(string& aString, const string& toSearch, const string& toReplace)
+replace	stringoperations.h	/^    static std::string& replace(std::string& aString, const std::string& toSearch, const std::string& toReplace);$/;"	p	class:ffmpegthumbnailer::StringOperations	access:public	signature:(std::string& aString, const std::string& toSearch, const std::string& toReplace)
+resize	moviedecoder.cpp	/^    videoFrame.frameData.resize(videoFrame.lineSize * videoFrame.height);$/;"	p	file:	signature:(videoFrame.lineSize * videoFrame.height)
+resize	pngwriter.cpp	/^    outputBuffer.resize(outputBuffer.size() + length);$/;"	p	file:	signature:(outputBuffer.size() + length)
+ret	moviedecoder.cpp	/^    int ret = av_seek_frame(m_pFormatContext, -1, timestamp, 0);$/;"	l
+rmse	videothumbnailer.cpp	/^        float rmse = 0.0;$/;"	l
+rowPointers	videothumbnailer.cpp	/^        vector<uint8_t*> rowPointers;$/;"	l
+rowPointers	videothumbnailer.cpp	/^    vector<uint8_t*> rowPointers;$/;"	l
+scaleContext	moviedecoder.cpp	/^    SwsContext* scaleContext = sws_getContext(m_pVideoCodecContext->width, m_pVideoCodecContext->height,$/;"	l
+scaledHeight	moviedecoder.cpp	/^    int scaledWidth, scaledHeight;$/;"	l
+scaledWidth	moviedecoder.cpp	/^    int scaledWidth, scaledHeight;$/;"	l
+secondToSeekTo	videothumbnailer.cpp	/^            int secondToSeekTo = m_SeekTime.empty() ?$/;"	l
+seconds	videothumbnailer.cpp	/^    int hours, minutes, seconds;$/;"	l
+seek	moviedecoder.cpp	/^void MovieDecoder::seek(int timeInSeconds)$/;"	f	class:ffmpegthumbnailer::MovieDecoder	signature:(int timeInSeconds)
+seek	moviedecoder.h	/^    void seek(int timeInSeconds);$/;"	p	class:ffmpegthumbnailer::MovieDecoder	access:public	signature:(int timeInSeconds)
+seek	videothumbnailer.cpp	/^            movieDecoder.seek(secondToSeekTo);$/;"	p	file:	signature:(secondToSeekTo)
+seek_percentage	videothumbnailerc.h	/^    int                     seek_percentage;        \/* default = 10 *\/$/;"	m	struct:video_thumbnailer_struct	access:public
+seek_time	videothumbnailerc.h	/^    char*                   seek_time;              \/* default = NULL (format hh:mm:ss, overrides seek_percentage if set) *\/$/;"	m	struct:video_thumbnailer_struct	access:public
+setImageQuality	videothumbnailer.cpp	/^void VideoThumbnailer::setImageQuality(int imageQuality)$/;"	f	class:ffmpegthumbnailer::VideoThumbnailer	signature:(int imageQuality)
+setImageQuality	videothumbnailer.h	/^    void setImageQuality(int imageQuality);$/;"	p	class:ffmpegthumbnailer::VideoThumbnailer	access:public	signature:(int imageQuality)
+setMaintainAspectRatio	videothumbnailer.cpp	/^void VideoThumbnailer::setMaintainAspectRatio(bool enabled)$/;"	f	class:ffmpegthumbnailer::VideoThumbnailer	signature:(bool enabled)
+setMaintainAspectRatio	videothumbnailer.h	/^    void setMaintainAspectRatio(bool enabled);$/;"	p	class:ffmpegthumbnailer::VideoThumbnailer	access:public	signature:(bool enabled)
+setProperties	videothumbnailerc.cpp	/^void setProperties(video_thumbnailer* thumbnailer)$/;"	f	signature:(video_thumbnailer* thumbnailer)
+setSeekPercentage	videothumbnailer.cpp	/^void VideoThumbnailer::setSeekPercentage(int percentage)$/;"	f	class:ffmpegthumbnailer::VideoThumbnailer	signature:(int percentage)
+setSeekPercentage	videothumbnailer.h	/^    void setSeekPercentage(int percentage);$/;"	p	class:ffmpegthumbnailer::VideoThumbnailer	access:public	signature:(int percentage)
+setSeekTime	videothumbnailer.cpp	/^void VideoThumbnailer::setSeekTime(const std::string& seekTime)$/;"	f	class:ffmpegthumbnailer::VideoThumbnailer	signature:(const std::string& seekTime)
+setSeekTime	videothumbnailer.h	/^    void setSeekTime(const std::string& seekTime);$/;"	p	class:ffmpegthumbnailer::VideoThumbnailer	access:public	signature:(const std::string& seekTime)
+setSmartFrameSelection	videothumbnailer.cpp	/^void VideoThumbnailer::setSmartFrameSelection(bool enabled)$/;"	f	class:ffmpegthumbnailer::VideoThumbnailer	signature:(bool enabled)
+setSmartFrameSelection	videothumbnailer.h	/^    void setSmartFrameSelection(bool enabled);$/;"	p	class:ffmpegthumbnailer::VideoThumbnailer	access:public	signature:(bool enabled)
+setText	imagewriter.h	/^	virtual void setText(const std::string& key, const std::string& value) = 0;$/;"	p	class:ffmpegthumbnailer::ImageWriter	access:public	signature:(const std::string& key, const std::string& value)
+setText	jpegwriter.cpp	/^void JpegWriter::setText(const string& \/*key*\/, const string& \/*value*\/)$/;"	f	class:ffmpegthumbnailer::JpegWriter	signature:(const string& , const string& )
+setText	jpegwriter.h	/^    void setText(const std::string& key, const std::string& value);$/;"	p	class:ffmpegthumbnailer::JpegWriter	access:public	signature:(const std::string& key, const std::string& value)
+setText	pngwriter.cpp	/^void PngWriter::setText(const string& key, const string& value)$/;"	f	class:ffmpegthumbnailer::PngWriter	signature:(const string& key, const string& value)
+setText	pngwriter.h	/^	void setText(const std::string& key, const std::string& value);$/;"	p	class:ffmpegthumbnailer::PngWriter	access:public	signature:(const std::string& key, const std::string& value)
+setThumbnailSize	videothumbnailer.cpp	/^void VideoThumbnailer::setThumbnailSize(int size)$/;"	f	class:ffmpegthumbnailer::VideoThumbnailer	signature:(int size)
+setThumbnailSize	videothumbnailer.h	/^    void setThumbnailSize(int size);$/;"	p	class:ffmpegthumbnailer::VideoThumbnailer	access:public	signature:(int size)
+setWorkAroundIssues	videothumbnailer.cpp	/^void VideoThumbnailer::setWorkAroundIssues(bool workAround)$/;"	f	class:ffmpegthumbnailer::VideoThumbnailer	signature:(bool workAround)
+setWorkAroundIssues	videothumbnailer.h	/^    void setWorkAroundIssues(bool workAround);$/;"	p	class:ffmpegthumbnailer::VideoThumbnailer	access:public	signature:(bool workAround)
+srcHeight	moviedecoder.cpp	/^        int srcHeight           = m_pVideoCodecContext->height;$/;"	l
+srcWidth	moviedecoder.cpp	/^        int srcWidth            = m_pVideoCodecContext->width;$/;"	l
+ss	stringoperations.h	/^        std::stringstream ss;$/;"	l
+startPos	stringoperations.cpp	/^    size_t startPos = 0;$/;"	l
+statInfo	videothumbnailer.cpp	/^        struct stat statInfo;$/;"	l
+tempString	stringoperations.cpp	/^    string          tempString = str;$/;"	l
+thumbnail_image_quality	videothumbnailerc.h	/^    int                     thumbnail_image_quality;\/* default = 8 (0 is bad, 10 is best)*\/$/;"	m	struct:video_thumbnailer_struct	access:public
+thumbnail_image_type	videothumbnailerc.h	/^    ThumbnailerImageType    thumbnail_image_type;   \/* default = Png *\/$/;"	m	struct:video_thumbnailer_struct	access:public
+thumbnail_size	videothumbnailerc.h	/^    int                     thumbnail_size;         \/* default = 128 *\/$/;"	m	struct:video_thumbnailer_struct	access:public
+thumbnailer	videothumbnailerc.cpp	/^    video_thumbnailer* thumbnailer = new video_thumbnailer_struct();$/;"	l
+thumbnailer	videothumbnailerc.h	/^    void*                   thumbnailer;            \/* for internal use only *\/$/;"	m	struct:video_thumbnailer_struct	access:public
+timeToSeconds	videothumbnailer.cpp	/^int timeToSeconds(const std::string& time)$/;"	f	namespace:ffmpegthumbnailer	signature:(const std::string& time)
+timestamp	moviedecoder.cpp	/^    int64_t timestamp = AV_TIME_BASE * static_cast<int64_t>(timeInSeconds);$/;"	l
+toString	stringoperations.h	/^    static std::string toString(const T& numeric)$/;"	f	class:ffmpegthumbnailer::StringOperations	access:public	signature:(const T& numeric)
+tokenize	stringoperations.cpp	/^vector<string> StringOperations::tokenize(const string& str, const string& delimiter)$/;"	f	class:ffmpegthumbnailer::StringOperations	signature:(const string& str, const string& delimiter)
+tokenize	stringoperations.h	/^    static std::vector<std::string> tokenize(const std::string& str, const std::string& delimiter);$/;"	p	class:ffmpegthumbnailer::StringOperations	access:public	signature:(const std::string& str, const std::string& delimiter)
+tokens	stringoperations.cpp	/^    vector<string>  tokens;$/;"	l
+videoFrame	videothumbnailer.cpp	/^    VideoFrame  videoFrame;$/;"	l
+videoFrames	videothumbnailer.cpp	/^    vector<VideoFrame> videoFrames(SMART_FRAME_ATTEMPTS);$/;"	p	file:	signature:(SMART_FRAME_ATTEMPTS)
+videoThumbnailer	videothumbnailerc.cpp	/^        VideoThumbnailer* videoThumbnailer  = reinterpret_cast<VideoThumbnailer*>(thumbnailer->thumbnailer);$/;"	l
+videoThumbnailer	videothumbnailerc.cpp	/^        VideoThumbnailer* videoThumbnailer = reinterpret_cast<VideoThumbnailer*>(thumbnailer->thumbnailer);$/;"	l
+videoThumbnailer	videothumbnailerc.cpp	/^    VideoThumbnailer* videoThumbnailer  = reinterpret_cast<VideoThumbnailer*>(thumbnailer->thumbnailer);$/;"	l
+videoThumbnailer	videothumbnailerc.cpp	/^    VideoThumbnailer* videoThumbnailer = reinterpret_cast<VideoThumbnailer*>(thumbnailer->thumbnailer);$/;"	l
+video_thumbnailer	videothumbnailerc.h	/^} video_thumbnailer;$/;"	t	typeref:struct:video_thumbnailer_struct
+video_thumbnailer_create	videothumbnailerc.cpp	/^extern "C" video_thumbnailer* video_thumbnailer_create(void)$/;"	f	signature:(void)
+video_thumbnailer_create	videothumbnailerc.h	/^video_thumbnailer* video_thumbnailer_create(void);$/;"	p	signature:(void)
+video_thumbnailer_create_image_data	videothumbnailerc.cpp	/^extern "C" image_data* video_thumbnailer_create_image_data(void)$/;"	f	signature:(void)
+video_thumbnailer_create_image_data	videothumbnailerc.h	/^image_data* video_thumbnailer_create_image_data(void);$/;"	p	signature:(void)
+video_thumbnailer_destroy	videothumbnailerc.cpp	/^extern "C" void video_thumbnailer_destroy(video_thumbnailer* thumbnailer)$/;"	f	signature:(video_thumbnailer* thumbnailer)
+video_thumbnailer_destroy	videothumbnailerc.h	/^void video_thumbnailer_destroy(video_thumbnailer* thumbnailer);$/;"	p	signature:(video_thumbnailer* thumbnailer)
+video_thumbnailer_destroy_image_data	videothumbnailerc.cpp	/^extern "C" void video_thumbnailer_destroy_image_data(image_data* data)$/;"	f	signature:(image_data* data)
+video_thumbnailer_destroy_image_data	videothumbnailerc.h	/^void video_thumbnailer_destroy_image_data(image_data* data);$/;"	p	signature:(image_data* data)
+video_thumbnailer_generate_thumbnail_to_buffer	videothumbnailerc.cpp	/^extern "C" int video_thumbnailer_generate_thumbnail_to_buffer(video_thumbnailer* thumbnailer, const char* movie_filename, image_data* generated_image_data)$/;"	f	signature:(video_thumbnailer* thumbnailer, const char* movie_filename, image_data* generated_image_data)
+video_thumbnailer_generate_thumbnail_to_buffer	videothumbnailerc.h	/^int video_thumbnailer_generate_thumbnail_to_buffer(video_thumbnailer* thumbnailer, const char* movie_filename, image_data* generated_image_data);$/;"	p	signature:(video_thumbnailer* thumbnailer, const char* movie_filename, image_data* generated_image_data)
+video_thumbnailer_generate_thumbnail_to_file	videothumbnailerc.cpp	/^extern "C" int video_thumbnailer_generate_thumbnail_to_file(video_thumbnailer* thumbnailer, const char* movie_filename, const char* output_fileName)$/;"	f	signature:(video_thumbnailer* thumbnailer, const char* movie_filename, const char* output_fileName)
+video_thumbnailer_generate_thumbnail_to_file	videothumbnailerc.h	/^int video_thumbnailer_generate_thumbnail_to_file(video_thumbnailer* thumbnailer, const char* movie_filename, const char* output_fileName);$/;"	p	signature:(video_thumbnailer* thumbnailer, const char* movie_filename, const char* output_fileName)
+video_thumbnailer_struct	videothumbnailerc.h	/^typedef struct video_thumbnailer_struct$/;"	s
+video_thumbnailer_struct::av_format_context	videothumbnailerc.h	/^    struct AVFormatContext* av_format_context;      \/* default = NULL *\/$/;"	m	struct:video_thumbnailer_struct	typeref:struct:video_thumbnailer_struct::AVFormatContext	access:public
+video_thumbnailer_struct::filter	videothumbnailerc.h	/^    void*                   filter;                 \/* for internal use only *\/$/;"	m	struct:video_thumbnailer_struct	access:public
+video_thumbnailer_struct::maintain_aspect_ratio	videothumbnailerc.h	/^    int                     maintain_aspect_ratio;  \/* default = 1 *\/$/;"	m	struct:video_thumbnailer_struct	access:public
+video_thumbnailer_struct::overlay_film_strip	videothumbnailerc.h	/^    int                     overlay_film_strip;     \/* default = 0 *\/$/;"	m	struct:video_thumbnailer_struct	access:public
+video_thumbnailer_struct::seek_percentage	videothumbnailerc.h	/^    int                     seek_percentage;        \/* default = 10 *\/$/;"	m	struct:video_thumbnailer_struct	access:public
+video_thumbnailer_struct::seek_time	videothumbnailerc.h	/^    char*                   seek_time;              \/* default = NULL (format hh:mm:ss, overrides seek_percentage if set) *\/$/;"	m	struct:video_thumbnailer_struct	access:public
+video_thumbnailer_struct::thumbnail_image_quality	videothumbnailerc.h	/^    int                     thumbnail_image_quality;\/* default = 8 (0 is bad, 10 is best)*\/$/;"	m	struct:video_thumbnailer_struct	access:public
+video_thumbnailer_struct::thumbnail_image_type	videothumbnailerc.h	/^    ThumbnailerImageType    thumbnail_image_type;   \/* default = Png *\/$/;"	m	struct:video_thumbnailer_struct	access:public
+video_thumbnailer_struct::thumbnail_size	videothumbnailerc.h	/^    int                     thumbnail_size;         \/* default = 128 *\/$/;"	m	struct:video_thumbnailer_struct	access:public
+video_thumbnailer_struct::thumbnailer	videothumbnailerc.h	/^    void*                   thumbnailer;            \/* for internal use only *\/$/;"	m	struct:video_thumbnailer_struct	access:public
+video_thumbnailer_struct::workaround_bugs	videothumbnailerc.h	/^    int                     workaround_bugs;        \/* default = 0 *\/$/;"	m	struct:video_thumbnailer_struct	access:public
+width	videoframe.h	/^    int width;$/;"	m	struct:ffmpegthumbnailer::VideoFrame	access:public
+workaround_bugs	videothumbnailerc.h	/^    int                     workaround_bugs;        \/* default = 0 *\/$/;"	m	struct:video_thumbnailer_struct	access:public
+writeDataCallback	pngwriter.cpp	/^static void writeDataCallback(png_structp png_ptr, png_bytep data, png_size_t length);$/;"	p	namespace:ffmpegthumbnailer	file:	signature:(png_structp png_ptr, png_bytep data, png_size_t length)
+writeDataCallback	pngwriter.cpp	/^void writeDataCallback(png_structp png_ptr, png_bytep data, png_size_t length)$/;"	f	namespace:ffmpegthumbnailer	signature:(png_structp png_ptr, png_bytep data, png_size_t length)
+writeFrame	imagewriter.h	/^	virtual void writeFrame(uint8_t** rgbData, int width, int height, int quality) = 0;$/;"	p	class:ffmpegthumbnailer::ImageWriter	access:public	signature:(uint8_t** rgbData, int width, int height, int quality)
+writeFrame	jpegwriter.cpp	/^void JpegWriter::writeFrame(uint8_t** rgbData, int width, int height, int quality)$/;"	f	class:ffmpegthumbnailer::JpegWriter	signature:(uint8_t** rgbData, int width, int height, int quality)
+writeFrame	jpegwriter.h	/^    void writeFrame(uint8_t** rgbData, int width, int height, int quality);$/;"	p	class:ffmpegthumbnailer::JpegWriter	access:public	signature:(uint8_t** rgbData, int width, int height, int quality)
+writeFrame	pngwriter.cpp	/^void PngWriter::writeFrame(uint8_t** rgbData, int width, int height, int \/*quality*\/)$/;"	f	class:ffmpegthumbnailer::PngWriter	signature:(uint8_t** rgbData, int width, int height, int )
+writeFrame	pngwriter.h	/^	void writeFrame(uint8_t** rgbData, int width, int height, int quality);$/;"	p	class:ffmpegthumbnailer::PngWriter	access:public	signature:(uint8_t** rgbData, int width, int height, int quality)
+writeImage	videothumbnailer.cpp	/^void VideoThumbnailer::writeImage(const string& videoFile, ImageWriter& imageWriter, const VideoFrame& videoFrame, int duration, vector<uint8_t*>& rowPointers)$/;"	f	class:ffmpegthumbnailer::VideoThumbnailer	signature:(const string& videoFile, ImageWriter& imageWriter, const VideoFrame& videoFrame, int duration, vector<uint8_t*>& rowPointers)
+writeImage	videothumbnailer.h	/^    void writeImage(const std::string& videoFile, ImageWriter& imageWriter, const VideoFrame& videoFrame, int duration, std::vector<uint8_t*>& rowPointers);$/;"	p	class:ffmpegthumbnailer::VideoThumbnailer	access:private	signature:(const std::string& videoFile, ImageWriter& imageWriter, const VideoFrame& videoFrame, int duration, std::vector<uint8_t*>& rowPointers)
+~ImageWriter	imagewriter.h	/^    virtual ~ImageWriter() {}$/;"	f	class:ffmpegthumbnailer::ImageWriter	access:public	signature:()
+~JpegWriter	jpegwriter.cpp	/^JpegWriter::~JpegWriter()$/;"	f	class:ffmpegthumbnailer::JpegWriter	signature:()
+~JpegWriter	jpegwriter.h	/^    ~JpegWriter();$/;"	p	class:ffmpegthumbnailer::JpegWriter	access:public	signature:()
+~MovieDecoder	moviedecoder.cpp	/^MovieDecoder::~MovieDecoder()$/;"	f	class:ffmpegthumbnailer::MovieDecoder	signature:()
+~MovieDecoder	moviedecoder.h	/^    ~MovieDecoder();$/;"	p	class:ffmpegthumbnailer::MovieDecoder	access:public	signature:()
+~PngWriter	pngwriter.cpp	/^PngWriter::~PngWriter()$/;"	f	class:ffmpegthumbnailer::PngWriter	signature:()
+~PngWriter	pngwriter.h	/^	~PngWriter();$/;"	p	class:ffmpegthumbnailer::PngWriter	access:public	signature:()
+~VideoThumbnailer	videothumbnailer.cpp	/^VideoThumbnailer::~VideoThumbnailer()$/;"	f	class:ffmpegthumbnailer::VideoThumbnailer	signature:()
+~VideoThumbnailer	videothumbnailer.h	/^    ~VideoThumbnailer();$/;"	p	class:ffmpegthumbnailer::VideoThumbnailer	access:public	signature:()
