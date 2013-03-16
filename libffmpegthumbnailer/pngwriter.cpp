@@ -17,6 +17,7 @@
 #include "pngwriter.h"
 #include <stdexcept>
 #include <cassert>
+#include <cstring>
 
 using namespace std;
 
