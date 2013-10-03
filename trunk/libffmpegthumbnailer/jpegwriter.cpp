@@ -133,7 +133,7 @@ boolean jpegFlushWorkBuffer(j_compress_ptr pCompressionInfo)
     bufWriter->m_DestMgr.next_output_byte = bufWriter->m_pDataBuffer;
     bufWriter->m_DestMgr.free_in_buffer = JPEG_WORK_BUFFER_SIZE;
 
-    return true;
+    return TRUE;
 }
 
 
