@@ -193,7 +193,7 @@ void VideoThumbnailer::generateThumbnail(const string& videoFile, ThumbnailerIma
 
 void VideoThumbnailer::writeImage(const string& videoFile, ImageWriter& imageWriter, const VideoFrame& videoFrame, int duration, vector<uint8_t*>& rowPointers)
 {
-    if (videoFile != "-")
+    if((videoFile != "-") && (videoFile.find("rtsp://") != 0) && (videoFile.find("udp://") != 0) && (videoFile.find("http://") != 0))
     {
         struct stat statInfo;
         if (stat(videoFile.c_str(), &statInfo) == 0)
@@ -203,7 +203,7 @@ void VideoThumbnailer::writeImage(const string& videoFile, ImageWriter& imageWri
         }
         else
         {
-            cout << "Warn: Failed to stat file (" << strerror(errno) << ")" << endl;
+            cout << "Warn: Failed to stat file " << videoFile << " (" << strerror(errno) << ")" << endl;
         }
         
         string mimeType = getMimeType(videoFile);

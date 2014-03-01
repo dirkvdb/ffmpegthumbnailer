@@ -59,9 +59,10 @@ void MovieDecoder::initialize(const string& filename)
 {
     av_register_all();
     avcodec_register_all();
+    avformat_network_init();
 
     string inputFile = filename == "-" ? "pipe:" : filename;
-    m_AllowSeek = (filename != "-") && (filename.find("rtsp://") != 0);
+    m_AllowSeek = (filename != "-") && (filename.find("rtsp://") != 0) && (filename.find("udp://") != 0);
     
 #if LIBAVCODEC_VERSION_MAJOR < 53
     if ((!m_FormatContextWasGiven) && av_open_input_file(&m_pFormatContext, inputFile.c_str(), NULL, 0, NULL) != 0)
@@ -125,6 +126,8 @@ void MovieDecoder::destroy()
     }
 
     m_VideoStream = -1;
+    
+    avformat_network_deinit();
 }
 
 string MovieDecoder::getCodec()
