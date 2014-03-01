@@ -128,9 +128,8 @@ int main(int argc, char** argv)
 #ifdef HAVE_GIO
         tryUriConvert(inputFile);
 #endif
-        ThumbnailerImageType imageType = imageFormat.empty() ?
-              determineImageTypeFromFilename(outputFile)
-            : determineImageTypeFromString(imageFormat);
+        ThumbnailerImageType imageType = imageFormat.empty() ? determineImageTypeFromFilename(outputFile)
+                                                             : determineImageTypeFromString(imageFormat);
     
         VideoThumbnailer videoThumbnailer(thumbnailSize, workaroundIssues, maintainAspectRatio, imageQuality, smartFrameSelection);
         FilmStripFilter* filmStripFilter = NULL;
@@ -160,6 +159,7 @@ int main(int argc, char** argv)
     }
     catch (...)
     {
+        cerr << "Unexpected rror" << endl;
         return -1;
     }
 
@@ -168,12 +168,12 @@ int main(int argc, char** argv)
 
 void printVersion()
 {
-    cout << PACKAGE_NAME" version: "VERSION << endl;
+    cout << PACKAGE_NAME " version: " VERSION << endl;
 }
 
 void printUsage()
 {
-    cout << "Usage: "PACKAGE_NAME" [options]" << endl << endl
+    cout << "Usage: " PACKAGE_NAME " [options]" << endl << endl
          << "Options:" << endl
          << "  -i<s>   : input file" << endl
          << "  -o<s>   : output file" << endl
@@ -216,49 +216,76 @@ typedef void (*InitFunc)(void);
 typedef void (*FreeFunc)(void*);
 typedef void (*UnrefFunc)(void*);
 
+class LibHandle
+{
+public:
+    LibHandle(const std::string& libName)
+    : m_pLib(dlopen(libName.c_str(), RTLD_LAZY))
+    {
+        if (!m_pLib) cerr << dlerror() << endl;
+    }
+    
+    ~LibHandle() { if (m_pLib) dlclose(m_pLib); }
+    
+    operator void*() const { return m_pLib; }
+    operator bool() const { return m_pLib != nullptr; } 
+    
+private:
+    void* m_pLib;
+};
+
 void tryUriConvert(std::string& filename)
 {
-    void* gLib = dlopen("libglib-2.0.so", RTLD_LAZY);
-    void* gobjectLib = dlopen("libgobject-2.0.so", RTLD_LAZY);
-    void* gioLib = dlopen("libgio-2.0.so", RTLD_LAZY);
-
+    LibHandle gLib("libglib-2.0.so.0");
+    LibHandle gobjectLib("libgobject-2.0.so.0");
+    LibHandle gioLib("libgio-2.0.so.0");
+    
     if (gioLib && gLib && gobjectLib)
     {   
-        FileCreateFunc createFunc = (FileCreateFunc) dlsym(gioLib, "g_file_new_for_uri");
+        FileCreateFunc createPathFunc = (FileCreateFunc) dlsym(gioLib, "g_file_new_for_path");
+        FileCreateFunc createUriFunc = (FileCreateFunc) dlsym(gioLib, "g_file_new_for_uri");
+        
         IsNativeFunc nativeFunc = (IsNativeFunc) dlsym(gioLib, "g_file_is_native");
         FileGetFunc getFunc = (FileGetFunc) dlsym(gioLib, "g_file_get_path");
         InitFunc initFunc = (InitFunc) dlsym(gobjectLib, "g_type_init");
         UnrefFunc unrefFunc = (UnrefFunc) dlsym(gobjectLib, "g_object_unref");
         FreeFunc freeFunc = (FreeFunc) dlsym(gLib, "g_free");
-        if (createFunc && nativeFunc && getFunc && freeFunc && initFunc && unrefFunc)
+        
+        if (!(createPathFunc && createUriFunc && nativeFunc && getFunc && freeFunc && initFunc && unrefFunc))
         {
-            initFunc();
-            void* pFile = createFunc(filename.c_str());
-            if (nativeFunc(pFile))
-            {
-                char* pPath = getFunc(pFile);
-                if (pPath)
-                {
-                    filename = pPath;
-                    freeFunc(pPath);
-                }
-            }
-            else
-            {
-				cerr << "Not a native file, thumbnailing will likely fail" << endl;
-			}
-
-            unrefFunc(pFile);
+            cerr << "Failed to obtain functions from gio libraries" << endl;
+            return;
         }
+        
+        initFunc();
+        
+        void* pFile = filename.find("file://") == 0 ? createUriFunc(filename.c_str()) : createPathFunc(filename.c_str());
+        if (!pFile)
+        {
+            cerr << "Failed to create gio file: " << filename << endl;
+            return;
+        }
+            
+        if (!nativeFunc(pFile))
+        {
+            unrefFunc(pFile);
+            cout << "Not a native file, thumbnailing will likely fail: " << filename << endl;
+            return;
+        }
+        
+        char* pPath = getFunc(pFile);
+        if (pPath)
+        {
+            filename = pPath;
+            freeFunc(pPath);
+        }
+        else
+        {
+            cerr << "Failed to get path: " << filename << endl;
+        }
+            
+        unrefFunc(pFile);
     }
-    else
-    {
-		cerr << "Failed to load gio libraries" << endl;
-	}
-
-    if (gioLib) dlclose(gioLib);
-    if (gobjectLib) dlclose(gobjectLib);
-    if (gLib) dlclose(gLib);
 }
 #endif
 
