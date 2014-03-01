@@ -145,6 +145,8 @@ if test "$ENABLE_UNITTEST" = "yes"; then
 fi
 AM_CONDITIONAL(ENABLE_UNITTEST, test "$enable_unittests" = "yes")
 
+CXXFLAGS="$CXXFLAGS -std=c++11"
+
 AC_SUBST([pkgconfigdir])
 AC_MSG_NOTICE([pkgconfig directory is ${pkgconfigdir}])
 
@@ -154,7 +156,6 @@ AC_OUTPUT([
     Makefile
     man/Makefile
 ])
-
 
 echo
 echo "CONFIGURATION SUMMARY ----"
