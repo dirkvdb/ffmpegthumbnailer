@@ -228,7 +228,7 @@ public:
     ~LibHandle() { if (m_pLib) dlclose(m_pLib); }
     
     operator void*() const { return m_pLib; }
-    operator bool() const { return m_pLib != nullptr; } 
+    operator bool() const { return m_pLib != NULL; } 
     
 private:
     void* m_pLib;
