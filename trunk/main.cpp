@@ -236,13 +236,17 @@ private:
 
 void tryUriConvert(std::string& filename)
 {
+	if (filename.find(":") == string::npos)
+	{
+		return;
+	}
+	
     LibHandle gLib("libglib-2.0.so.0");
     LibHandle gobjectLib("libgobject-2.0.so.0");
     LibHandle gioLib("libgio-2.0.so.0");
     
     if (gioLib && gLib && gobjectLib)
     {   
-        FileCreateFunc createPathFunc = (FileCreateFunc) dlsym(gioLib, "g_file_new_for_path");
         FileCreateFunc createUriFunc = (FileCreateFunc) dlsym(gioLib, "g_file_new_for_uri");
         
         IsNativeFunc nativeFunc = (IsNativeFunc) dlsym(gioLib, "g_file_is_native");
@@ -251,7 +255,7 @@ void tryUriConvert(std::string& filename)
         UnrefFunc unrefFunc = (UnrefFunc) dlsym(gobjectLib, "g_object_unref");
         FreeFunc freeFunc = (FreeFunc) dlsym(gLib, "g_free");
         
-        if (!(createPathFunc && createUriFunc && nativeFunc && getFunc && freeFunc && initFunc && unrefFunc))
+        if (!(createUriFunc && nativeFunc && getFunc && freeFunc && initFunc && unrefFunc))
         {
             cerr << "Failed to obtain functions from gio libraries" << endl;
             return;
@@ -259,7 +263,7 @@ void tryUriConvert(std::string& filename)
         
         initFunc();
         
-        void* pFile = filename.find("file://") == 0 ? createUriFunc(filename.c_str()) : createPathFunc(filename.c_str());
+        void* pFile = createUriFunc(filename.c_str());
         if (!pFile)
         {
             cerr << "Failed to create gio file: " << filename << endl;
