@@ -122,9 +122,8 @@ void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageWriter& i
     {
         try
         {
-            int secondToSeekTo = m_SeekTime.empty() ?
-                movieDecoder.getDuration() * m_SeekPercentage / 100 :
-                timeToSeconds(m_SeekTime);
+            int secondToSeekTo = m_SeekTime.empty() ? movieDecoder.getDuration() * m_SeekPercentage / 100
+													: timeToSeconds(m_SeekTime);
             movieDecoder.seek(secondToSeekTo);
         }
         catch (exception& e)
