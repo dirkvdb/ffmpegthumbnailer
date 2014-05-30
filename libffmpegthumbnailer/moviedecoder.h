@@ -34,7 +34,7 @@ struct VideoFrame;
 class MovieDecoder
 {
 public:
-    MovieDecoder(const std::string& filename, AVFormatContext* pavContext = NULL);
+    MovieDecoder(const std::string& filename, AVFormatContext* pavContext = nullptr);
     ~MovieDecoder();
 
     std::string getCodec();
