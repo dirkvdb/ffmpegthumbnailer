@@ -48,12 +48,14 @@ ffmpegthumbnailer_SOURCES = main.cpp
 ffmpegthumbnailer_LDADD = $(DL_LIBS) libffmpegthumbnailer.la
 
 if ENABLE_UNITTEST
+AM_CPPFLAGS = -I$(top_srcdir)/unittest
 check_PROGRAMS = testrunner
 TESTS = testrunner
 AM_COLOR_TESTS = always
 endif
 
-testrunner_SOURCES =    unittest/testrunner.cpp \
+testrunner_SOURCES =    unittest/gmock-gtest-all.cpp \
+                        unittest/testrunner.cpp \
                         unittest/histogramtest.cpp \
                         unittest/videothumbnailertest.cpp
 

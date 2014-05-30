@@ -1,8 +1,8 @@
-#include <gtest/gtest.h>
 #include <algorithm>
 
 #include <vector>
 
+#include "gtest/gtest.h"
 #include "libffmpegthumbnailer/videothumbnailer.h"
 #include "libffmpegthumbnailer/imagetypes.h"
 #include "libffmpegthumbnailer/histogram.h"
