@@ -135,14 +135,6 @@ AC_ARG_ENABLE(unittests,
    [  --enable-unittests      Enables build of unittests],
    ENABLE_UNITTEST=$enableval)
 
-if test "$ENABLE_UNITTEST" = "yes"; then
-    AC_CHECK_HEADERS(
-    [gtest/gtest.h],,
-    [AC_MSG_ERROR([Missing gtest library, install the google unittest framework])])
-
-    UNITTEST_LIBS="-lgtest"
-    AC_SUBST(UNITTEST_LIBS)
-fi
 AM_CONDITIONAL(ENABLE_UNITTEST, test "$enable_unittests" = "yes")
 
 AC_SUBST([pkgconfigdir])

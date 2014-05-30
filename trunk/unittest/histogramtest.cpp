@@ -1,9 +1,8 @@
-#include <gtest/gtest.h>
-
 #include <string>
 #include <vector>
 #include <iostream>
 
+#include "gtest/gtest.h"
 #include "libffmpegthumbnailer/histogram.h"
 
 namespace ffmpegthumbnailer
