@@ -148,6 +148,8 @@ AM_CONDITIONAL(ENABLE_UNITTEST, test "$enable_unittests" = "yes")
 AC_SUBST([pkgconfigdir])
 AC_MSG_NOTICE([pkgconfig directory is ${pkgconfigdir}])
 
+CXXFLAGS="$CXXFLAGS -std=c++11"
+
 AC_CONFIG_FILES([libffmpegthumbnailer.pc:libffmpegthumbnailer.pc.in])
 
 AC_OUTPUT([
