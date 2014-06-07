@@ -194,7 +194,10 @@ void VideoThumbnailer::generateThumbnail(const string& videoFile, ThumbnailerIma
 
 void VideoThumbnailer::writeImage(const string& videoFile, ImageWriter& imageWriter, const VideoFrame& videoFrame, int duration, vector<uint8_t*>& rowPointers)
 {
-    if((videoFile != "-") && (videoFile.find("rtsp://") != 0) && (videoFile.find("udp://") != 0) && (videoFile.find("http://") != 0))
+    if ((videoFile != "-") &&
+        (videoFile.compare(0, 7, "rtsp://") != 0) &&
+        (videoFile.compare(0, 6, "udp://") != 0) &&
+        (videoFile.compare(0, 7, "http://") != 0))
     {
         struct stat statInfo;
         if (stat(videoFile.c_str(), &statInfo) == 0)
@@ -216,6 +219,7 @@ void VideoThumbnailer::writeImage(const string& videoFile, ImageWriter& imageWri
         imageWriter.setText("Thumb::URI", videoFile);
         imageWriter.setText("Thumb::Movie::Length", StringOperations::toString(duration));
     }
+    
     imageWriter.writeFrame(&(rowPointers.front()), videoFrame.width, videoFrame.height, m_ImageQuality);
 }
 
