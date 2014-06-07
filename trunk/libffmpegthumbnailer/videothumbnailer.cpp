@@ -58,6 +58,7 @@ VideoThumbnailer::VideoThumbnailer()
 VideoThumbnailer::VideoThumbnailer(int thumbnailSize, bool workaroundIssues, bool maintainAspectRatio, int imageQuality, bool smartFrameSelection)
 : m_ThumbnailSize(thumbnailSize)
 , m_SeekPercentage(10)
+, m_OverlayFilmStrip(false)
 , m_WorkAroundIssues(workaroundIssues)
 , m_ImageQuality(imageQuality)
 , m_MaintainAspectRatio(maintainAspectRatio)
@@ -242,13 +243,17 @@ string VideoThumbnailer::getMimeType(const string& videoFile)
     {
         return "video/x-ms-wm";
     }
-    else if (extension == "mp4")
+    else if (extension == "wmv")
     {
         return "video/x-ms-wmv";
     }
     else if (extension == "mp4")
     {
         return "video/mp4";
+    }
+    else if (extension == "webm")
+    {
+        return "video/webm";
     }
     else if (extension == "flv")
     {
