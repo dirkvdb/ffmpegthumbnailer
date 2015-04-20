@@ -24,6 +24,6 @@ install:
 
 script:
   - ./autogen.sh
-  - ./configure --enable-silent-rules --enable-unit-tests --enable-debug=$ENABLE_DEBUG
+  - ./configure --enable-silent-rules --enable-unit-tests --enable-debug=$ENABLE_DEBUG --disable-shared
   - make -j4
   - make -j4 check
