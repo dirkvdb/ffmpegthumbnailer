@@ -118,7 +118,7 @@ void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageWriter& i
 {
     MovieDecoder movieDecoder(videoFile, pAvContext);
     movieDecoder.decodeVideoFrame(); //before seeking, a frame has to be decoded
- 
+
     if ((!m_WorkAroundIssues) || (movieDecoder.getCodec() != "h264")) //workaround for bug in older ffmpeg (100% cpu usage when seeking in h264 files)
     {
         try
@@ -129,16 +129,15 @@ void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageWriter& i
         }
         catch (exception& e)
         {
-            cerr << e.what() << ", will use first frame" << endl;
             //seeking failed, try the first frame again
             movieDecoder.destroy();
             movieDecoder.initialize(videoFile);
             movieDecoder.decodeVideoFrame();
          }
     }
-    
+
     VideoFrame  videoFrame;
-    
+
     if (m_SmartFrameSelection)
     {
         generateSmartThumbnail(movieDecoder, videoFrame);
@@ -163,16 +162,16 @@ void VideoThumbnailer::generateSmartThumbnail(MovieDecoder& movieDecoder, VideoF
 {
     vector<VideoFrame> videoFrames(SMART_FRAME_ATTEMPTS);
     vector<Histogram<int> > histograms(SMART_FRAME_ATTEMPTS);
-    
+
     for (int i = 0; i < SMART_FRAME_ATTEMPTS; ++i)
     {
         movieDecoder.decodeVideoFrame();
         movieDecoder.getScaledVideoFrame(m_ThumbnailSize, m_MaintainAspectRatio, videoFrames[i]);
         generateHistogram(videoFrames[i], histograms[i]);
     }
-    
+
     int bestFrame = getBestThumbnailIndex(videoFrames, histograms);
-    
+
     assert(bestFrame != -1);
     videoFrame = videoFrames[bestFrame];
 }
@@ -209,7 +208,7 @@ void VideoThumbnailer::writeImage(const string& videoFile, ImageWriter& imageWri
         {
             cout << "Warn: Failed to stat file " << videoFile << " (" << strerror(errno) << ")" << endl;
         }
-        
+
         string mimeType = getMimeType(videoFile);
         if (!mimeType.empty())
         {
@@ -219,7 +218,7 @@ void VideoThumbnailer::writeImage(const string& videoFile, ImageWriter& imageWri
         imageWriter.setText("Thumb::URI", videoFile);
         imageWriter.setText("Thumb::Movie::Length", StringOperations::toString(duration));
     }
-    
+
     imageWriter.writeFrame(&(rowPointers.front()), videoFrame.width, videoFrame.height, m_ImageQuality);
 }
 
@@ -338,7 +337,7 @@ int VideoThumbnailer::getBestThumbnailIndex(vector<VideoFrame>& videoFrames, con
             avgHistogram.b[j] += static_cast<float>(histograms[i].b[j]) / histograms.size();
         }
     }
-    
+
     int bestFrame = -1;
     float minRMSE = FLT_MAX;
     for (size_t i = 0; i < histograms.size(); ++i)
@@ -352,14 +351,14 @@ int VideoThumbnailer::getBestThumbnailIndex(vector<VideoFrame>& videoFrames, con
                         + fabsf(avgHistogram.b[j] - histograms[i].b[j]);
             rmse += (error * error) / 255;
         }
-        
+
         rmse = sqrtf(rmse);
         if (rmse < minRMSE)
         {
             minRMSE = rmse;
             bestFrame = i;
         }
-        
+
 #ifdef DEBUG_MODE
         stringstream outputFile;
         outputFile << "frames/Frame" << setfill('0') << setw(3) << i << "_" << rmse << endl;
@@ -371,7 +370,7 @@ int VideoThumbnailer::getBestThumbnailIndex(vector<VideoFrame>& videoFrames, con
         delete imageWriter;
 #endif
     }
-    
+
 #ifdef DEBUG_MODE
     cout << "Best frame was: " << bestFrame << "(RMSE: " << minRMSE << ")" << endl;
 #endif

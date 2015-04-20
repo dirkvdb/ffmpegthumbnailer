@@ -19,7 +19,6 @@
 #include "filmstripfilter.h"
 
 #include <vector>
-#include <iostream>
 #include <stdexcept>
 
 using namespace ffmpegthumbnailer;
@@ -114,9 +113,8 @@ extern "C" int video_thumbnailer_generate_thumbnail_to_buffer(video_thumbnailer*
         generated_image_data->image_data_ptr = &dataVector->front();
         generated_image_data->image_data_size = dataVector->size();
     }
-    catch (std::logic_error& e)
+    catch (std::logic_error&)
     {
-        std::cerr << e.what() << std::endl;
         return -1;
     }
 
@@ -131,9 +129,8 @@ extern "C" int video_thumbnailer_generate_thumbnail_to_file(video_thumbnailer* t
         setProperties(thumbnailer);
         videoThumbnailer->generateThumbnail(movie_filename, thumbnailer->thumbnail_image_type, output_fileName, thumbnailer->av_format_context);
     }
-    catch (std::logic_error& e)
+    catch (std::logic_error&)
     {
-        std::cerr << e.what() << std::endl;
         return -1;
     }
 
