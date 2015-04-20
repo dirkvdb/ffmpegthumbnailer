@@ -128,7 +128,7 @@ AC_ARG_ENABLE(debug,
 AM_CONDITIONAL(DEBUG, test "$enable_debug" = "yes")
 if test "$DEBUG" = "yes"; then
     AC_DEFINE(ENABLE_DEBUG, [], "Enable debug mode")
-    CXXFLAGS="$CXXFLAGS -g -O1 -Wall -Werror -Wfatal-errors"
+    CXXFLAGS="$CXXFLAGS -g -O1 -Wall -Wfatal-errors"
 fi
 
 AC_ARG_ENABLE(unittests,
