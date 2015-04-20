@@ -1,0 +1,25 @@
+language: cpp
+
+os:
+  - linux
+  - osx
+
+compiler:
+  - gcc
+  - clang
+
+env:
+  - BUILD_TYPE=Debug
+  - BUILD_TYPE=Release
+
+before_install:
+  - sudo apt-get update -qq
+
+install:
+  - sudo apt-get -qq install build-essential libpng-dev libjpeg-dev libavformat-dev libavcodec-dev libavutil-dev
+
+script:
+  - ./autogen.sh
+  - ./configure --enable-silent-rules
+  - make -j4
+  - make -j4 check
