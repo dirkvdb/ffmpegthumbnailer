@@ -9,8 +9,8 @@ compiler:
   - clang
 
 env:
-  - BUILD_TYPE=Debug
-  - BUILD_TYPE=Release
+  - ENABLE_DEBUG=no
+  - ENABLE_DEBUG=yes
 
 before_install:
   - sudo apt-get update -qq
@@ -20,6 +20,6 @@ install:
 
 script:
   - ./autogen.sh
-  - ./configure --enable-silent-rules
+  - ./configure --enable-silent-rules --enable-unit-tests --enable-debug=$ENABLE_DEBUG
   - make -j4
   - make -j4 check
