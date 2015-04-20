@@ -34,7 +34,7 @@ struct VideoFrame;
 class MovieDecoder
 {
 public:
-    MovieDecoder(const std::string& filename, AVFormatContext* pavContext = nullptr);
+    MovieDecoder(const std::string& filename, AVFormatContext* pavContext = NULL);
     ~MovieDecoder();
 
     std::string getCodec();
@@ -45,13 +45,13 @@ public:
     int getWidth();
     int getHeight();
     int getDuration();
-    
+
     void initialize(const std::string& filename);
     void destroy();
-    
+
 private:
     void initializeVideo();
-    
+
     bool decodeVideoPacket();
     bool getVideoPacket();
     void convertAndScaleFrame(PixelFormat format, int scaledSize, bool maintainAspectRatio, int& scaledWidth, int& scaledHeight);

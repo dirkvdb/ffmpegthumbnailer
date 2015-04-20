@@ -24,7 +24,7 @@
 #include <cstring>
 
 extern "C" {
-#ifdef LATEST_GREATEST_FFMPEG	
+#ifdef LATEST_GREATEST_FFMPEG
 #include <libavutil/opt.h>
 #endif
 #include <libswscale/swscale.h>
@@ -38,13 +38,13 @@ namespace ffmpegthumbnailer
 MovieDecoder::MovieDecoder(const string& filename, AVFormatContext* pavContext)
 : m_VideoStream(-1)
 , m_pFormatContext(pavContext)
-, m_pVideoCodecContext(nullptr)
-, m_pVideoCodec(nullptr)
-, m_pVideoStream(nullptr)
-, m_pFrame(nullptr)
-, m_pFrameBuffer(nullptr)
-, m_pPacket(nullptr)
-, m_FormatContextWasGiven(pavContext != nullptr)
+, m_pVideoCodecContext(NULL)
+, m_pVideoCodec(NULL)
+, m_pVideoStream(NULL)
+, m_pFrame(NULL)
+, m_pFrameBuffer(NULL)
+, m_pPacket(NULL)
+, m_FormatContextWasGiven(pavContext != NULL)
 , m_AllowSeek(true)
 {
     initialize(filename);
@@ -63,14 +63,14 @@ void MovieDecoder::initialize(const string& filename)
 
     string inputFile = filename == "-" ? "pipe:" : filename;
     m_AllowSeek = (filename != "-") && (filename.find("rtsp://") != 0) && (filename.find("udp://") != 0);
-    
-    if ((!m_FormatContextWasGiven) && avformat_open_input(&m_pFormatContext, inputFile.c_str(), nullptr, nullptr) != 0)
+
+    if ((!m_FormatContextWasGiven) && avformat_open_input(&m_pFormatContext, inputFile.c_str(), NULL, NULL) != 0)
     {
         destroy();
         throw logic_error(string("Could not open input file: ") + filename);
     }
 
-	if (avformat_find_stream_info(m_pFormatContext, nullptr) < 0)
+	if (avformat_find_stream_info(m_pFormatContext, NULL) < 0)
     {
         destroy();
         throw logic_error(string("Could not find stream information"));
@@ -85,7 +85,7 @@ void MovieDecoder::destroy()
     if (m_pVideoCodecContext)
     {
         avcodec_close(m_pVideoCodecContext);
-        m_pVideoCodecContext = nullptr;
+        m_pVideoCodecContext = NULL;
     }
 
     if ((!m_FormatContextWasGiven) && m_pFormatContext)
@@ -97,7 +97,7 @@ void MovieDecoder::destroy()
     {
         av_free_packet(m_pPacket);
         delete m_pPacket;
-        m_pPacket = nullptr;
+        m_pPacket = NULL;
     }
 
     if (m_pFrame)
@@ -108,11 +108,11 @@ void MovieDecoder::destroy()
     if (m_pFrameBuffer)
     {
         av_free(m_pFrameBuffer);
-        m_pFrameBuffer = nullptr;
+        m_pFrameBuffer = NULL;
     }
 
     m_VideoStream = -1;
-    
+
     avformat_network_deinit();
 }
 
@@ -146,16 +146,16 @@ void MovieDecoder::initializeVideo()
     m_pVideoCodecContext = m_pFormatContext->streams[m_VideoStream]->codec;
     m_pVideoCodec = avcodec_find_decoder(m_pVideoCodecContext->codec_id);
 
-    if (m_pVideoCodec == nullptr)
+    if (m_pVideoCodec == NULL)
     {
-        // set to nullptr, otherwise avcodec_close(m_pVideoCodecContext) crashes
-        m_pVideoCodecContext = nullptr;
+        // set to NULL, otherwise avcodec_close(m_pVideoCodecContext) crashes
+        m_pVideoCodecContext = NULL;
         throw logic_error("Video Codec not found");
     }
 
     m_pVideoCodecContext->workaround_bugs = 1;
 
-	if (avcodec_open2(m_pVideoCodecContext, m_pVideoCodec, nullptr) < 0)
+	if (avcodec_open2(m_pVideoCodecContext, m_pVideoCodec, NULL) < 0)
     {
         throw logic_error("Could not open video codec");
     }
@@ -197,7 +197,7 @@ void MovieDecoder::seek(int timeInSeconds)
     {
         return;
     }
-    
+
     int64_t timestamp = AV_TIME_BASE * static_cast<int64_t>(timeInSeconds);
 
     if (timestamp < 0)
@@ -217,7 +217,7 @@ void MovieDecoder::seek(int timeInSeconds)
 
     int keyFrameAttempts = 0;
     bool gotFrame = 0;
-    
+
     do
     {
         int count = 0;
@@ -233,10 +233,10 @@ void MovieDecoder::seek(int timeInSeconds)
             catch(logic_error&) {}
             ++count;
         }
-        
+
         ++keyFrameAttempts;
     } while ((!gotFrame || !m_pFrame->key_frame) && keyFrameAttempts < 200);
-    
+
     if (gotFrame == 0)
     {
         throw logic_error("Seeking in video failed");
@@ -267,9 +267,9 @@ bool MovieDecoder::decodeVideoPacket()
     }
 
     avcodec_get_frame_defaults(m_pFrame);
-    
+
     int frameFinished;
-    
+
     int bytesDecoded = avcodec_decode_video2(m_pVideoCodecContext, m_pFrame, &frameFinished, m_pPacket);
     if (bytesDecoded < 0)
     {
@@ -285,7 +285,7 @@ bool MovieDecoder::getVideoPacket()
     bool frameDecoded = false;
 
     int attempts = 0;
-    
+
     if (m_pPacket)
     {
         av_free_packet(m_pPacket);
@@ -306,7 +306,7 @@ bool MovieDecoder::getVideoPacket()
             }
         }
     }
-    
+
     return frameDecoded;
 }
 
@@ -337,11 +337,11 @@ void MovieDecoder::convertAndScaleFrame(PixelFormat format, int scaledSize, bool
 #ifdef LATEST_GREATEST_FFMPEG
 	// Enable this when it hits the released ffmpeg version
     SwsContext* scaleContext = sws_alloc_context();
-    if (scaleContext == nullptr)
+    if (scaleContext == NULL)
     {
 		throw std::logic_error("Failed to allocate scale context");
 	}
-	
+
 	av_set_int(scaleContext, "srcw", m_pVideoCodecContext->width);
     av_set_int(scaleContext, "srch", m_pVideoCodecContext->height);
     av_set_int(scaleContext, "src_format", m_pVideoCodecContext->pix_fmt);
@@ -349,7 +349,7 @@ void MovieDecoder::convertAndScaleFrame(PixelFormat format, int scaledSize, bool
     av_set_int(scaleContext, "dsth", scaledHeight);
     av_set_int(scaleContext, "dst_format", format);
 	av_set_int(scaleContext, "sws_flags", SWS_BICUBIC);
-	
+
 	const int* coeff = sws_getCoefficients(SWS_CS_DEFAULT);
     if (sws_setColorspaceDetails(scaleContext, coeff, m_pVideoCodecContext->pix_fmt, coeff, format, 0, 1<<16, 1<<16) < 0)
     {
@@ -357,34 +357,34 @@ void MovieDecoder::convertAndScaleFrame(PixelFormat format, int scaledSize, bool
 		throw std::logic_error("Failed to set colorspace details");
 	}
 
-	if (sws_init_context(scaleContext, nullptr, nullptr) < 0)
+	if (sws_init_context(scaleContext, NULL, NULL) < 0)
 	{
 		sws_freeContext(scaleContext);
 		throw std::logic_error("Failed to initialise scale context");
 	}
 #endif
-    
+
     SwsContext* scaleContext = sws_getContext(m_pVideoCodecContext->width, m_pVideoCodecContext->height,
                                               m_pVideoCodecContext->pix_fmt, scaledWidth, scaledHeight,
-                                              format, SWS_BICUBIC, nullptr, nullptr, nullptr);
+                                              format, SWS_BICUBIC, NULL, NULL, NULL);
 
-    if (nullptr == scaleContext)
+    if (NULL == scaleContext)
     {
         throw logic_error("Failed to create resize context");
     }
 
-    AVFrame* convertedFrame = nullptr;
-    uint8_t* convertedFrameBuffer = nullptr;
+    AVFrame* convertedFrame = NULL;
+    uint8_t* convertedFrameBuffer = NULL;
 
     createAVFrame(&convertedFrame, &convertedFrameBuffer, scaledWidth, scaledHeight, format);
-    
+
     sws_scale(scaleContext, m_pFrame->data, m_pFrame->linesize, 0, m_pVideoCodecContext->height,
               convertedFrame->data, convertedFrame->linesize);
     sws_freeContext(scaleContext);
 
     av_free(m_pFrame);
     av_free(m_pFrameBuffer);
-    
+
     m_pFrame        = convertedFrame;
     m_pFrameBuffer  = convertedFrameBuffer;
 }
@@ -396,7 +396,7 @@ void MovieDecoder::calculateDimensions(int squareSize, bool maintainAspectRatio,
         // use original video size
         squareSize = max(m_pVideoCodecContext->width, m_pVideoCodecContext->height);
     }
-    
+
     if (!maintainAspectRatio)
     {
         destWidth = squareSize;
@@ -408,12 +408,12 @@ void MovieDecoder::calculateDimensions(int squareSize, bool maintainAspectRatio,
         int srcHeight           = m_pVideoCodecContext->height;
         int ascpectNominator    = m_pVideoCodecContext->sample_aspect_ratio.num;
         int ascpectDenominator  = m_pVideoCodecContext->sample_aspect_ratio.den;
-        
+
         if (ascpectNominator != 0 && ascpectDenominator != 0)
         {
             srcWidth = srcWidth * ascpectNominator / ascpectDenominator;
         }
-        
+
         if (srcWidth > srcHeight)
         {
             destWidth  = squareSize;
