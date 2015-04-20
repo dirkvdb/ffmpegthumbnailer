@@ -22,6 +22,7 @@
 #include <unistd.h>
 #include <stdexcept>
 #include <stdlib.h>
+#include <clocale>
 
 #ifdef HAVE_GIO
 #include <dlfcn.h>
@@ -54,6 +55,12 @@ int main(int argc, char** argv)
     string  inputFile;
     string  outputFile;
     string  imageFormat;
+
+    if (!setlocale(LC_CTYPE, "en_US.UTF-8"))
+    {
+        std::cerr << "Locale not specified. Check LANG, LC_CTYPE, LC_ALL" << std::endl;
+        return 1;
+    }
 
     while ((option = getopt (argc, argv, "i:o:s:t:q:c:afwhvp")) != -1)
     {
@@ -116,13 +123,13 @@ int main(int argc, char** argv)
         printUsage();
         return 0;
     }
-    
+
     if (outputFile == "-" && imageFormat.empty())
     {
         cerr << "When writing to stdout the image format needs to be specified (e.g.: -c png)" << endl;
         return 0;
     }
-    
+
     try
     {
 #ifdef HAVE_GIO
@@ -130,7 +137,7 @@ int main(int argc, char** argv)
 #endif
         ThumbnailerImageType imageType = imageFormat.empty() ? determineImageTypeFromFilename(outputFile)
                                                              : determineImageTypeFromString(imageFormat);
-    
+
         VideoThumbnailer videoThumbnailer(thumbnailSize, workaroundIssues, maintainAspectRatio, imageQuality, smartFrameSelection);
         FilmStripFilter* filmStripFilter = NULL;
 
@@ -193,17 +200,17 @@ ThumbnailerImageType determineImageTypeFromString(const std::string& type)
 {
     string lowercaseType = type;
     StringOperations::lowercase(lowercaseType);
-    
+
     if (lowercaseType == "png")
     {
         return Png;
     }
-    
+
     if (lowercaseType == "jpeg" || lowercaseType == "jpg")
     {
         return Jpeg;
     }
-    
+
     throw logic_error("Invalid image type specified");
 }
 
@@ -224,12 +231,12 @@ public:
     {
         if (!m_pLib) cerr << dlerror() << endl;
     }
-    
+
     ~LibHandle() { if (m_pLib) dlclose(m_pLib); }
-    
+
     operator void*() const { return m_pLib; }
-    operator bool() const { return m_pLib != NULL; } 
-    
+    operator bool() const { return m_pLib != NULL; }
+
 private:
     void* m_pLib;
 };
@@ -240,43 +247,43 @@ void tryUriConvert(std::string& filename)
 	{
 		return;
 	}
-	
+
     LibHandle gLib("libglib-2.0.so.0");
     LibHandle gobjectLib("libgobject-2.0.so.0");
     LibHandle gioLib("libgio-2.0.so.0");
-    
+
     if (gioLib && gLib && gobjectLib)
-    {   
+    {
         FileCreateFunc createUriFunc = (FileCreateFunc) dlsym(gioLib, "g_file_new_for_uri");
-        
+
         IsNativeFunc nativeFunc = (IsNativeFunc) dlsym(gioLib, "g_file_is_native");
         FileGetFunc getFunc = (FileGetFunc) dlsym(gioLib, "g_file_get_path");
         InitFunc initFunc = (InitFunc) dlsym(gobjectLib, "g_type_init");
         UnrefFunc unrefFunc = (UnrefFunc) dlsym(gobjectLib, "g_object_unref");
         FreeFunc freeFunc = (FreeFunc) dlsym(gLib, "g_free");
-        
+
         if (!(createUriFunc && nativeFunc && getFunc && freeFunc && initFunc && unrefFunc))
         {
             cerr << "Failed to obtain functions from gio libraries" << endl;
             return;
         }
-        
+
         initFunc();
-        
+
         void* pFile = createUriFunc(filename.c_str());
         if (!pFile)
         {
             cerr << "Failed to create gio file: " << filename << endl;
             return;
         }
-            
+
         if (!nativeFunc(pFile))
         {
             unrefFunc(pFile);
             cout << "Not a native file, thumbnailing will likely fail: " << filename << endl;
             return;
         }
-        
+
         char* pPath = getFunc(pFile);
         if (pPath)
         {
@@ -287,7 +294,7 @@ void tryUriConvert(std::string& filename)
         {
             cerr << "Failed to get path: " << filename << endl;
         }
-            
+
         unrefFunc(pFile);
     }
 }
