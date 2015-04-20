@@ -24,6 +24,6 @@ install:
 
 script:
   - ./autogen.sh
-  - ./configure --enable-silent-rules --enable-unittests --enable-debug=$ENABLE_DEBUG
+  - CXXFLAGS="-fPIC" ./configure --enable-silent-rules --enable-unittests --enable-debug=$ENABLE_DEBUG
   - make -j4
   - make -j4 check
