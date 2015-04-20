@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/dirkvdb/ffmpegthumbnailer.svg?branch=master)](https://travis-ci.org/dirkvdb/ffmpegthumbnailer)
+
 FFmpegthumbnailer is a lightweight video thumbnailer that can be used by file
 managers to create thumbnails for your video files. The thumbnailer uses ffmpeg
 o decode frames from the video files, so supported videoformats depend on the
