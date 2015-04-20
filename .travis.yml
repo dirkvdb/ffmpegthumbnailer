@@ -16,7 +16,11 @@ before_install:
   - sudo apt-get update -qq
 
 install:
-  - sudo apt-get -qq install build-essential libpng-dev libjpeg-dev libavformat-dev libavcodec-dev libavutil-dev libswscale-dev
+  - sudo apt-get -qq install build-essential libpng-dev libjpeg-dev
+  - wget http://www.ffmpeg.org/releases/ffmpeg-2.6.2.tar.bz2
+  - tar xf ffmpeg-2.6.2.tar.bz2
+  - cd ffmpeg-2.6.2 && ./configure --prefix=/usr --disable-shared --disable-avdevice --disable-doc --disable-htmlpages --disable-manpages --disable-programs --disable-encoders --disable-muxers --disable-decoders --disable-swscale --disable-yasm --disable-everything && make -j4 && sudo make install
+  - cd ..
 
 script:
   - ./autogen.sh
