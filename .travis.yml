@@ -16,7 +16,7 @@ before_install:
   - sudo apt-get update -qq
 
 install:
-  - sudo apt-get -qq install build-essential libpng-dev libjpeg-dev libavformat-dev libavcodec-dev libavutil-dev
+  - sudo apt-get -qq install build-essential libpng-dev libjpeg-dev libavformat-dev libavcodec-dev libavutil-dev libswscale-dev
 
 script:
   - ./autogen.sh
