@@ -28,3 +28,4 @@ script:
   - ./autogen.sh
   - ./configure --enable-silent-rules --enable-unittests --enable-debug=$ENABLE_DEBUG --disable-shared
   - make -j4
+  - make -j4 check
