@@ -31,9 +31,9 @@ struct Histogram
 
     Histogram()
     {
-        memset(r, 0, 255 * sizeof(T));
-        memset(g, 0, 255 * sizeof(T));
-        memset(b, 0, 255 * sizeof(T));
+        memset(r, 0, 256 * sizeof(T));
+        memset(g, 0, 256 * sizeof(T));
+        memset(b, 0, 256 * sizeof(T));
     }
 };
 

@@ -24,8 +24,6 @@ install:
   - cd ..
 
 script:
-  - locale
-  - ./autogen.sh
-  - ./configure --enable-silent-rules --enable-unittests --enable-debug=$ENABLE_DEBUG --disable-shared
+  - cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DENABLE_TESTS=ON -DENABLE_STATIC=ON -DENABLE_SHARED=ON .
   - make -j4
-  - make -j4 check
+  - make test

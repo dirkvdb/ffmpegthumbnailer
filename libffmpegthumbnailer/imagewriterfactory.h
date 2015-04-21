@@ -17,9 +17,7 @@
 #ifndef IMAGE_WRITER_FACTORY_H
 #define IMAGE_WRITER_FACTORY_H
 
-#ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif
 
 #include "imagewriter.h"
 #include "imagetypes.h"

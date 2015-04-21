@@ -14,9 +14,7 @@
 //    along with this program; if not, write to the Free Software
 //    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-#ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif
 
 #include <iostream>
 #include <unistd.h>
@@ -175,12 +173,12 @@ int main(int argc, char** argv)
 
 void printVersion()
 {
-    cout << PACKAGE_NAME " version: " VERSION << endl;
+    cout << PACKAGE " version: " PACKAGE_VERSION << endl;
 }
 
 void printUsage()
 {
-    cout << "Usage: " PACKAGE_NAME " [options]" << endl << endl
+    cout << "Usage: " PACKAGE " [options]" << endl << endl
          << "Options:" << endl
          << "  -i<s>   : input file" << endl
          << "  -o<s>   : output file" << endl
