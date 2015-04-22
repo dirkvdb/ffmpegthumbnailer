@@ -20,7 +20,7 @@ install:
   - sudo apt-get -qq install build-essential libpng-dev libjpeg-dev
   - wget http://www.ffmpeg.org/releases/ffmpeg-2.6.2.tar.bz2
   - tar xf ffmpeg-2.6.2.tar.bz2
-  - cd ffmpeg-2.6.2 && ./configure --prefix=/usr --disable-static --disable-everything --disable-avdevice --disable-doc --disable-htmlpages --disable-manpages --disable-programs --disable-encoders --disable-muxers --disable-decoders --enable-pic --enable-swscale --disable-yasm --enable-protocol=file --enable-protocol=http  && make -j4 && sudo make install
+  - cd ffmpeg-2.6.2 && ./configure --prefix=/usr --disable-static --enable-shared --disable-everything --disable-avdevice --disable-doc --disable-htmlpages --disable-manpages --disable-programs --disable-encoders --disable-muxers --disable-decoders --enable-swscale --disable-yasm --enable-protocol=file --enable-protocol=http  && make -j4 && sudo make install
   - cd ..
 
 script:
