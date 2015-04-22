@@ -1,6 +1,7 @@
 #include <algorithm>
 
 #include <vector>
+#include <fstream>
 
 #include <gtest/gtest.h>
 #include "libffmpegthumbnailer/videothumbnailer.h"
@@ -39,13 +40,20 @@ class VideoThumbnailerTest : public testing::Test
     VideoThumbnailer videoThumbnailer;
 };
 
+TEST_F(VideoThumbnailerTest, OpenFile)
+{
+    std::string input = std::string(TEST_DATADIR) + "/test_абвгдеёжзийклмно.flv";
+    std::fstream fs(input.c_str());
+    ASSERT_TRUE(fs.is_open());
+}
+
 TEST_F(VideoThumbnailerTest, CreateThumbNonAscii)
 {
-	std::string input = std::string(TEST_DATADIR) + "/test_абвгдеёжзийклмно.flv";
+    std::string input = std::string(TEST_DATADIR) + "/test_абвгдеёжзийклмно.flv";
 
-	std::vector<uint8_t> buffer;
-	videoThumbnailer.generateThumbnail(input, Png, buffer);
-	ASSERT_FALSE(buffer.empty());
+    std::vector<uint8_t> buffer;
+    videoThumbnailer.generateThumbnail(input, Png, buffer);
+    ASSERT_FALSE(buffer.empty());
 }
 
 TEST_F(VideoThumbnailerTest, CreateHistogramBlackFrame)
