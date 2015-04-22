@@ -25,5 +25,5 @@ install:
 
 script:
   - cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DENABLE_TESTS=ON -DENABLE_STATIC=ON -DENABLE_SHARED=ON .
-  - make -j4
+  - make VERBOSE=1 -j4
   - make test

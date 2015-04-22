@@ -168,10 +168,6 @@ IF (ENABLE_SHARED)
     SET (SHARED_LIB libffmpegthumbnailer)
 ENDIF ()
 
-IF (CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
-    SET_TARGET_PROPERTIES(libffmpegthumbnailer PROPERTIES COMPILE_FLAGS "-fPIC")
-ENDIF ()
-
 ADD_EXECUTABLE(ffmpegthumbnailer main.cpp)
 IF (ENABLE_SHARED)
     TARGET_LINK_LIBRARIES(ffmpegthumbnailer ${SHARED_LIB})
