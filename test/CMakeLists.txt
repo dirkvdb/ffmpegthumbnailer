@@ -25,4 +25,8 @@ ELSE ()
     TARGET_LINK_LIBRARIES(ffmpegthumbnailertest ${STATIC_LIB})
 ENDIF ()
 
+IF (UNIX)
+    TARGET_LINK_LIBRARIES(ffmpegthumbnailertest -lpthread)
+ENDIF ()
+
 ADD_TEST(NAME ffmpegthumbnailertest COMMAND ffmpegthumbnailertest)
