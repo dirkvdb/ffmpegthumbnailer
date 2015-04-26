@@ -22,7 +22,7 @@
 #include <stdlib.h>
 #include <clocale>
 
-#ifdef HAVE_GIO
+#ifdef ENABLE_GIO
 #include <dlfcn.h>
 #endif
 
@@ -130,7 +130,7 @@ int main(int argc, char** argv)
 
     try
     {
-#ifdef HAVE_GIO
+#ifdef ENABLE_GIO
         tryUriConvert(inputFile);
 #endif
         ThumbnailerImageType imageType = imageFormat.empty() ? determineImageTypeFromFilename(outputFile)
@@ -213,7 +213,7 @@ ThumbnailerImageType determineImageTypeFromString(const std::string& type)
 }
 
 
-#ifdef HAVE_GIO
+#ifdef ENABLE_GIO
 typedef void* (*FileCreateFunc)(const char*);
 typedef char* (*FileGetFunc)(void* file);
 typedef int (*IsNativeFunc)(void* file);

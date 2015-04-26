@@ -1,0 +1,8 @@
+{
+    "compilation_database": "./build",
+    "extra_cflags": "-std=c++1y -stdlib=libstdc++",
+    "extra_include_dirs": [
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1",
+        "/usr/local/opt/llvm36/lib/llvm-3.6/include"
+    ]
+}
