@@ -47,7 +47,5 @@ then
 fi
 
 #upload archive to google
-#python2 googlecode_upload.py -s "Release $version" -p $project -u dirk.vdb -w $password -l "Featured,Type-Source,OpSys-Linux" $builddir/$project-$version.tar.gz
-
-#create a tag
-#svn copy https://ffmpegthumbnailer.googlecode.com/svn/trunk https://ffmpegthumbnailer.googlecode.com/svn/tags/$project-$version -m "Tag of release $version"
+github-release release --user aktau dirkvdb --repo ffmpegthumbnailer --tag ${version} --name "ffmpegthumbnailer-${version}" --description "ffmpegthumbnailer release ${version}"
+github-release upload --user aktau dirkvdb --repo ffmpegthumbnailer --tag ${version} --name "ffmpegthumbnailer-${version}" --file ${builddir}/ffmpegthumbnailer-${version}.tar.bz2

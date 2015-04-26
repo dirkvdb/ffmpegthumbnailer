@@ -1,5 +1,6 @@
 FFmpegThumbnailer 2.0.10
 - Migrated to github
+- Use cmake instead of autotools
 - Remove stderr logging
 
 FFmpegThumbnailer 2.0.9
