@@ -1,14 +1,6 @@
 #!/bin/bash
 
 project="ffmpegthumbnailer"
-password=$1
-option=$2
-
-if [ "$password" == "" ]
-then
-	echo "No password for Google Code supplied"
-	exit 1
-fi
 
 status=`svn status -u | wc -l`
 if [ $status -ne 1 ]
