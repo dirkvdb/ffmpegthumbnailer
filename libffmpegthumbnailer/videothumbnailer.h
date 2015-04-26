@@ -79,7 +79,7 @@ private:
     bool                        m_SmartFrameSelection;
     std::string                 m_SeekTime;
     std::vector<IFilter*>       m_Filters;
-    
+
     friend class VideoThumbnailerTest;
 };
 

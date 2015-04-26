@@ -20,11 +20,10 @@ install:
   - sudo apt-get -qq install build-essential libpng-dev libjpeg-dev
   - wget http://www.ffmpeg.org/releases/ffmpeg-2.6.2.tar.bz2
   - tar xf ffmpeg-2.6.2.tar.bz2
-  - cd ffmpeg-2.6.2 && ./configure --prefix=/usr --disable-everything --disable-avdevice --disable-doc --disable-htmlpages --disable-manpages --disable-programs --disable-encoders --disable-muxers --disable-decoders --enable-pic --enable-swscale --disable-yasm --enable-protocol=file --enable-protocol=http  && make -j4 && sudo make install
+  - cd ffmpeg-2.6.2 && ./configure --prefix=/usr --disable-static --enable-shared --disable-everything --disable-avdevice --disable-doc --disable-htmlpages --disable-manpages --disable-programs --disable-encoders --disable-muxers --disable-decoders --enable-swscale --disable-yasm --enable-protocol=file --enable-protocol=http --enable-iconv  && make -j4 && sudo make install
   - cd ..
 
 script:
-  - locale
-  - ./autogen.sh
-  - ./configure --enable-silent-rules --enable-unittests --enable-debug=$ENABLE_DEBUG --disable-shared
+  - cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DENABLE_STATIC=ON -DENABLE_SHARED=ON -DENABLE_GIO=ON -DENABLE_THUMBNAILER=ON .
   - make -j4
+  - CTEST_OUTPUT_ON_FAILURE=1 make test

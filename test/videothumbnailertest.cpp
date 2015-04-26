@@ -1,8 +1,9 @@
-#include <algorithm>
+﻿#include <algorithm>
 
 #include <vector>
+#include <fstream>
 
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 #include "libffmpegthumbnailer/videothumbnailer.h"
 #include "libffmpegthumbnailer/imagetypes.h"
 #include "libffmpegthumbnailer/histogram.h"
@@ -41,11 +42,11 @@ class VideoThumbnailerTest : public testing::Test
 
 TEST_F(VideoThumbnailerTest, DISABLED_CreateThumbNonAscii)
 {
-	std::string input = std::string(TEST_DATADIR) + "/test_абвгдеёжзийклмно.flv";
+    std::string input = std::string(TEST_DATADIR) + "/test_Кругом_шумел.flv";
 
-	std::vector<uint8_t> buffer;
-	videoThumbnailer.generateThumbnail(input, Png, buffer);
-	ASSERT_FALSE(buffer.empty());
+    std::vector<uint8_t> buffer;
+    videoThumbnailer.generateThumbnail(input, Png, buffer);
+    ASSERT_FALSE(buffer.empty());
 }
 
 TEST_F(VideoThumbnailerTest, CreateHistogramBlackFrame)
@@ -76,9 +77,9 @@ TEST_F(VideoThumbnailerTest, CreateHistogramWhiteFrame)
 
     for (int i = 0; i < 254; ++i)
     {
-        EXPECT_EQ(0, histogram.r[i]);
-        EXPECT_EQ(0, histogram.g[i]);
-        EXPECT_EQ(0, histogram.b[i]);
+        EXPECT_EQ(0, histogram.r[i]) << "index " << i;
+        EXPECT_EQ(0, histogram.g[i]) << "index " << i;
+        EXPECT_EQ(0, histogram.b[i]) << "index " << i;
     }
 }
 
