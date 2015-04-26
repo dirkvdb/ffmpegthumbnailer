@@ -47,6 +47,6 @@ then
 fi
 
 #upload archive to google
-checkresult github-release release --user dirkvdb --repo ffmpegthumbnailer --tag ${version} --name "ffmpegthumbnailer-${version}" --description "ffmpegthumbnailer release ${version}"
-checkresult github-release upload --user dirkvdb --repo ffmpegthumbnailer --tag ${version} --name "ffmpegthumbnailer-${version}" --file ${builddir}/ffmpegthumbnailer-${version}.tar.bz2
+checkresult github-release release --user dirkvdb --repo ffmpegthumbnailer --tag ${version} --name ffmpegthumbnailer-${version} --description "ffmpegthumbnailer release ${version}"
+checkresult github-release upload --user dirkvdb --repo ffmpegthumbnailer --tag ${version} --name ffmpegthumbnailer-${version}.tar.bz2 --file ${builddir}/ffmpegthumbnailer-${version}.tar.bz2
 rm -rf $builddir
