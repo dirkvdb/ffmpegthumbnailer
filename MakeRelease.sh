@@ -1,51 +1,43 @@
 #!/bin/bash
 
+function checkresult {
+    "$@"
+    local status=$?
+    if [ $status -ne 0 ]; then
+        echo "error with $@ status=$status" >&2
+        exit $status
+    fi
+    return $status
+}
+
+option=$1
+
 project="ffmpegthumbnailer"
 
-status=`svn status -u | wc -l`
-if [ $status -ne 1 ]
+if [[ $(git diff --shortstat 2> /dev/null | tail -n1) != "" ]]
 then
-	echo "svn status is not clean, commit changes first"
-	exit 1
+	echo "git status is not clean, commit changes first"
+	#exit 1
 fi
 
 #get version number
-version=""
-version=`cat configure.ac | grep AC_INIT | cut -d[ -f3 | cut -d] -f1`
+version_major=`cat CMakeLists.txt | grep SET\(PACKAGE_VERSION_MAJOR | cut -d ' ' -f2 | sed 's/)//'`
+version_minor=`cat CMakeLists.txt | grep SET\(PACKAGE_VERSION_MINOR | cut -d ' ' -f2 | sed 's/)//'`
+version_patch=`cat CMakeLists.txt | grep SET\(PACKAGE_VERSION_PATCH | cut -d ' ' -f2 | sed 's/)//'`
+version="${version_major}.${version_minor}.${version_patch}"
+
+echo $version
 
 #build the code
 builddir="out-$version"
 rm -rf $builddir
 mkdir -p $builddir
+
 cd $builddir
-../configure --enable-unittests --enable-silent-rules --enable-as-needed --enable-thumbnailer
-if [ $? != 0 ]
-then
-	echo "Configure failed"
-	exit 1
-fi
-
-make check
-if [ $? != 0 ]
-then
-	echo "Make check failed"
-	exit 1
-fi
-
-./testrunner
-if [ $? != 0 ]
-then
-	echo "Unittests did not succeed"
-	exit 1
-fi
-
-make distcheck
-if [ $? != 0 ]
-then
-	echo "Make failed"
-	exit 1
-fi
-
+checkresult cmake -DENABLE_TESTS=ON -DENABLE_THUMBNAILER=ON -DCMAKE_BUILD_TYPE=Release -DENABLE_STATIC=ON -DENABLE_SHARED=ON ..
+checkresult make -j4
+checkresult ctest CTEST_OUTPUT_ON_FAILURE=1
+checkresult make package_source
 cd ..
 
 if [ "$option" == "noupload" ]
@@ -55,7 +47,7 @@ then
 fi
 
 #upload archive to google
-python2 googlecode_upload.py -s "Release $version" -p $project -u dirk.vdb -w $password -l "Featured,Type-Source,OpSys-Linux" $builddir/$project-$version.tar.gz
+#python2 googlecode_upload.py -s "Release $version" -p $project -u dirk.vdb -w $password -l "Featured,Type-Source,OpSys-Linux" $builddir/$project-$version.tar.gz
 
 #create a tag
-svn copy https://ffmpegthumbnailer.googlecode.com/svn/trunk https://ffmpegthumbnailer.googlecode.com/svn/tags/$project-$version -m "Tag of release $version"
+#svn copy https://ffmpegthumbnailer.googlecode.com/svn/trunk https://ffmpegthumbnailer.googlecode.com/svn/tags/$project-$version -m "Tag of release $version"
