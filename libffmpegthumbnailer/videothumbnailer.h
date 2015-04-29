@@ -58,7 +58,7 @@ public:
     void removeFilter(IFilter* pFilter);
     void clearFilters();
 
-    static void setLogCallBack(std::function<void(ThumbnailerLogLevel, const std::string&)> cb);
+    static void setLogCallback(std::function<void(ThumbnailerLogLevel, const std::string&)> cb);
 
 private:
     void generateThumbnail(const std::string& videoFile, ImageWriter& imageWriter, AVFormatContext* pAvContext = nullptr);

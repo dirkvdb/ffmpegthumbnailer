@@ -304,7 +304,7 @@ void VideoThumbnailer::clearFilters()
     m_Filters.clear();
 }
 
-void VideoThumbnailer::setLogCallBack(std::function<void(ThumbnailerLogLevel, const std::string&)> cb)
+void VideoThumbnailer::setLogCallback(std::function<void(ThumbnailerLogLevel, const std::string&)> cb)
 {
     using namespace std::placeholders;
 

@@ -140,7 +140,7 @@ extern "C" void video_thumbnailer_set_log_callback(log_callback cb)
 
     log_cb = cb;
 
-    VideoThumbnailer::setLogCallBack([&] (ThumbnailerLogLevel lvl, const std::string& msg) {
+    VideoThumbnailer::setLogCallback([&] (ThumbnailerLogLevel lvl, const std::string& msg) {
         if (log_cb)
         {
             log_cb(lvl, msg.c_str());

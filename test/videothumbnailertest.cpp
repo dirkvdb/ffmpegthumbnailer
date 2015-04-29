@@ -24,7 +24,7 @@ class VideoThumbnailerTest : public testing::Test
         frame.lineSize = 30;
         frame.frameData.resize(300);
 
-        VideoThumbnailer::SetLogCallback([] (ThumbnailerLogLevel, const std::string& msg) {
+        VideoThumbnailer::setLogCallback([] (ThumbnailerLogLevel, const std::string& msg) {
             std::cout << msg;
         });
     }

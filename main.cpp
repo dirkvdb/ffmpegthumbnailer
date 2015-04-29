@@ -136,7 +136,7 @@ int main(int argc, char** argv)
         ThumbnailerImageType imageType = imageFormat.empty() ? determineImageTypeFromFilename(outputFile)
                                                              : determineImageTypeFromString(imageFormat);
 
-        VideoThumbnailer::setLogCallBack([] (ThumbnailerLogLevel lvl, const std::string& msg) {
+        VideoThumbnailer::setLogCallback([] (ThumbnailerLogLevel lvl, const std::string& msg) {
             if (lvl == ThumbnailerLogLevelInfo)
                 std::cout << msg;
             else
