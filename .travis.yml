@@ -29,5 +29,6 @@ install:
 
 script:
   - cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DENABLE_STATIC=ON -DENABLE_SHARED=ON -DENABLE_GIO=ON -DENABLE_THUMBNAILER=ON .
+  - ls -la /home/travis/build/dirkvdb/ffmpegthumbnailer/test/
   - make -j4
   - CTEST_OUTPUT_ON_FAILURE=1 make test

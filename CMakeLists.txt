@@ -239,7 +239,7 @@ ELSE ()
     MESSAGE(STATUS "register thumbnailer : disabled")
 ENDIF ()
 
-IF (ENABLE_UNITTEST)
+IF (ENABLE_TESTS)
     MESSAGE(STATUS "unittests            : enabled")
 ELSE ()
     MESSAGE(STATUS "unittests            : disabled")
