@@ -27,6 +27,7 @@ PROJECT(${PACKAGE})
 INCLUDE(CPack)
 
 SET(CMAKE_EXPORT_COMPILE_COMMANDS 1)
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 OPTION(ENABLE_SHARED "Build shared library" ON)
 OPTION(ENABLE_STATIC "Build static library" OFF)
@@ -114,6 +115,7 @@ SET(LIB_HDRS
     libffmpegthumbnailer/videothumbnailer.h
     libffmpegthumbnailer/videothumbnailerc.h
     libffmpegthumbnailer/imagetypes.h
+    libffmpegthumbnailer/ffmpegthumbnailertypes.h
     libffmpegthumbnailer/ifilter.h
     libffmpegthumbnailer/videoframe.h
     libffmpegthumbnailer/filmstripfilter.h

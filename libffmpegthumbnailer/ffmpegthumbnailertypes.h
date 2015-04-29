@@ -14,25 +14,15 @@
 //    along with this program; if not, write to the Free Software
 //    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-#ifndef IMAGE_WRITER_H
-#define IMAGE_WRITER_H
+#ifndef THUMBNAILER_TYPES_H
+#define THUMBNAILER_TYPES_H
 
-#include <string>
-#include <cinttypes>
+#include "imagetypes.h"
 
-namespace ffmpegthumbnailer
+typedef enum ThumbnailerLogLevelEnum
 {
-
-class ImageWriter
-{
-public:
-    ImageWriter() {}
-    virtual ~ImageWriter() {}
-
-	virtual void setText(const std::string& key, const std::string& value) = 0;
-	virtual void writeFrame(uint8_t** rgbData, int width, int height, int quality) = 0;
-};
-
-}
+    ThumbnailerLogLevelInfo,
+    ThumbnailerLogLevelError
+} ThumbnailerLogLevel;
 
 #endif

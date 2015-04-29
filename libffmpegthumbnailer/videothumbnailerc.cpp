@@ -31,26 +31,23 @@ extern "C" video_thumbnailer* video_thumbnailer_create(void)
     thumbnailer->filter                     = new FilmStripFilter();
     thumbnailer->thumbnail_size             = 128;
     thumbnailer->seek_percentage            = 10;
-    thumbnailer->seek_time                  = NULL;
+    thumbnailer->seek_time                  = nullptr;
     thumbnailer->overlay_film_strip         = 0;
     thumbnailer->workaround_bugs            = 0;
     thumbnailer->thumbnail_image_quality    = 8;
     thumbnailer->thumbnail_image_type       = Png;
     thumbnailer->maintain_aspect_ratio      = 1;
-    thumbnailer->av_format_context          = NULL;
+    thumbnailer->av_format_context          = nullptr;
 
     return thumbnailer;
 }
 
 extern "C" void video_thumbnailer_destroy(video_thumbnailer* thumbnailer)
 {
-    VideoThumbnailer* videoThumbnailer = reinterpret_cast<VideoThumbnailer*>(thumbnailer->thumbnailer);
-    delete videoThumbnailer;
-    FilmStripFilter* filmStripFilter = reinterpret_cast<FilmStripFilter*>(thumbnailer->filter);
-    delete filmStripFilter;
+    delete reinterpret_cast<VideoThumbnailer*>(thumbnailer->thumbnailer);
+    delete reinterpret_cast<FilmStripFilter*>(thumbnailer->filter);
 
     thumbnailer->thumbnailer = 0;
-
     delete thumbnailer;
 }
 
@@ -91,7 +88,7 @@ void setProperties(video_thumbnailer* thumbnailer)
         videoThumbnailer->addFilter(reinterpret_cast<IFilter*>(thumbnailer->filter));
     }
 
-    if (thumbnailer->seek_time != NULL)
+    if (thumbnailer->seek_time != nullptr)
     {
         videoThumbnailer->setSeekTime(thumbnailer->seek_time);
     }
@@ -135,4 +132,18 @@ extern "C" int video_thumbnailer_generate_thumbnail_to_file(video_thumbnailer* t
     }
 
     return 0;
+}
+
+extern "C" void video_thumbnailer_set_log_callback(log_callback cb)
+{
+    static log_callback log_cb = nullptr;
+
+    log_cb = cb;
+
+    VideoThumbnailer::setLogCallBack([&] (ThumbnailerLogLevel lvl, const std::string& msg) {
+        if (log_cb)
+        {
+            log_cb(lvl, msg.c_str());
+        }
+    });
 }

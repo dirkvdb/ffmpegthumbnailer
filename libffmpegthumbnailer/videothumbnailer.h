@@ -20,10 +20,11 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <inttypes.h>
+#include <cinttypes>
+#include <functional>
 
-#include "imagetypes.h"
 #include "ifilter.h"
+#include "ffmpegthumbnailertypes.h"
 
 struct AVFormatContext;
 
@@ -43,8 +44,8 @@ public:
     VideoThumbnailer(int thumbnailSize, bool workaroundIssues, bool maintainAspectRatio, int imageQuality, bool smartFrameSelection);
     ~VideoThumbnailer();
 
-    void generateThumbnail(const std::string& videoFile, ThumbnailerImageType type, const std::string& outputFile, AVFormatContext* pAvContext = NULL);
-    void generateThumbnail(const std::string& videoFile, ThumbnailerImageType type, std::vector<uint8_t>& buffer, AVFormatContext* pAvContext = NULL);
+    void generateThumbnail(const std::string& videoFile, ThumbnailerImageType type, const std::string& outputFile, AVFormatContext* pAvContext = nullptr);
+    void generateThumbnail(const std::string& videoFile, ThumbnailerImageType type, std::vector<uint8_t>& buffer, AVFormatContext* pAvContext = nullptr);
 
     void setThumbnailSize(int size);
     void setSeekPercentage(int percentage);
@@ -57,8 +58,10 @@ public:
     void removeFilter(IFilter* pFilter);
     void clearFilters();
 
+    static void setLogCallBack(std::function<void(ThumbnailerLogLevel, const std::string&)> cb);
+
 private:
-    void generateThumbnail(const std::string& videoFile, ImageWriter& imageWriter, AVFormatContext* pAvContext = NULL);
+    void generateThumbnail(const std::string& videoFile, ImageWriter& imageWriter, AVFormatContext* pAvContext = nullptr);
     void generateSmartThumbnail(MovieDecoder& movieDecoder, VideoFrame& videoFrame);
     void writeImage(const std::string& videoFile, ImageWriter& imageWriter, const VideoFrame& videoFrame, int duration, std::vector<uint8_t*>& rowPointers);
 
@@ -69,16 +72,20 @@ private:
     int getBestThumbnailIndex(std::vector<VideoFrame>& videoFrames, const std::vector<Histogram<int> >& histograms);
     void applyFilters(VideoFrame& frameData);
 
+    static void TraceMessage(ThumbnailerLogLevel lvl, const std::string& msg);
+
 private:
-    int                         m_ThumbnailSize;
-    uint16_t                    m_SeekPercentage;
-    bool                        m_OverlayFilmStrip;
-    bool                        m_WorkAroundIssues;
-    int                         m_ImageQuality;
-    bool                        m_MaintainAspectRatio;
-    bool                        m_SmartFrameSelection;
-    std::string                 m_SeekTime;
-    std::vector<IFilter*>       m_Filters;
+    int                                             m_ThumbnailSize;
+    uint16_t                                        m_SeekPercentage;
+    bool                                            m_OverlayFilmStrip;
+    bool                                            m_WorkAroundIssues;
+    int                                             m_ImageQuality;
+    bool                                            m_MaintainAspectRatio;
+    bool                                            m_SmartFrameSelection;
+    std::string                                     m_SeekTime;
+    std::vector<IFilter*>                           m_Filters;
+
+    static std::function<void(ThumbnailerLogLevel, const std::string&)> m_LogCb;
 
     friend class VideoThumbnailerTest;
 };

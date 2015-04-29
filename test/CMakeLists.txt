@@ -15,6 +15,7 @@ ADD_EXECUTABLE(ffmpegthumbnailertest
     testrunner.cpp
     histogramtest.cpp
     videothumbnailertest.cpp
+    videothumbnailerctest.cpp
 )
 
 ADD_DEFINITIONS(-DTEST_DATADIR="${CMAKE_CURRENT_SOURCE_DIR}")

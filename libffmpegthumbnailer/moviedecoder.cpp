@@ -22,6 +22,7 @@
 #include <algorithm>
 #include <cassert>
 #include <cstring>
+#include <array>
 
 extern "C" {
 #ifdef LATEST_GREATEST_FFMPEG
@@ -35,16 +36,18 @@ using namespace std;
 namespace ffmpegthumbnailer
 {
 
+std::function<void(ThumbnailerLogLevel, const std::string&)> MovieDecoder::m_LogCb;
+
 MovieDecoder::MovieDecoder(const string& filename, AVFormatContext* pavContext)
 : m_VideoStream(-1)
 , m_pFormatContext(pavContext)
-, m_pVideoCodecContext(NULL)
-, m_pVideoCodec(NULL)
-, m_pVideoStream(NULL)
-, m_pFrame(NULL)
-, m_pFrameBuffer(NULL)
-, m_pPacket(NULL)
-, m_FormatContextWasGiven(pavContext != NULL)
+, m_pVideoCodecContext(nullptr)
+, m_pVideoCodec(nullptr)
+, m_pVideoStream(nullptr)
+, m_pFrame(nullptr)
+, m_pFrameBuffer(nullptr)
+, m_pPacket(nullptr)
+, m_FormatContextWasGiven(pavContext != nullptr)
 , m_AllowSeek(true)
 {
     initialize(filename);
@@ -53,6 +56,35 @@ MovieDecoder::MovieDecoder(const string& filename, AVFormatContext* pavContext)
 MovieDecoder::~MovieDecoder()
 {
     destroy();
+}
+
+void MovieDecoder::setLogCallBack(std::function<void(ThumbnailerLogLevel, const std::string&)> cb)
+{
+    m_LogCb = cb;
+
+    av_log_set_callback([] (void*, int level, const char* format, va_list args) {
+        ThumbnailerLogLevel lvl;
+
+        switch (level)
+        {
+        case AV_LOG_INFO:
+            lvl = ThumbnailerLogLevelInfo;
+            break;
+        case AV_LOG_ERROR:
+            lvl = ThumbnailerLogLevelError;
+            break;
+        default:
+            return;
+        }
+
+        std::array<char, 1024> buffer;
+        int ret = vsnprintf(buffer.data(), buffer.size(), format, args);
+
+        if (ret >= 0 && ret < buffer.size())
+        {
+            m_LogCb(lvl, buffer.data());
+        }
+    });
 }
 
 void MovieDecoder::initialize(const string& filename)
@@ -64,13 +96,13 @@ void MovieDecoder::initialize(const string& filename)
     string inputFile = filename == "-" ? "pipe:" : filename;
     m_AllowSeek = (filename != "-") && (filename.find("rtsp://") != 0) && (filename.find("udp://") != 0);
 
-    if ((!m_FormatContextWasGiven) && avformat_open_input(&m_pFormatContext, inputFile.c_str(), NULL, NULL) != 0)
+    if ((!m_FormatContextWasGiven) && avformat_open_input(&m_pFormatContext, inputFile.c_str(), nullptr, nullptr) != 0)
     {
         destroy();
         throw logic_error(string("Could not open input file: ") + filename);
     }
 
-	if (avformat_find_stream_info(m_pFormatContext, NULL) < 0)
+	if (avformat_find_stream_info(m_pFormatContext, nullptr) < 0)
     {
         destroy();
         throw logic_error(string("Could not find stream information"));
@@ -85,7 +117,7 @@ void MovieDecoder::destroy()
     if (m_pVideoCodecContext)
     {
         avcodec_close(m_pVideoCodecContext);
-        m_pVideoCodecContext = NULL;
+        m_pVideoCodecContext = nullptr;
     }
 
     if ((!m_FormatContextWasGiven) && m_pFormatContext)
@@ -97,7 +129,7 @@ void MovieDecoder::destroy()
     {
         av_free_packet(m_pPacket);
         delete m_pPacket;
-        m_pPacket = NULL;
+        m_pPacket = nullptr;
     }
 
     if (m_pFrame)
@@ -108,7 +140,7 @@ void MovieDecoder::destroy()
     if (m_pFrameBuffer)
     {
         av_free(m_pFrameBuffer);
-        m_pFrameBuffer = NULL;
+        m_pFrameBuffer = nullptr;
     }
 
     m_VideoStream = -1;
@@ -140,23 +172,26 @@ void MovieDecoder::initializeVideo()
 
     if (m_VideoStream == -1)
     {
+        destroy();
         throw logic_error("Could not find video stream");
     }
 
     m_pVideoCodecContext = m_pFormatContext->streams[m_VideoStream]->codec;
     m_pVideoCodec = avcodec_find_decoder(m_pVideoCodecContext->codec_id);
 
-    if (m_pVideoCodec == NULL)
+    if (m_pVideoCodec == nullptr)
     {
-        // set to NULL, otherwise avcodec_close(m_pVideoCodecContext) crashes
-        m_pVideoCodecContext = NULL;
+        // set to nullptr, otherwise avcodec_close(m_pVideoCodecContext) crashes
+        m_pVideoCodecContext = nullptr;
+        destroy();
         throw logic_error("Video Codec not found");
     }
 
     m_pVideoCodecContext->workaround_bugs = 1;
 
-	if (avcodec_open2(m_pVideoCodecContext, m_pVideoCodec, NULL) < 0)
+	if (avcodec_open2(m_pVideoCodecContext, m_pVideoCodec, nullptr) < 0)
     {
+        destroy();
         throw logic_error("Could not open video codec");
     }
 }
@@ -337,7 +372,7 @@ void MovieDecoder::convertAndScaleFrame(PixelFormat format, int scaledSize, bool
 #ifdef LATEST_GREATEST_FFMPEG
 	// Enable this when it hits the released ffmpeg version
     SwsContext* scaleContext = sws_alloc_context();
-    if (scaleContext == NULL)
+    if (scaleContext == nullptr)
     {
 		throw std::logic_error("Failed to allocate scale context");
 	}
@@ -357,7 +392,7 @@ void MovieDecoder::convertAndScaleFrame(PixelFormat format, int scaledSize, bool
 		throw std::logic_error("Failed to set colorspace details");
 	}
 
-	if (sws_init_context(scaleContext, NULL, NULL) < 0)
+	if (sws_init_context(scaleContext, nullptr, nullptr) < 0)
 	{
 		sws_freeContext(scaleContext);
 		throw std::logic_error("Failed to initialise scale context");
@@ -366,15 +401,15 @@ void MovieDecoder::convertAndScaleFrame(PixelFormat format, int scaledSize, bool
 
     SwsContext* scaleContext = sws_getContext(m_pVideoCodecContext->width, m_pVideoCodecContext->height,
                                               m_pVideoCodecContext->pix_fmt, scaledWidth, scaledHeight,
-                                              format, SWS_BICUBIC, NULL, NULL, NULL);
+                                              format, SWS_BICUBIC, nullptr, nullptr, nullptr);
 
-    if (NULL == scaleContext)
+    if (nullptr == scaleContext)
     {
         throw logic_error("Failed to create resize context");
     }
 
-    AVFrame* convertedFrame = NULL;
-    uint8_t* convertedFrameBuffer = NULL;
+    AVFrame* convertedFrame = nullptr;
+    uint8_t* convertedFrameBuffer = nullptr;
 
     createAVFrame(&convertedFrame, &convertedFrameBuffer, scaledWidth, scaledHeight, format);
 

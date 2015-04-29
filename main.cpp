@@ -136,8 +136,15 @@ int main(int argc, char** argv)
         ThumbnailerImageType imageType = imageFormat.empty() ? determineImageTypeFromFilename(outputFile)
                                                              : determineImageTypeFromString(imageFormat);
 
+        VideoThumbnailer::setLogCallBack([] (ThumbnailerLogLevel lvl, const std::string& msg) {
+            if (lvl == ThumbnailerLogLevelInfo)
+                std::cout << msg;
+            else
+                std::cerr << msg;
+        });
+
         VideoThumbnailer videoThumbnailer(thumbnailSize, workaroundIssues, maintainAspectRatio, imageQuality, smartFrameSelection);
-        FilmStripFilter* filmStripFilter = NULL;
+        FilmStripFilter* filmStripFilter = nullptr;
 
         if (filmStripOverlay)
         {
@@ -233,7 +240,7 @@ public:
     ~LibHandle() { if (m_pLib) dlclose(m_pLib); }
 
     operator void*() const { return m_pLib; }
-    operator bool() const { return m_pLib != NULL; }
+    operator bool() const { return m_pLib != nullptr; }
 
 private:
     void* m_pLib;

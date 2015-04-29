@@ -17,9 +17,12 @@
 #ifndef MOVIEDECODER_H
 #define MOVIEDECODER_H
 
-#include <inttypes.h>
+#include <cinttypes>
 #include <string>
 #include <vector>
+#include <functional>
+
+#include "ffmpegthumbnailertypes.h"
 
 extern "C" {
 #include <libavcodec/avcodec.h>
@@ -36,6 +39,8 @@ class MovieDecoder
 public:
     MovieDecoder(const std::string& filename, AVFormatContext* pavContext = NULL);
     ~MovieDecoder();
+
+    static void setLogCallBack(std::function<void(ThumbnailerLogLevel, const std::string&)> cb);
 
     std::string getCodec();
     void seek(int timeInSeconds);
@@ -69,6 +74,8 @@ private:
     AVPacket*               m_pPacket;
     bool                    m_FormatContextWasGiven;
     bool                    m_AllowSeek;
+
+    static std::function<void(ThumbnailerLogLevel, const std::string&)> m_LogCb;
 };
 
 }

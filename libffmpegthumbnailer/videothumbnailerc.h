@@ -18,7 +18,7 @@
 #define VIDEO_THUMBNAILERC_H
 
 #include <inttypes.h>
-#include "imagetypes.h"
+#include "ffmpegthumbnailertypes.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -26,6 +26,8 @@ extern "C"
 #endif
 
 struct AVFormatContext;
+
+typedef void(*log_callback)(ThumbnailerLogLevel, const char*);
 
 typedef struct video_thumbnailer_struct
 {
@@ -65,6 +67,8 @@ void video_thumbnailer_destroy_image_data(image_data* data);
 int video_thumbnailer_generate_thumbnail_to_buffer(video_thumbnailer* thumbnailer, const char* movie_filename, image_data* generated_image_data);
 /* generate thumbnail from video file (movie_filename), image is written to output_fileName on disk*/
 int video_thumbnailer_generate_thumbnail_to_file(video_thumbnailer* thumbnailer, const char* movie_filename, const char* output_fileName);
+
+void video_thumbnailer_set_log_callback(log_callback cb);
 
 #ifdef __cplusplus
 }
