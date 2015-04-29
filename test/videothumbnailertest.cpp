@@ -23,6 +23,10 @@ class VideoThumbnailerTest : public testing::Test
         frame.height = 10;
         frame.lineSize = 30;
         frame.frameData.resize(300);
+
+        VideoThumbnailer::SetLogCallback([] (ThumbnailerLogLevel, const std::string& msg) {
+            std::cout << msg;
+        });
     }
 
     void generateHistogram()
