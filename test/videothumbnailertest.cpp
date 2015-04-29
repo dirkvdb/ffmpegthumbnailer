@@ -44,7 +44,7 @@ class VideoThumbnailerTest : public testing::Test
     VideoThumbnailer videoThumbnailer;
 };
 
-TEST_F(VideoThumbnailerTest, CreateThumb)
+TEST_F(VideoThumbnailerTest, DISABLED_CreateThumb)
 {
     std::string input = std::string(TEST_DATADIR) + "/test_sample.flv";
 

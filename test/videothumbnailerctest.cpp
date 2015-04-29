@@ -31,7 +31,7 @@ class VideoThumbnailercTest : public testing::Test
     video_thumbnailer* thumbnailer = nullptr;
 };
 
-TEST_F(VideoThumbnailercTest, CreateThumb)
+TEST_F(VideoThumbnailercTest, DISABLED_CreateThumb)
 {
     thumbnailer->seek_percentage        = 15;
     thumbnailer->overlay_film_strip     = 1;
