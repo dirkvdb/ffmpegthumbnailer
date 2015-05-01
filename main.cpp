@@ -136,14 +136,14 @@ int main(int argc, char** argv)
         ThumbnailerImageType imageType = imageFormat.empty() ? determineImageTypeFromFilename(outputFile)
                                                              : determineImageTypeFromString(imageFormat);
 
-        VideoThumbnailer::setLogCallback([] (ThumbnailerLogLevel lvl, const std::string& msg) {
+        VideoThumbnailer videoThumbnailer(thumbnailSize, workaroundIssues, maintainAspectRatio, imageQuality, smartFrameSelection);
+        videoThumbnailer.setLogCallback([] (ThumbnailerLogLevel lvl, const std::string& msg) {
             if (lvl == ThumbnailerLogLevelInfo)
-                std::cout << msg;
+                std::cout << msg << std::endl;
             else
-                std::cerr << msg;
+                std::cerr << msg << std::endl;
         });
 
-        VideoThumbnailer videoThumbnailer(thumbnailSize, workaroundIssues, maintainAspectRatio, imageQuality, smartFrameSelection);
         FilmStripFilter* filmStripFilter = nullptr;
 
         if (filmStripOverlay)

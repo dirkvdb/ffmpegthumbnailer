@@ -24,8 +24,8 @@ class VideoThumbnailerTest : public testing::Test
         frame.lineSize = 30;
         frame.frameData.resize(300);
 
-        VideoThumbnailer::setLogCallback([] (ThumbnailerLogLevel, const std::string& msg) {
-            std::cout << msg;
+        videoThumbnailer.setLogCallback([] (ThumbnailerLogLevel, const std::string& msg) {
+            std::cout << msg << std::endl;
         });
     }
 
@@ -60,6 +60,12 @@ TEST_F(VideoThumbnailerTest, DISABLED_CreateThumbNonAscii)
     std::vector<uint8_t> buffer;
     videoThumbnailer.generateThumbnail(input, Png, buffer);
     ASSERT_FALSE(buffer.empty());
+}
+
+TEST_F(VideoThumbnailerTest, CreateThumbInvalidFile)
+{
+    std::vector<uint8_t> buffer;
+    EXPECT_THROW(videoThumbnailer.generateThumbnail("invalidfile.mpg", Png, buffer), std::logic_error);
 }
 
 TEST_F(VideoThumbnailerTest, CreateHistogramBlackFrame)

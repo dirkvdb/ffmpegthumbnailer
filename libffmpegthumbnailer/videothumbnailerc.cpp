@@ -23,12 +23,25 @@
 
 using namespace ffmpegthumbnailer;
 
+struct thumbnailer_data
+{
+    VideoThumbnailer thumbnailer;
+    FilmStripFilter filter;
+    thumbnailer_log_callback log_cb = nullptr;
+};
+
+static void trace_message(video_thumbnailer* thumbnailer, ThumbnailerLogLevel lvl, const char* message)
+{
+    if (thumbnailer->tdata->log_cb)
+    {
+        thumbnailer->tdata->log_cb(lvl, message);
+    }
+}
+
 extern "C" video_thumbnailer* video_thumbnailer_create(void)
 {
     video_thumbnailer* thumbnailer = new video_thumbnailer_struct();
 
-    thumbnailer->thumbnailer                = new VideoThumbnailer();
-    thumbnailer->filter                     = new FilmStripFilter();
     thumbnailer->thumbnail_size             = 128;
     thumbnailer->seek_percentage            = 10;
     thumbnailer->seek_time                  = nullptr;
@@ -38,16 +51,14 @@ extern "C" video_thumbnailer* video_thumbnailer_create(void)
     thumbnailer->thumbnail_image_type       = Png;
     thumbnailer->maintain_aspect_ratio      = 1;
     thumbnailer->av_format_context          = nullptr;
+    thumbnailer->tdata                      = new thumbnailer_data();
 
     return thumbnailer;
 }
 
 extern "C" void video_thumbnailer_destroy(video_thumbnailer* thumbnailer)
 {
-    delete reinterpret_cast<VideoThumbnailer*>(thumbnailer->thumbnailer);
-    delete reinterpret_cast<FilmStripFilter*>(thumbnailer->filter);
-
-    thumbnailer->thumbnailer = 0;
+    delete thumbnailer->tdata;
     delete thumbnailer;
 }
 
@@ -76,25 +87,25 @@ extern "C" void video_thumbnailer_destroy_image_data(image_data* data)
 
 void setProperties(video_thumbnailer* thumbnailer)
 {
-    VideoThumbnailer* videoThumbnailer  = reinterpret_cast<VideoThumbnailer*>(thumbnailer->thumbnailer);
-    videoThumbnailer->setThumbnailSize(thumbnailer->thumbnail_size);
-    videoThumbnailer->setWorkAroundIssues(thumbnailer->workaround_bugs != 0);
-    videoThumbnailer->setImageQuality(thumbnailer->thumbnail_image_quality);
-    videoThumbnailer->setMaintainAspectRatio(thumbnailer->maintain_aspect_ratio != 0);
+    auto& videoThumbnailer = thumbnailer->tdata->thumbnailer;
+    videoThumbnailer.setThumbnailSize(thumbnailer->thumbnail_size);
+    videoThumbnailer.setWorkAroundIssues(thumbnailer->workaround_bugs != 0);
+    videoThumbnailer.setImageQuality(thumbnailer->thumbnail_image_quality);
+    videoThumbnailer.setMaintainAspectRatio(thumbnailer->maintain_aspect_ratio != 0);
 
     if (thumbnailer->overlay_film_strip)
     {
-        videoThumbnailer->removeFilter(reinterpret_cast<IFilter*>(thumbnailer->filter));
-        videoThumbnailer->addFilter(reinterpret_cast<IFilter*>(thumbnailer->filter));
+        videoThumbnailer.removeFilter(&thumbnailer->tdata->filter);
+        videoThumbnailer.addFilter(&thumbnailer->tdata->filter);
     }
 
     if (thumbnailer->seek_time != nullptr)
     {
-        videoThumbnailer->setSeekTime(thumbnailer->seek_time);
+        videoThumbnailer.setSeekTime(thumbnailer->seek_time);
     }
     else
     {
-        videoThumbnailer->setSeekPercentage(thumbnailer->seek_percentage);
+        videoThumbnailer.setSeekPercentage(thumbnailer->seek_percentage);
     }
 }
 
@@ -102,16 +113,16 @@ extern "C" int video_thumbnailer_generate_thumbnail_to_buffer(video_thumbnailer*
 {
     try
     {
-        std::vector<uint8_t>* dataVector    = reinterpret_cast<std::vector<uint8_t>* >(generated_image_data->internal_data);
-
-        VideoThumbnailer* videoThumbnailer  = reinterpret_cast<VideoThumbnailer*>(thumbnailer->thumbnailer);
+        auto dataVector         = reinterpret_cast<std::vector<uint8_t>*>(generated_image_data->internal_data);
+        auto& videoThumbnailer  = thumbnailer->tdata->thumbnailer;
         setProperties(thumbnailer);
-        videoThumbnailer->generateThumbnail(movie_filename, thumbnailer->thumbnail_image_type, *dataVector, thumbnailer->av_format_context);
+        videoThumbnailer.generateThumbnail(movie_filename, thumbnailer->thumbnail_image_type, *dataVector, thumbnailer->av_format_context);
         generated_image_data->image_data_ptr = &dataVector->front();
         generated_image_data->image_data_size = dataVector->size();
     }
-    catch (std::logic_error&)
+    catch (const std::exception& e)
     {
+        trace_message(thumbnailer, ThumbnailerLogLevelError, e.what());
         return -1;
     }
 
@@ -122,28 +133,32 @@ extern "C" int video_thumbnailer_generate_thumbnail_to_file(video_thumbnailer* t
 {
     try
     {
-        VideoThumbnailer* videoThumbnailer = reinterpret_cast<VideoThumbnailer*>(thumbnailer->thumbnailer);
+        auto& videoThumbnailer = thumbnailer->tdata->thumbnailer;
         setProperties(thumbnailer);
-        videoThumbnailer->generateThumbnail(movie_filename, thumbnailer->thumbnail_image_type, output_fileName, thumbnailer->av_format_context);
+        videoThumbnailer.generateThumbnail(movie_filename, thumbnailer->thumbnail_image_type, output_fileName, thumbnailer->av_format_context);
     }
-    catch (std::logic_error&)
+    catch (const std::exception& e)
     {
+        trace_message(thumbnailer, ThumbnailerLogLevelError, e.what());
         return -1;
     }
 
     return 0;
 }
 
-extern "C" void video_thumbnailer_set_log_callback(log_callback cb)
+extern "C" void video_thumbnailer_set_log_callback(video_thumbnailer* thumbnailer, thumbnailer_log_callback cb)
 {
-    static log_callback log_cb = nullptr;
+    thumbnailer->tdata->log_cb = cb;
+    auto& videoThumbnailer = thumbnailer->tdata->thumbnailer;
 
-    log_cb = cb;
-
-    VideoThumbnailer::setLogCallback([&] (ThumbnailerLogLevel lvl, const std::string& msg) {
-        if (log_cb)
-        {
-            log_cb(lvl, msg.c_str());
-        }
-    });
+    if (!cb)
+    {
+        videoThumbnailer.setLogCallback(nullptr);
+    }
+    else
+    {
+        videoThumbnailer.setLogCallback([&] (ThumbnailerLogLevel lvl, const std::string& msg) {
+            cb(lvl, msg.c_str());
+        });
+    }
 }

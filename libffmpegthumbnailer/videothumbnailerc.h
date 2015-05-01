@@ -26,8 +26,9 @@ extern "C"
 #endif
 
 struct AVFormatContext;
+struct thumbnailer_data;
 
-typedef void(*log_callback)(ThumbnailerLogLevel, const char*);
+typedef void(*thumbnailer_log_callback)(ThumbnailerLogLevel, const char*);
 
 typedef struct video_thumbnailer_struct
 {
@@ -41,8 +42,7 @@ typedef struct video_thumbnailer_struct
     struct AVFormatContext* av_format_context;      /* default = NULL */
     int                     maintain_aspect_ratio;  /* default = 1 */
 
-    void*                   thumbnailer;            /* for internal use only */
-    void*                   filter;                 /* for internal use only */
+    thumbnailer_data*       tdata;                  /* for internal use only */
 } video_thumbnailer;
 
 typedef struct image_data_struct
@@ -67,8 +67,9 @@ void video_thumbnailer_destroy_image_data(image_data* data);
 int video_thumbnailer_generate_thumbnail_to_buffer(video_thumbnailer* thumbnailer, const char* movie_filename, image_data* generated_image_data);
 /* generate thumbnail from video file (movie_filename), image is written to output_fileName on disk*/
 int video_thumbnailer_generate_thumbnail_to_file(video_thumbnailer* thumbnailer, const char* movie_filename, const char* output_fileName);
-
-void video_thumbnailer_set_log_callback(log_callback cb);
+/* install a logging callback that gets called on errors and informational messages, reset by passing NULL.
+   by default no logging is generated on stdout or stderr */
+void video_thumbnailer_set_log_callback(video_thumbnailer* thumbnailer, thumbnailer_log_callback cb);
 
 #ifdef __cplusplus
 }

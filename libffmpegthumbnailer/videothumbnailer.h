@@ -58,7 +58,7 @@ public:
     void removeFilter(IFilter* pFilter);
     void clearFilters();
 
-    static void setLogCallback(std::function<void(ThumbnailerLogLevel, const std::string&)> cb);
+    void setLogCallback(std::function<void(ThumbnailerLogLevel, const std::string&)> cb);
 
 private:
     void generateThumbnail(const std::string& videoFile, ImageWriter& imageWriter, AVFormatContext* pAvContext = nullptr);
@@ -72,7 +72,7 @@ private:
     int getBestThumbnailIndex(std::vector<VideoFrame>& videoFrames, const std::vector<Histogram<int> >& histograms);
     void applyFilters(VideoFrame& frameData);
 
-    static void TraceMessage(ThumbnailerLogLevel lvl, const std::string& msg);
+    void TraceMessage(ThumbnailerLogLevel lvl, const std::string& msg);
 
 private:
     int                                             m_ThumbnailSize;
@@ -85,7 +85,7 @@ private:
     std::string                                     m_SeekTime;
     std::vector<IFilter*>                           m_Filters;
 
-    static std::function<void(ThumbnailerLogLevel, const std::string&)> m_LogCb;
+    std::function<void(ThumbnailerLogLevel, const std::string&)> m_LogCb;
 
     friend class VideoThumbnailerTest;
 };

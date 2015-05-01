@@ -20,6 +20,8 @@
 #include <cinttypes>
 #include <string>
 #include <vector>
+#include <mutex>
+#include <unordered_map>
 #include <functional>
 
 #include "ffmpegthumbnailertypes.h"
@@ -39,8 +41,6 @@ class MovieDecoder
 public:
     MovieDecoder(const std::string& filename, AVFormatContext* pavContext = NULL);
     ~MovieDecoder();
-
-    static void setLogCallBack(std::function<void(ThumbnailerLogLevel, const std::string&)> cb);
 
     std::string getCodec();
     void seek(int timeInSeconds);
@@ -63,6 +63,8 @@ private:
     void createAVFrame(AVFrame** pAvFrame, uint8_t** pFrameBuffer, int width, int height, PixelFormat format);
     void calculateDimensions(int squareSize, bool maintainAspectRatio, int& destWidth, int& destHeight);
 
+    void addLogCallback();
+
 private:
     int                     m_VideoStream;
     AVFormatContext*        m_pFormatContext;
@@ -74,8 +76,6 @@ private:
     AVPacket*               m_pPacket;
     bool                    m_FormatContextWasGiven;
     bool                    m_AllowSeek;
-
-    static std::function<void(ThumbnailerLogLevel, const std::string&)> m_LogCb;
 };
 
 }

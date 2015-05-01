@@ -41,7 +41,6 @@ namespace ffmpegthumbnailer
 {
 
 static const int SMART_FRAME_ATTEMPTS = 25;
-std::function<void(ThumbnailerLogLevel, const std::string&)> VideoThumbnailer::m_LogCb;
 
 VideoThumbnailer::VideoThumbnailer()
 : m_ThumbnailSize(128)
@@ -126,9 +125,9 @@ void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageWriter& i
 													: timeToSeconds(m_SeekTime);
             movieDecoder.seek(secondToSeekTo);
         }
-        catch (exception& e)
+        catch (const exception& e)
         {
-            TraceMessage(ThumbnailerLogLevelInfo, std::string(e.what()) + ", will use first frame\n");
+            TraceMessage(ThumbnailerLogLevelInfo, std::string(e.what()) + ", will use first frame");
 
             //seeking failed, try the first frame again
             movieDecoder.destroy();
@@ -272,7 +271,7 @@ string VideoThumbnailer::getMimeType(const string& videoFile)
 string VideoThumbnailer::getExtension(const string& videoFilename)
 {
     string extension;
-    string::size_type pos = videoFilename.rfind('.');
+    auto pos = videoFilename.rfind('.');
 
     if (string::npos != pos)
     {
@@ -289,14 +288,9 @@ void VideoThumbnailer::addFilter(IFilter* pFilter)
 
 void VideoThumbnailer::removeFilter(IFilter* pFilter)
 {
-    for (vector<IFilter*>::iterator iter = m_Filters.begin(); iter != m_Filters.end(); ++iter)
-    {
-        if (*iter == pFilter)
-        {
-            m_Filters.erase(iter);
-            break;
-        }
-    }
+    std::remove_if(m_Filters.begin(), m_Filters.end(), [pFilter] (IFilter* fil) {
+        return fil == pFilter;
+    });
 }
 
 void VideoThumbnailer::clearFilters()
@@ -306,17 +300,14 @@ void VideoThumbnailer::clearFilters()
 
 void VideoThumbnailer::setLogCallback(std::function<void(ThumbnailerLogLevel, const std::string&)> cb)
 {
-    using namespace std::placeholders;
-
     m_LogCb = cb;
-    MovieDecoder::setLogCallBack(std::bind(&VideoThumbnailer::TraceMessage, _1, _2));
 }
 
 void VideoThumbnailer::applyFilters(VideoFrame& frameData)
 {
-    for (vector<IFilter*>::iterator iter = m_Filters.begin(); iter != m_Filters.end(); ++iter)
+    for (auto filter : m_Filters)
     {
-        (*iter)->process(frameData);
+        filter->process(frameData);
     }
 }
 
@@ -392,10 +383,6 @@ void VideoThumbnailer::TraceMessage(ThumbnailerLogLevel lvl, const std::string& 
     if (m_LogCb)
     {
         m_LogCb(lvl, msg);
-    }
-    else
-    {
-        std::cout << msg;
     }
 }
 

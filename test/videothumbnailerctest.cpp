@@ -1,4 +1,4 @@
-﻿#include <algorithm>
+#include <algorithm>
 
 #include <vector>
 #include <fstream>
@@ -43,6 +43,18 @@ TEST_F(VideoThumbnailercTest, DISABLED_CreateThumb)
 
     ASSERT_NE(0, imageData->image_data_size);
     ASSERT_NE(nullptr, imageData->image_data_ptr);
+}
+
+TEST_F(VideoThumbnailercTest, CreateThumbInvalidFile)
+{
+    video_thumbnailer_set_log_callback(thumbnailer, [] (ThumbnailerLogLevel, const char* msg) {
+        EXPECT_STREQ("Could not open input file: invalidfile.mpg", msg);
+    });
+
+    EXPECT_EQ(-1, video_thumbnailer_generate_thumbnail_to_buffer(thumbnailer, "invalidfile.mpg", imageData));
+
+    video_thumbnailer_set_log_callback(thumbnailer, nullptr);
+    EXPECT_EQ(-1, video_thumbnailer_generate_thumbnail_to_buffer(thumbnailer, "invalidfile.mpg", imageData));
 }
 
 }

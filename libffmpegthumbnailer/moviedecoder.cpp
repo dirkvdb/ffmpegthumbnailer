@@ -36,7 +36,12 @@ using namespace std;
 namespace ffmpegthumbnailer
 {
 
-std::function<void(ThumbnailerLogLevel, const std::string&)> MovieDecoder::m_LogCb;
+struct SilenceLogLevel
+{
+    SilenceLogLevel() { av_log_set_level(AV_LOG_QUIET); }
+};
+
+static SilenceLogLevel silencio;
 
 MovieDecoder::MovieDecoder(const string& filename, AVFormatContext* pavContext)
 : m_VideoStream(-1)
@@ -56,35 +61,6 @@ MovieDecoder::MovieDecoder(const string& filename, AVFormatContext* pavContext)
 MovieDecoder::~MovieDecoder()
 {
     destroy();
-}
-
-void MovieDecoder::setLogCallBack(std::function<void(ThumbnailerLogLevel, const std::string&)> cb)
-{
-    m_LogCb = cb;
-
-    av_log_set_callback([] (void*, int level, const char* format, va_list args) {
-        ThumbnailerLogLevel lvl;
-
-        switch (level)
-        {
-        case AV_LOG_INFO:
-            lvl = ThumbnailerLogLevelInfo;
-            break;
-        case AV_LOG_ERROR:
-            lvl = ThumbnailerLogLevelError;
-            break;
-        default:
-            return;
-        }
-
-        std::array<char, 1024> buffer;
-        int ret = vsnprintf(buffer.data(), buffer.size(), format, args);
-
-        if (ret >= 0 && ret < buffer.size())
-        {
-            m_LogCb(lvl, buffer.data());
-        }
-    });
 }
 
 void MovieDecoder::initialize(const string& filename)
