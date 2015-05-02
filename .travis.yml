@@ -28,19 +28,12 @@ install:
 - cd ffmpeg-2.6.2 && ./configure --prefix=/usr --disable-static --enable-shared --disable-everything --disable-avdevice --disable-doc --disable-htmlpages --disable-manpages --disable-programs --disable-encoders --disable-muxers --disable-decoders --enable-swscale --disable-yasm --enable-protocol=file --enable-protocol=http --enable-iconv  && make -j4 && sudo make install
 - cd ..
 
-script:
-- cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DENABLE_STATIC=ON -DENABLE_SHARED=ON -DENABLE_GIO=ON -DENABLE_THUMBNAILER=ON .
-- make -j4
-- ls -la /home/travis/build/dirkvdb/ffmpegthumbnailer/test/
-- stat /home/travis/build/dirkvdb/ffmpegthumbnailer/test/test_sample.flv
-- CTEST_OUTPUT_ON_FAILURE=1 make test
-
 addons:
   coverity_scan:
     project:
       name: "dirkvdb/ffmpegthumbnailer"
       description: "Build submitted via Travis CI"
     notification_email: dirk.vdb@gmail.com
-    build_command_prepend: "cmake ."
+    build_command_prepend: "cmake . -DCMAKE_BUILD_TYPE=$BUILD_TYPE"
     build_command: "make -j4"
     branch_pattern: coverity_scan
