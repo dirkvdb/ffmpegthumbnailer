@@ -43,6 +43,6 @@ addons:
       name: "dirkvdb/ffmpegthumbnailer"
       description: "Build submitted via Travis CI"
     notification_email: dirk.vdb@gmail.com
-    build_command_prepend: "cmake . -DCMAKE_CXX_COMPILE=g++-4.9"
+    build_command_prepend: "cmake ."
     build_command: "make -j4"
     branch_pattern: coverity_scan
