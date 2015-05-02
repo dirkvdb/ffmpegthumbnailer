@@ -13,7 +13,7 @@ env:
     - ENABLE_DEBUG=no
     - ENABLE_DEBUG=yes
   global:
-    secure: 1x8/zr5nMm3oaGZ9szPrZ5bdXfuKfUcMD0hHH12rR62WzRMv/uK6GGkeHR07+yVrwzD/arwmtpqQJNmFEpg5x2o686bqBMK4ZmXblHwk9AlIl5rYUcClxQkt5+nk01vr24LHz+IVM07h9azFa/8OL2LVLVcfL0XyYWSJ+p5HGAQ=
+    secure: "0N2Bw0qdLIoX0fW8/SHMobrA6oup/gd5373SwtyA//nP3HVNJpgpnVI8iyZ0ztIlStcWO1tB39XowUFTxT2jGSMM0Xliw501WjIIbaECb6QCkUl1tHJ2NmI7aD36gZcbcAzdTbjab5SJ5yLZR4Barr+zrIQiChu7Ggcg4SIltRs="
 
 before_install:
 - echo "deb http://llvm.org/apt/precise/ llvm-toolchain-precise main" | sudo tee -a /etc/apt/sources.list
