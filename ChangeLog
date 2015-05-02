@@ -1,6 +1,7 @@
 FFmpegThumbnailer 2.1.0
 - The library is now completely silent on std out and err by default
 - A callback can be registered to listen to logging messages
+- Fixed cmake installation directories
 
 FFmpegThumbnailer 2.0.10
 - Migrated to github
