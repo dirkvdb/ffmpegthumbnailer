@@ -10,8 +10,8 @@ compiler:
 
 env:
   matrix:
-    - ENABLE_DEBUG=no
-    - ENABLE_DEBUG=yes
+    - BUILD_TYPE=Debug
+    - BUILD_TYPE=Release
   global:
     secure: "0N2Bw0qdLIoX0fW8/SHMobrA6oup/gd5373SwtyA//nP3HVNJpgpnVI8iyZ0ztIlStcWO1tB39XowUFTxT2jGSMM0Xliw501WjIIbaECb6QCkUl1tHJ2NmI7aD36gZcbcAzdTbjab5SJ5yLZR4Barr+zrIQiChu7Ggcg4SIltRs="
 
