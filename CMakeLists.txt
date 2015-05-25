@@ -165,7 +165,7 @@ IF (ENABLE_STATIC)
     ADD_LIBRARY(libffmpegthumbnailerstatic STATIC ${LIB_SRC_LIST})
     TARGET_LINK_LIBRARIES(libffmpegthumbnailerstatic ${FFMPEGTHUMBNAILER_LIBRARIES})
     SET_TARGET_PROPERTIES(libffmpegthumbnailerstatic PROPERTIES
-        OUTPUT_NAME libffmpegthumbnailer
+        OUTPUT_NAME ffmpegthumbnailer
     )
     SET (STATIC_LIB libffmpegthumbnailerstatic)
 ENDIF ()
