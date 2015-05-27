@@ -402,6 +402,15 @@ void MovieDecoder::convertAndScaleFrame(PixelFormat format, int scaledSize, bool
 
 void MovieDecoder::calculateDimensions(int squareSize, bool maintainAspectRatio, int& destWidth, int& destHeight)
 {
+    AVRational par = av_guess_sample_aspect_ratio(m_pFormatContext, m_pVideoStream, m_pFrame);
+    bool anamorphic = false;
+
+    // if the pixel aspect ratio is defined and is not 1, we have an anamorphic stream
+    if (par.num != 0 && (float) par.num / par.den != 1.0)
+    {
+        anamorphic = true;
+    }
+
     if (squareSize == 0)
     {
         // use original video size
@@ -417,12 +426,10 @@ void MovieDecoder::calculateDimensions(int squareSize, bool maintainAspectRatio,
     {
         int srcWidth            = m_pVideoCodecContext->width;
         int srcHeight           = m_pVideoCodecContext->height;
-        int ascpectNominator    = m_pVideoCodecContext->sample_aspect_ratio.num;
-        int ascpectDenominator  = m_pVideoCodecContext->sample_aspect_ratio.den;
 
-        if (ascpectNominator != 0 && ascpectDenominator != 0)
+        if (anamorphic)
         {
-            srcWidth = srcWidth * ascpectNominator / ascpectDenominator;
+            srcWidth = srcWidth * par.num / par.den;
         }
 
         if (srcWidth > srcHeight)
