@@ -405,7 +405,7 @@ void MovieDecoder::calculateDimensions(int squareSize, bool maintainAspectRatio,
     AVRational par = av_guess_sample_aspect_ratio(m_pFormatContext, m_pVideoStream, m_pFrame);
 
     // if the pixel aspect ratio is defined and is not 1, we have an anamorphic stream
-    bool anamorphic = par.num != 0 && static_cast<float>(par.num) / par.den != 1.0f;
+    bool anamorphic = par.num != 0 && par.num != par.den;
 
     if (squareSize == 0)
     {
