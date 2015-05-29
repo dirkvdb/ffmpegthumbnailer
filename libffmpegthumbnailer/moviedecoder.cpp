@@ -403,13 +403,9 @@ void MovieDecoder::convertAndScaleFrame(PixelFormat format, int scaledSize, bool
 void MovieDecoder::calculateDimensions(int squareSize, bool maintainAspectRatio, int& destWidth, int& destHeight)
 {
     AVRational par = av_guess_sample_aspect_ratio(m_pFormatContext, m_pVideoStream, m_pFrame);
-    bool anamorphic = false;
 
     // if the pixel aspect ratio is defined and is not 1, we have an anamorphic stream
-    if (par.num != 0 && static_cast<float>(par.num) / par.den != 1.0)
-    {
-        anamorphic = true;
-    }
+    bool anamorphic = par.num != 0 && static_cast<float>(par.num) / par.den != 1.0;
 
     if (squareSize == 0)
     {
