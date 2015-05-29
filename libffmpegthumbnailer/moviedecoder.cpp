@@ -406,7 +406,7 @@ void MovieDecoder::calculateDimensions(int squareSize, bool maintainAspectRatio,
     bool anamorphic = false;
 
     // if the pixel aspect ratio is defined and is not 1, we have an anamorphic stream
-    if (par.num != 0 && (float) par.num / par.den != 1.0)
+    if (par.num != 0 && static_cast<float>(par.num) / par.den != 1.0)
     {
         anamorphic = true;
     }
