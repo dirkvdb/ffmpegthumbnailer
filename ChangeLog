@@ -1,3 +1,7 @@
+FFmpegThumbnailer 2.1.x
+- Fixed dimension calculation for anamorphic streams (Thanks to Richard Zurad)
+- Fixed static library name
+
 FFmpegThumbnailer 2.1.0
 - The library is now completely silent on std out and err by default
 - A callback can be registered to listen to logging messages
