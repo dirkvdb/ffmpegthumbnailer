@@ -4,12 +4,9 @@
 #include <gtest/gtest.h>
 
 int main(int argc, char **argv) {
-    std::cout << "Running ffmpegthumbnailer tests" << std::endl;
-
-    if (!setlocale(LC_CTYPE, "en_US.UTF-8"))
+    if (!std::setlocale(LC_CTYPE, ""))
     {
-        std::cerr << "Locale not specified. Check LANG, LC_CTYPE, LC_ALL" << std::endl;
-        return 1;
+        std::cerr << "Failed to set locale" << std::endl;
     }
 
     testing::InitGoogleTest(&argc, argv);

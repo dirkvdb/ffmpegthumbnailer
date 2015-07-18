@@ -54,10 +54,9 @@ int main(int argc, char** argv)
     string  outputFile;
     string  imageFormat;
 
-    if (!setlocale(LC_CTYPE, "en_US.UTF-8"))
+    if (!std::setlocale(LC_CTYPE, ""))
     {
-        std::cerr << "Locale not specified. Check LANG, LC_CTYPE, LC_ALL" << std::endl;
-        return 1;
+        std::cerr << "Failed to set locale" << std::endl;
     }
 
     while ((option = getopt (argc, argv, "i:o:s:t:q:c:afwhvp")) != -1)
