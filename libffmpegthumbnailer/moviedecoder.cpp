@@ -341,7 +341,7 @@ void MovieDecoder::getScaledVideoFrame(int scaledSize, bool maintainAspectRatio,
     memcpy((&(videoFrame.frameData.front())), m_pFrame->data[0], videoFrame.lineSize * videoFrame.height);
 }
 
-void MovieDecoder::convertAndScaleFrame(PixelFormat format, int scaledSize, bool maintainAspectRatio, int& scaledWidth, int& scaledHeight)
+void MovieDecoder::convertAndScaleFrame(AVPixelFormat format, int scaledSize, bool maintainAspectRatio, int& scaledWidth, int& scaledHeight)
 {
     calculateDimensions(scaledSize, maintainAspectRatio, scaledWidth, scaledHeight);
 
@@ -441,7 +441,7 @@ void MovieDecoder::calculateDimensions(int squareSize, bool maintainAspectRatio,
     }
 }
 
-void MovieDecoder::createAVFrame(AVFrame** pAvFrame, uint8_t** pFrameBuffer, int width, int height, PixelFormat format)
+void MovieDecoder::createAVFrame(AVFrame** pAvFrame, uint8_t** pFrameBuffer, int width, int height, AVPixelFormat format)
 {
     *pAvFrame = av_frame_alloc();
 
