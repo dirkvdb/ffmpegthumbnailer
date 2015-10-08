@@ -41,8 +41,6 @@ struct SilenceLogLevel
     SilenceLogLevel() { av_log_set_level(AV_LOG_QUIET); }
 };
 
-static SilenceLogLevel silencio;
-
 MovieDecoder::MovieDecoder(const string& filename, AVFormatContext* pavContext)
 : m_VideoStream(-1)
 , m_pFormatContext(pavContext)
@@ -78,7 +76,7 @@ void MovieDecoder::initialize(const string& filename)
         throw logic_error(string("Could not open input file: ") + filename);
     }
 
-	if (avformat_find_stream_info(m_pFormatContext, nullptr) < 0)
+    if (avformat_find_stream_info(m_pFormatContext, nullptr) < 0)
     {
         destroy();
         throw logic_error(string("Could not find stream information"));
@@ -165,7 +163,7 @@ void MovieDecoder::initializeVideo()
 
     m_pVideoCodecContext->workaround_bugs = 1;
 
-	if (avcodec_open2(m_pVideoCodecContext, m_pVideoCodec, nullptr) < 0)
+    if (avcodec_open2(m_pVideoCodecContext, m_pVideoCodec, nullptr) < 0)
     {
         destroy();
         throw logic_error("Could not open video codec");
@@ -277,7 +275,7 @@ bool MovieDecoder::decodeVideoPacket()
         return false;
     }
 
-    avcodec_get_frame_defaults(m_pFrame);
+    av_frame_unref(m_pFrame);
 
     int frameFinished;
 
@@ -323,14 +321,8 @@ bool MovieDecoder::getVideoPacket()
 
 void MovieDecoder::getScaledVideoFrame(int scaledSize, bool maintainAspectRatio, VideoFrame& videoFrame)
 {
-    if (m_pFrame->interlaced_frame)
-    {
-        avpicture_deinterlace((AVPicture*) m_pFrame, (AVPicture*) m_pFrame, m_pVideoCodecContext->pix_fmt,
-                              m_pVideoCodecContext->width, m_pVideoCodecContext->height);
-    }
-
     int scaledWidth, scaledHeight;
-    convertAndScaleFrame(PIX_FMT_RGB24, scaledSize, maintainAspectRatio, scaledWidth, scaledHeight);
+    convertAndScaleFrame(AV_PIX_FMT_RGB24, scaledSize, maintainAspectRatio, scaledWidth, scaledHeight);
 
     videoFrame.width = scaledWidth;
     videoFrame.height = scaledHeight;
@@ -346,33 +338,33 @@ void MovieDecoder::convertAndScaleFrame(AVPixelFormat format, int scaledSize, bo
     calculateDimensions(scaledSize, maintainAspectRatio, scaledWidth, scaledHeight);
 
 #ifdef LATEST_GREATEST_FFMPEG
-	// Enable this when it hits the released ffmpeg version
+    // Enable this when it hits the released ffmpeg version
     SwsContext* scaleContext = sws_alloc_context();
     if (scaleContext == nullptr)
     {
-		throw std::logic_error("Failed to allocate scale context");
-	}
+        throw std::logic_error("Failed to allocate scale context");
+    }
 
-	av_set_int(scaleContext, "srcw", m_pVideoCodecContext->width);
+    av_set_int(scaleContext, "srcw", m_pVideoCodecContext->width);
     av_set_int(scaleContext, "srch", m_pVideoCodecContext->height);
     av_set_int(scaleContext, "src_format", m_pVideoCodecContext->pix_fmt);
     av_set_int(scaleContext, "dstw", scaledWidth);
     av_set_int(scaleContext, "dsth", scaledHeight);
     av_set_int(scaleContext, "dst_format", format);
-	av_set_int(scaleContext, "sws_flags", SWS_BICUBIC);
+    av_set_int(scaleContext, "sws_flags", SWS_BICUBIC);
 
-	const int* coeff = sws_getCoefficients(SWS_CS_DEFAULT);
+    const int* coeff = sws_getCoefficients(SWS_CS_DEFAULT);
     if (sws_setColorspaceDetails(scaleContext, coeff, m_pVideoCodecContext->pix_fmt, coeff, format, 0, 1<<16, 1<<16) < 0)
     {
-		sws_freeContext(scaleContext);
-		throw std::logic_error("Failed to set colorspace details");
-	}
+        sws_freeContext(scaleContext);
+        throw std::logic_error("Failed to set colorspace details");
+    }
 
-	if (sws_init_context(scaleContext, nullptr, nullptr) < 0)
-	{
-		sws_freeContext(scaleContext);
-		throw std::logic_error("Failed to initialise scale context");
-	}
+    if (sws_init_context(scaleContext, nullptr, nullptr) < 0)
+    {
+        sws_freeContext(scaleContext);
+        throw std::logic_error("Failed to initialise scale context");
+    }
 #endif
 
     SwsContext* scaleContext = sws_getContext(m_pVideoCodecContext->width, m_pVideoCodecContext->height,
