@@ -146,7 +146,7 @@ void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageWriter& i
         }
         catch (const exception& e)
         {
-            std::cerr <<  std::string(e.what()) + ". Smartframe selection failed. Retrying without smart frame detection.";
+            std::cerr <<  std::string(e.what()) + ". Smart frame selection failed. Retrying without smart frame detection.";
             m_SmartFrameSelection = false;
             generateThumbnail(videoFile, imageWriter, pAvContext);
         }
