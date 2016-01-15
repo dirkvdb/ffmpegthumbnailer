@@ -127,8 +127,8 @@ void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageWriter& i
         }
         catch (const exception& e)
         {
-            std::cerr <<  std::string(e.what()) + ", will use first frame";
-
+            TraceMessage(ThumbnailerLogLevelError, std::string(e.what()) + ", will use first frame.");  
+            
             //seeking failed, try the first frame again
             movieDecoder.destroy();
             movieDecoder.initialize(videoFile);
@@ -146,7 +146,7 @@ void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageWriter& i
         }
         catch (const exception& e)
         {
-            std::cerr <<  std::string(e.what()) + ". Smart frame selection failed. Retrying without smart frame detection.";
+            TraceMessage(ThumbnailerLogLevelError, std::string(e.what()) + ". Smart frame selection failed. Retrying without smart frame detection.");  
             m_SmartFrameSelection = false;
             generateThumbnail(videoFile, imageWriter, pAvContext);
         }
