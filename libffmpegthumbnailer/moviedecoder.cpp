@@ -25,10 +25,10 @@
 #include <array>
 
 extern "C" {
-#ifdef LATEST_GREATEST_FFMPEG
 #include <libavutil/opt.h>
-#endif
 #include <libswscale/swscale.h>
+#include <libavutil/imgutils.h>
+//#include <libavfilter/avfilter.h>
 }
 
 using namespace std;
@@ -101,7 +101,7 @@ void MovieDecoder::destroy()
 
     if (m_pPacket)
     {
-        av_free_packet(m_pPacket);
+        av_packet_unref(m_pPacket);
         delete m_pPacket;
         m_pPacket = nullptr;
     }
@@ -168,6 +168,21 @@ void MovieDecoder::initializeVideo()
         destroy();
         throw logic_error("Could not open video codec");
     }
+}
+
+void MovieDecoder::initializeFilterGraph()
+{
+    // avfilter_register_all();
+
+    // auto yadifFilter = avfilter_get_by_name("yadif");
+
+    // AVFilterContext* filterContext;
+    // avfilter_open(&filterContext, yadifFilter, nullptr);
+    // if (avfilter_init_str(filterContext, "\"yadif=1:-1\"") < 0)
+    // {
+    //     destroy();
+    //     throw logic_error("Failed to initialize filter");
+    // }
 }
 
 int MovieDecoder::getWidth()
@@ -297,7 +312,7 @@ bool MovieDecoder::getVideoPacket()
 
     if (m_pPacket)
     {
-        av_free_packet(m_pPacket);
+        av_packet_unref(m_pPacket);
         delete m_pPacket;
     }
 
@@ -311,7 +326,7 @@ bool MovieDecoder::getVideoPacket()
             frameDecoded = m_pPacket->stream_index == m_VideoStream;
             if (!frameDecoded)
             {
-                av_free_packet(m_pPacket);
+                av_packet_unref(m_pPacket);
             }
         }
     }
@@ -321,6 +336,9 @@ bool MovieDecoder::getVideoPacket()
 
 void MovieDecoder::getScaledVideoFrame(int scaledSize, bool maintainAspectRatio, VideoFrame& videoFrame)
 {
+    // TODO: deinterlacing
+
+
     int scaledWidth, scaledHeight;
     convertAndScaleFrame(AV_PIX_FMT_RGB24, scaledSize, maintainAspectRatio, scaledWidth, scaledHeight);
 
@@ -337,21 +355,19 @@ void MovieDecoder::convertAndScaleFrame(AVPixelFormat format, int scaledSize, bo
 {
     calculateDimensions(scaledSize, maintainAspectRatio, scaledWidth, scaledHeight);
 
-#ifdef LATEST_GREATEST_FFMPEG
-    // Enable this when it hits the released ffmpeg version
     SwsContext* scaleContext = sws_alloc_context();
     if (scaleContext == nullptr)
     {
         throw std::logic_error("Failed to allocate scale context");
     }
 
-    av_set_int(scaleContext, "srcw", m_pVideoCodecContext->width);
-    av_set_int(scaleContext, "srch", m_pVideoCodecContext->height);
-    av_set_int(scaleContext, "src_format", m_pVideoCodecContext->pix_fmt);
-    av_set_int(scaleContext, "dstw", scaledWidth);
-    av_set_int(scaleContext, "dsth", scaledHeight);
-    av_set_int(scaleContext, "dst_format", format);
-    av_set_int(scaleContext, "sws_flags", SWS_BICUBIC);
+    av_opt_set_int(scaleContext, "srcw", m_pVideoCodecContext->width, 0);
+    av_opt_set_int(scaleContext, "srch", m_pVideoCodecContext->height, 0);
+    av_opt_set_int(scaleContext, "src_format", m_pVideoCodecContext->pix_fmt, 0);
+    av_opt_set_int(scaleContext, "dstw", scaledWidth, 0);
+    av_opt_set_int(scaleContext, "dsth", scaledHeight, 0);
+    av_opt_set_int(scaleContext, "dst_format", format, 0);
+    av_opt_set_int(scaleContext, "sws_flags", SWS_BICUBIC, 0);
 
     const int* coeff = sws_getCoefficients(SWS_CS_DEFAULT);
     if (sws_setColorspaceDetails(scaleContext, coeff, m_pVideoCodecContext->pix_fmt, coeff, format, 0, 1<<16, 1<<16) < 0)
@@ -365,11 +381,6 @@ void MovieDecoder::convertAndScaleFrame(AVPixelFormat format, int scaledSize, bo
         sws_freeContext(scaleContext);
         throw std::logic_error("Failed to initialise scale context");
     }
-#endif
-
-    SwsContext* scaleContext = sws_getContext(m_pVideoCodecContext->width, m_pVideoCodecContext->height,
-                                              m_pVideoCodecContext->pix_fmt, scaledWidth, scaledHeight,
-                                              format, SWS_BICUBIC, nullptr, nullptr, nullptr);
 
     if (nullptr == scaleContext)
     {
@@ -436,10 +447,11 @@ void MovieDecoder::calculateDimensions(int squareSize, bool maintainAspectRatio,
 void MovieDecoder::createAVFrame(AVFrame** pAvFrame, uint8_t** pFrameBuffer, int width, int height, AVPixelFormat format)
 {
     *pAvFrame = av_frame_alloc();
+    auto* avPicture = reinterpret_cast<AVPicture*>(*pAvFrame);
 
-    int numBytes = avpicture_get_size(format, width, height);
+    int numBytes = av_image_get_buffer_size(format, width, height, 1);
     *pFrameBuffer = reinterpret_cast<uint8_t*>(av_malloc(numBytes));
-    avpicture_fill((AVPicture*) *pAvFrame, *pFrameBuffer, format, width, height);
+    av_image_fill_arrays(avPicture->data, avPicture->linesize, *pFrameBuffer, format, width, height, 1);
 }
 
 }

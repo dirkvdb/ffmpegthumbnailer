@@ -56,6 +56,7 @@ public:
 
 private:
     void initializeVideo();
+    void initializeFilterGraph();
 
     bool decodeVideoPacket();
     bool getVideoPacket();
