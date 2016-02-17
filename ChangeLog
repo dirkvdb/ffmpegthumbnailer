@@ -1,5 +1,7 @@
 FFmpegThumbnailer 2.1.1
 - Buildable agains latest ffmpeg (currently breaks deinterlacing)
+- Fallback when smart frame detection fails (thanks to johnnydeez)
+- Add MPEG-TS (MTS) support (thanks to marcinn)
 
 FFmpegThumbnailer 2.1.0
 - The library is now completely silent on std out and err by default
