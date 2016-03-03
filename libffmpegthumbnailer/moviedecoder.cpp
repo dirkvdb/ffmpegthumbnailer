@@ -23,12 +23,16 @@
 #include <cassert>
 #include <cstring>
 #include <array>
+#include <sstream>
+#include <memory>
 
 extern "C" {
 #include <libavutil/opt.h>
-#include <libswscale/swscale.h>
 #include <libavutil/imgutils.h>
-//#include <libavfilter/avfilter.h>
+#include <libavfilter/avfilter.h>
+#include <libavfilter/avfiltergraph.h>
+#include <libavfilter/buffersink.h>
+#include <libavfilter/buffersrc.h>
 }
 
 using namespace std;
@@ -46,9 +50,11 @@ MovieDecoder::MovieDecoder(const string& filename, AVFormatContext* pavContext)
 , m_pFormatContext(pavContext)
 , m_pVideoCodecContext(nullptr)
 , m_pVideoCodec(nullptr)
+, m_pFilterGraph(nullptr)
+, m_pFilterSource(nullptr)
+, m_pFilterSink(nullptr)
 , m_pVideoStream(nullptr)
 , m_pFrame(nullptr)
-, m_pFrameBuffer(nullptr)
 , m_pPacket(nullptr)
 , m_FormatContextWasGiven(pavContext != nullptr)
 , m_AllowSeek(true)
@@ -79,7 +85,7 @@ void MovieDecoder::initialize(const string& filename)
     if (avformat_find_stream_info(m_pFormatContext, nullptr) < 0)
     {
         destroy();
-        throw logic_error(string("Could not find stream information"));
+        throw logic_error("Could not find stream information");
     }
 
     initializeVideo();
@@ -109,12 +115,6 @@ void MovieDecoder::destroy()
     if (m_pFrame)
     {
         av_frame_free(&m_pFrame);
-    }
-
-    if (m_pFrameBuffer)
-    {
-        av_free(m_pFrameBuffer);
-        m_pFrameBuffer = nullptr;
     }
 
     m_VideoStream = -1;
@@ -170,19 +170,54 @@ void MovieDecoder::initializeVideo()
     }
 }
 
-void MovieDecoder::initializeFilterGraph()
+void MovieDecoder::initializeFilterGraph(AVRational timeBase, int width, int height)
 {
-    // avfilter_register_all();
+    static const AVPixelFormat pixelFormats[] = { AV_PIX_FMT_RGB24, AV_PIX_FMT_NONE };
 
-    // auto yadifFilter = avfilter_get_by_name("yadif");
+    auto del = [] (AVBufferSinkParams* p) { av_freep(p); };
+    std::unique_ptr<AVBufferSinkParams, decltype(del)> buffersinkParams(av_buffersink_params_alloc(), del);
 
-    // AVFilterContext* filterContext;
-    // avfilter_open(&filterContext, yadifFilter, nullptr);
-    // if (avfilter_init_str(filterContext, "\"yadif=1:-1\"") < 0)
-    // {
-    //     destroy();
-    //     throw logic_error("Failed to initialize filter");
-    // }
+    avfilter_register_all();
+
+    m_pFilterGraph = avfilter_graph_alloc();
+    assert(m_pFilterGraph);
+
+    std::stringstream ss;
+    ss << "video_size=" << m_pVideoCodecContext->width << "x" << m_pVideoCodecContext->height
+       << ":pix_fmt=" << m_pVideoCodecContext->pix_fmt
+       << ":time_base=" << timeBase.num << "/" << timeBase.den
+       << ":pixel_aspect=" << m_pVideoCodecContext->sample_aspect_ratio.num << "/" << FFMAX(m_pVideoCodecContext->sample_aspect_ratio.den, 1);
+
+    checkRc(avfilter_graph_create_filter(&m_pFilterSource, avfilter_get_by_name("buffer"), "thumb_buffer", ss.str().c_str(), nullptr, m_pFilterGraph),
+            "Failed to create filter source");
+    buffersinkParams->pixel_fmts = pixelFormats;
+    checkRc(avfilter_graph_create_filter(&m_pFilterSink, avfilter_get_by_name("buffersink"), "thumb_buffersink", nullptr, buffersinkParams.get(), m_pFilterGraph),
+            "Failed to create filter sink");
+    buffersinkParams.release();
+
+    AVFilterContext* yadifFilter = nullptr;
+    checkRc(avfilter_graph_create_filter(&yadifFilter, avfilter_get_by_name("yadif"), "thumb_deint", "deint=1", nullptr, m_pFilterGraph),
+            "Failed to create deinterlace filter");
+
+    std::stringstream scale;
+    scale << "w=" << width
+          << ":h=" << height
+          << ":sws_flags=bicubic";
+
+    AVFilterContext* scaleFilter = nullptr;
+    checkRc(avfilter_graph_create_filter(&scaleFilter, avfilter_get_by_name("scale"), "thumb_scale", scale.str().c_str(), nullptr, m_pFilterGraph),
+            "Failed to create scale filter");
+
+    AVFilterContext* formatFilter = nullptr;
+    checkRc(avfilter_graph_create_filter(&formatFilter, avfilter_get_by_name("format"), "thumb_format", "pix_fmts=rgb24", nullptr, m_pFilterGraph),
+            "Failed to create scale filter");
+
+    checkRc(avfilter_link(formatFilter, 0, m_pFilterSink, 0), "Failed to link filters");
+    checkRc(avfilter_link(scaleFilter, 0, formatFilter, 0), "Failed to link filters");
+    checkRc(avfilter_link(yadifFilter, 0, scaleFilter, 0), "Failed to link filters");
+    checkRc(avfilter_link(m_pFilterSource, 0, yadifFilter, 0), "Failed to link filters");
+
+    checkRc(avfilter_graph_config(m_pFilterGraph, nullptr), "Failed to configure filter graph");
 }
 
 int MovieDecoder::getWidth()
@@ -229,15 +264,8 @@ void MovieDecoder::seek(int timeInSeconds)
         timestamp = 0;
     }
 
-    int ret = av_seek_frame(m_pFormatContext, -1, timestamp, 0);
-    if (ret >= 0)
-    {
-        avcodec_flush_buffers(m_pFormatContext->streams[m_VideoStream]->codec);
-    }
-    else
-    {
-        throw logic_error("Seeking in video failed");
-    }
+    checkRc(av_seek_frame(m_pFormatContext, -1, timestamp, 0), "Seeking in video failed");
+    avcodec_flush_buffers(m_pFormatContext->streams[m_VideoStream]->codec);
 
     int keyFrameAttempts = 0;
     bool gotFrame = 0;
@@ -267,12 +295,11 @@ void MovieDecoder::seek(int timeInSeconds)
     }
 }
 
-
 void MovieDecoder::decodeVideoFrame()
 {
     bool frameFinished = false;
 
-    while(!frameFinished && getVideoPacket())
+    while (!frameFinished && getVideoPacket())
     {
         frameFinished = decodeVideoPacket();
     }
@@ -336,71 +363,32 @@ bool MovieDecoder::getVideoPacket()
 
 void MovieDecoder::getScaledVideoFrame(int scaledSize, bool maintainAspectRatio, VideoFrame& videoFrame)
 {
-    // TODO: deinterlacing
-
-
-    int scaledWidth, scaledHeight;
-    convertAndScaleFrame(AV_PIX_FMT_RGB24, scaledSize, maintainAspectRatio, scaledWidth, scaledHeight);
-
-    videoFrame.width = scaledWidth;
-    videoFrame.height = scaledHeight;
-    videoFrame.lineSize = m_pFrame->linesize[0];
-
-    videoFrame.frameData.clear();
-    videoFrame.frameData.resize(videoFrame.lineSize * videoFrame.height);
-    memcpy((&(videoFrame.frameData.front())), m_pFrame->data[0], videoFrame.lineSize * videoFrame.height);
-}
-
-void MovieDecoder::convertAndScaleFrame(AVPixelFormat format, int scaledSize, bool maintainAspectRatio, int& scaledWidth, int& scaledHeight)
-{
+    int scaledWidth = 0;
+    int scaledHeight = 0;
     calculateDimensions(scaledSize, maintainAspectRatio, scaledWidth, scaledHeight);
 
-    SwsContext* scaleContext = sws_alloc_context();
-    if (scaleContext == nullptr)
+    initializeFilterGraph(m_pFormatContext->streams[m_VideoStream]->time_base, scaledWidth, scaledHeight);
+
+    checkRc(av_buffersrc_write_frame(m_pFilterSource, m_pFrame), "Failed to write frame tp filter graph");
+    decodeVideoFrame();
+    checkRc(av_buffersrc_write_frame(m_pFilterSource, m_pFrame), "Failed to write frame tp filter graph");
+
+    auto del = [] (AVFrame* f) { av_frame_free(&f); };
+    std::unique_ptr<AVFrame, decltype(del)> res(av_frame_alloc(), del);
+    checkRc(av_buffersink_get_frame(m_pFilterSink, res.get()), "Failed to get buffer from filter");
+
+    videoFrame.width = res->width;
+    videoFrame.height = res->height;
+    videoFrame.lineSize = res->linesize[0];
+
+    videoFrame.frameData.resize(videoFrame.lineSize * videoFrame.height);
+    memcpy((videoFrame.frameData.data()), res->data[0], videoFrame.frameData.size());
+
+
+    if (m_pFilterGraph)
     {
-        throw std::logic_error("Failed to allocate scale context");
+        avfilter_graph_free(&m_pFilterGraph);
     }
-
-    av_opt_set_int(scaleContext, "srcw", m_pVideoCodecContext->width, 0);
-    av_opt_set_int(scaleContext, "srch", m_pVideoCodecContext->height, 0);
-    av_opt_set_int(scaleContext, "src_format", m_pVideoCodecContext->pix_fmt, 0);
-    av_opt_set_int(scaleContext, "dstw", scaledWidth, 0);
-    av_opt_set_int(scaleContext, "dsth", scaledHeight, 0);
-    av_opt_set_int(scaleContext, "dst_format", format, 0);
-    av_opt_set_int(scaleContext, "sws_flags", SWS_BICUBIC, 0);
-
-    const int* coeff = sws_getCoefficients(SWS_CS_DEFAULT);
-    if (sws_setColorspaceDetails(scaleContext, coeff, m_pVideoCodecContext->pix_fmt, coeff, format, 0, 1<<16, 1<<16) < 0)
-    {
-        sws_freeContext(scaleContext);
-        throw std::logic_error("Failed to set colorspace details");
-    }
-
-    if (sws_init_context(scaleContext, nullptr, nullptr) < 0)
-    {
-        sws_freeContext(scaleContext);
-        throw std::logic_error("Failed to initialise scale context");
-    }
-
-    if (nullptr == scaleContext)
-    {
-        throw logic_error("Failed to create resize context");
-    }
-
-    AVFrame* convertedFrame = nullptr;
-    uint8_t* convertedFrameBuffer = nullptr;
-
-    createAVFrame(&convertedFrame, &convertedFrameBuffer, scaledWidth, scaledHeight, format);
-
-    sws_scale(scaleContext, m_pFrame->data, m_pFrame->linesize, 0, m_pVideoCodecContext->height,
-              convertedFrame->data, convertedFrame->linesize);
-    sws_freeContext(scaleContext);
-
-    av_free(m_pFrame);
-    av_free(m_pFrameBuffer);
-
-    m_pFrame        = convertedFrame;
-    m_pFrameBuffer  = convertedFrameBuffer;
 }
 
 void MovieDecoder::calculateDimensions(int squareSize, bool maintainAspectRatio, int& destWidth, int& destHeight)
@@ -444,14 +432,15 @@ void MovieDecoder::calculateDimensions(int squareSize, bool maintainAspectRatio,
     }
 }
 
-void MovieDecoder::createAVFrame(AVFrame** pAvFrame, uint8_t** pFrameBuffer, int width, int height, AVPixelFormat format)
+void MovieDecoder::checkRc(int ret, const std::string& message)
 {
-    *pAvFrame = av_frame_alloc();
-    auto* avPicture = reinterpret_cast<AVPicture*>(*pAvFrame);
-
-    int numBytes = av_image_get_buffer_size(format, width, height, 1);
-    *pFrameBuffer = reinterpret_cast<uint8_t*>(av_malloc(numBytes));
-    av_image_fill_arrays(avPicture->data, avPicture->linesize, *pFrameBuffer, format, width, height, 1);
+    if (ret < 0)
+    {
+        char buf[256];
+        buf[0] = ' ';
+        av_strerror(ret, &buf[1], sizeof(buf) - 1);
+        throw std::logic_error(message + buf);
+    }
 }
 
 }

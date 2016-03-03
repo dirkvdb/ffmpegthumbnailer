@@ -31,6 +31,9 @@ extern "C" {
 #include <libavformat/avformat.h>
 }
 
+struct AVFilterGraph;
+struct AVFilterContext;
+
 namespace ffmpegthumbnailer
 {
 
@@ -56,24 +59,25 @@ public:
 
 private:
     void initializeVideo();
-    void initializeFilterGraph();
+    void initializeFilterGraph(AVRational timeBase, int width, int height);
 
     bool decodeVideoPacket();
     bool getVideoPacket();
-    void convertAndScaleFrame(AVPixelFormat format, int scaledSize, bool maintainAspectRatio, int& scaledWidth, int& scaledHeight);
-    void createAVFrame(AVFrame** pAvFrame, uint8_t** pFrameBuffer, int width, int height, AVPixelFormat format);
     void calculateDimensions(int squareSize, bool maintainAspectRatio, int& destWidth, int& destHeight);
 
     void addLogCallback();
+    void checkRc(int ret, const std::string& message);
 
 private:
     int                     m_VideoStream;
     AVFormatContext*        m_pFormatContext;
     AVCodecContext*         m_pVideoCodecContext;
     AVCodec*                m_pVideoCodec;
+    AVFilterGraph*          m_pFilterGraph;
+    AVFilterContext*        m_pFilterSource;
+    AVFilterContext*        m_pFilterSink;
     AVStream*               m_pVideoStream;
     AVFrame*                m_pFrame;
-    uint8_t*                m_pFrameBuffer;
     AVPacket*               m_pPacket;
     bool                    m_FormatContextWasGiven;
     bool                    m_AllowSeek;
