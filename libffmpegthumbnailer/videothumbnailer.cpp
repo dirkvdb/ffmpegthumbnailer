@@ -32,6 +32,7 @@
 #include <stdexcept>
 #include <cassert>
 #include <cerrno>
+#include <memory>
 #include <algorithm>
 #include <sys/stat.h>
 
@@ -127,8 +128,8 @@ void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageWriter& i
         }
         catch (const exception& e)
         {
-            TraceMessage(ThumbnailerLogLevelError, std::string(e.what()) + ", will use first frame.");  
-            
+            TraceMessage(ThumbnailerLogLevelError, std::string(e.what()) + ", will use first frame.");
+
             //seeking failed, try the first frame again
             movieDecoder.destroy();
             movieDecoder.initialize(videoFile);
@@ -146,7 +147,7 @@ void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageWriter& i
         }
         catch (const exception& e)
         {
-            TraceMessage(ThumbnailerLogLevelError, std::string(e.what()) + ". Smart frame selection failed. Retrying without smart frame detection.");  
+            TraceMessage(ThumbnailerLogLevelError, std::string(e.what()) + ". Smart frame selection failed. Retrying without smart frame detection.");
             m_SmartFrameSelection = false;
             generateThumbnail(videoFile, imageWriter, pAvContext);
         }
@@ -187,17 +188,15 @@ void VideoThumbnailer::generateSmartThumbnail(MovieDecoder& movieDecoder, VideoF
 
 void VideoThumbnailer::generateThumbnail(const string& videoFile, ThumbnailerImageType type, const string& outputFile, AVFormatContext* pAvContext)
 {
-    ImageWriter* imageWriter = ImageWriterFactory<const string&>::createImageWriter(type, outputFile);
+    std::unique_ptr<ImageWriter> imageWriter(ImageWriterFactory<const string&>::createImageWriter(type, outputFile));
     generateThumbnail(videoFile, *imageWriter, pAvContext);
-    delete imageWriter;
 }
 
 void VideoThumbnailer::generateThumbnail(const string& videoFile, ThumbnailerImageType type, vector<uint8_t>& buffer, AVFormatContext* pAvContext)
 {
     buffer.clear();
-    ImageWriter* imageWriter = ImageWriterFactory<vector<uint8_t>&>::createImageWriter(type, buffer);
+    std::unique_ptr<ImageWriter> imageWriter(ImageWriterFactory<vector<uint8_t>&>::createImageWriter(type, buffer));
     generateThumbnail(videoFile, *imageWriter, pAvContext);
-    delete imageWriter;
 }
 
 void VideoThumbnailer::writeImage(const string& videoFile, ImageWriter& imageWriter, const VideoFrame& videoFrame, int duration, vector<uint8_t*>& rowPointers)
@@ -371,12 +370,11 @@ int VideoThumbnailer::getBestThumbnailIndex(vector<VideoFrame>& videoFrames, con
 #ifdef DEBUG_MODE
         stringstream outputFile;
         outputFile << "frames/Frame" << setfill('0') << setw(3) << i << "_" << rmse << endl;
-        ImageWriter* imageWriter = ImageWriterFactory<const string&>::createImageWriter(Png, outputFile.str());
+        std::unique_ptr<ImageWriter> imageWriter(ImageWriterFactory<const string&>::createImageWriter(Png, outputFile.str()));
         vector<uint8_t*> rowPointers;
         for (int x = 0; x < videoFrames[i].height; ++x)
             rowPointers.push_back(&(videoFrames[i].frameData[x * videoFrames[i].lineSize]));
         imageWriter->writeFrame(&(rowPointers.front()), videoFrames[i].width, videoFrames[i].height, m_ImageQuality);
-        delete imageWriter;
 #endif
     }
 
