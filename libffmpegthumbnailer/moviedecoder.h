@@ -59,11 +59,12 @@ public:
 
 private:
     void initializeVideo();
-    void initializeFilterGraph(AVRational timeBase, int width, int height);
+    void initializeFilterGraph(AVRational timeBase, int size, bool maintainAspectRatio);
 
     bool decodeVideoPacket();
     bool getVideoPacket();
-    void calculateDimensions(int squareSize, bool maintainAspectRatio, int& destWidth, int& destHeight);
+    int32_t getStreamRotation();
+    std::string createScaleString(int size, bool maintainAspectRatio);
 
     void addLogCallback();
     void checkRc(int ret, const std::string& message);
