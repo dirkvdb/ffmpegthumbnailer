@@ -28,12 +28,14 @@
 
 extern "C" {
 #include <libavutil/opt.h>
+#include <libavutil/display.h>
 #include <libavutil/imgutils.h>
 #include <libavfilter/avfilter.h>
 #include <libavfilter/avfiltergraph.h>
 #include <libavfilter/buffersink.h>
 #include <libavfilter/buffersrc.h>
 }
+
 
 using namespace std;
 
@@ -170,7 +172,42 @@ void MovieDecoder::initializeVideo()
     }
 }
 
-void MovieDecoder::initializeFilterGraph(AVRational timeBase, int width, int height)
+std::string MovieDecoder::createScaleString(int size, bool maintainAspectRatio)
+{
+    std::stringstream scale;
+
+    if (!maintainAspectRatio)
+    {
+        scale << "w=" << size << ":h=" << size;
+    }
+    else
+    {
+        auto width      = m_pVideoCodecContext->width;
+        auto height     = m_pVideoCodecContext->height;
+
+        AVRational par = av_guess_sample_aspect_ratio(m_pFormatContext, m_pVideoStream, m_pFrame);
+        // if the pixel aspect ratio is defined and is not 1, we have an anamorphic stream
+        bool anamorphic = par.num != 0 && par.num != par.den;
+
+        if (anamorphic)
+        {
+            width = width * par.num / par.den;
+        }
+
+        if (height > width)
+        {
+            scale << "w=-1:h=" << (size == 0 ? height : size);
+        }
+        else
+        {
+            scale << "h=-1:w=" << (size == 0 ? width : size);
+        }
+    }
+
+    return scale.str();
+}
+
+void MovieDecoder::initializeFilterGraph(AVRational timeBase, int size, bool maintainAspectRatio)
 {
     static const AVPixelFormat pixelFormats[] = { AV_PIX_FMT_RGB24, AV_PIX_FMT_NONE };
 
@@ -199,23 +236,32 @@ void MovieDecoder::initializeFilterGraph(AVRational timeBase, int width, int hei
     checkRc(avfilter_graph_create_filter(&yadifFilter, avfilter_get_by_name("yadif"), "thumb_deint", "deint=1", nullptr, m_pFilterGraph),
             "Failed to create deinterlace filter");
 
-    std::stringstream scale;
-    scale << "w=" << width
-          << ":h=" << height
-          << ":sws_flags=bicubic";
-
     AVFilterContext* scaleFilter = nullptr;
-    checkRc(avfilter_graph_create_filter(&scaleFilter, avfilter_get_by_name("scale"), "thumb_scale", scale.str().c_str(), nullptr, m_pFilterGraph),
+    checkRc(avfilter_graph_create_filter(&scaleFilter, avfilter_get_by_name("scale"), "thumb_scale", createScaleString(size, maintainAspectRatio).c_str(), nullptr, m_pFilterGraph),
             "Failed to create scale filter");
 
     AVFilterContext* formatFilter = nullptr;
     checkRc(avfilter_graph_create_filter(&formatFilter, avfilter_get_by_name("format"), "thumb_format", "pix_fmts=rgb24", nullptr, m_pFilterGraph),
-            "Failed to create scale filter");
+            "Failed to create format filter");
 
-    checkRc(avfilter_link(formatFilter, 0, m_pFilterSink, 0), "Failed to link filters");
-    checkRc(avfilter_link(scaleFilter, 0, formatFilter, 0), "Failed to link filters");
-    checkRc(avfilter_link(yadifFilter, 0, scaleFilter, 0), "Failed to link filters");
-    checkRc(avfilter_link(m_pFilterSource, 0, yadifFilter, 0), "Failed to link filters");
+    AVFilterContext* rotateFilter = nullptr;
+    auto rotation = getStreamRotation();
+    if (rotation != -1)
+    {
+        checkRc(avfilter_graph_create_filter(&rotateFilter, avfilter_get_by_name("transpose"), "thumb_rotate", std::to_string(rotation).c_str(), nullptr, m_pFilterGraph),
+            "Failed to create rotate filter");
+    }
+
+    checkRc(avfilter_link(rotateFilter ? rotateFilter : formatFilter, 0, m_pFilterSink, 0), "Failed to link final filter");
+
+    if (rotateFilter)
+    {
+        checkRc(avfilter_link(formatFilter, 0, rotateFilter, 0), "Failed to link format filter");
+    }
+
+    checkRc(avfilter_link(scaleFilter, 0, formatFilter, 0), "Failed to link scale filter");
+    checkRc(avfilter_link(yadifFilter, 0, scaleFilter, 0), "Failed to link yadif filter");
+    checkRc(avfilter_link(m_pFilterSource, 0, yadifFilter, 0), "Failed to link source filter");
 
     checkRc(avfilter_graph_config(m_pFilterGraph, nullptr), "Failed to configure filter graph");
 }
@@ -365,9 +411,9 @@ void MovieDecoder::getScaledVideoFrame(int scaledSize, bool maintainAspectRatio,
 {
     int scaledWidth = 0;
     int scaledHeight = 0;
-    calculateDimensions(scaledSize, maintainAspectRatio, scaledWidth, scaledHeight);
+    //calculateDimensions(scaledSize, maintainAspectRatio, scaledWidth, scaledHeight);
 
-    initializeFilterGraph(m_pFormatContext->streams[m_VideoStream]->time_base, scaledWidth, scaledHeight);
+    initializeFilterGraph(m_pFormatContext->streams[m_VideoStream]->time_base, scaledSize, maintainAspectRatio);
 
     checkRc(av_buffersrc_write_frame(m_pFilterSource, m_pFrame), "Failed to write frame tp filter graph");
     decodeVideoFrame();
@@ -384,51 +430,9 @@ void MovieDecoder::getScaledVideoFrame(int scaledSize, bool maintainAspectRatio,
     videoFrame.frameData.resize(videoFrame.lineSize * videoFrame.height);
     memcpy((videoFrame.frameData.data()), res->data[0], videoFrame.frameData.size());
 
-
     if (m_pFilterGraph)
     {
         avfilter_graph_free(&m_pFilterGraph);
-    }
-}
-
-void MovieDecoder::calculateDimensions(int squareSize, bool maintainAspectRatio, int& destWidth, int& destHeight)
-{
-    AVRational par = av_guess_sample_aspect_ratio(m_pFormatContext, m_pVideoStream, m_pFrame);
-
-    // if the pixel aspect ratio is defined and is not 1, we have an anamorphic stream
-    bool anamorphic = par.num != 0 && par.num != par.den;
-
-    if (squareSize == 0)
-    {
-        // use original video size
-        squareSize = max(m_pVideoCodecContext->width, m_pVideoCodecContext->height);
-    }
-
-    if (!maintainAspectRatio)
-    {
-        destWidth = squareSize;
-        destHeight = squareSize;
-    }
-    else
-    {
-        int srcWidth            = m_pVideoCodecContext->width;
-        int srcHeight           = m_pVideoCodecContext->height;
-
-        if (anamorphic)
-        {
-            srcWidth = srcWidth * par.num / par.den;
-        }
-
-        if (srcWidth > srcHeight)
-        {
-            destWidth  = squareSize;
-            destHeight = static_cast<int>(static_cast<float>(squareSize) / srcWidth * srcHeight);
-        }
-        else
-        {
-            destWidth  = static_cast<int>(static_cast<float>(squareSize) / srcHeight * srcWidth);
-            destHeight = squareSize;
-        }
     }
 }
 
@@ -441,6 +445,26 @@ void MovieDecoder::checkRc(int ret, const std::string& message)
         av_strerror(ret, &buf[1], sizeof(buf) - 1);
         throw std::logic_error(message + buf);
     }
+}
+
+
+int32_t MovieDecoder::getStreamRotation()
+{
+    int32_t* matrix = reinterpret_cast<int32_t*>(av_stream_get_side_data(m_pVideoStream, AV_PKT_DATA_DISPLAYMATRIX, nullptr));
+    if (matrix)
+    {
+        auto angle = lround(av_display_rotation_get(matrix));
+        if (angle > 45 && angle < 135)
+        {
+            return 2;
+        }
+        else if (angle < -45 && angle > -135)
+        {
+            return 1;
+        }
+    }
+
+    return -1;
 }
 
 }
