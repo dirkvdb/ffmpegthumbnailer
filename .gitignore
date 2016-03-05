@@ -2,3 +2,4 @@ out
 .idea
 build
 *.sublime-workspace
+xcode

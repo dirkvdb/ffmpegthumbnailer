@@ -409,10 +409,6 @@ bool MovieDecoder::getVideoPacket()
 
 void MovieDecoder::getScaledVideoFrame(int scaledSize, bool maintainAspectRatio, VideoFrame& videoFrame)
 {
-    int scaledWidth = 0;
-    int scaledHeight = 0;
-    //calculateDimensions(scaledSize, maintainAspectRatio, scaledWidth, scaledHeight);
-
     initializeFilterGraph(m_pFormatContext->streams[m_VideoStream]->time_base, scaledSize, maintainAspectRatio);
 
     checkRc(av_buffersrc_write_frame(m_pFilterSource, m_pFrame), "Failed to write frame tp filter graph");

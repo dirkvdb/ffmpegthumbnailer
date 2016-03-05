@@ -35,6 +35,12 @@ OPTION(ENABLE_STATIC "Build static library" OFF)
 OPTION(ENABLE_TESTS "Build unit tests" ON)
 OPTION(ENABLE_GIO "Support for gio file uris" OFF)
 OPTION(ENABLE_THUMBNAILER "Register ffmpegthumbnailer as thumbnailer" OFF)
+OPTION(SANITIZE_ADDRESS "Build with address sanitizer (detect invalid memory access and memory leaks)" OFF)
+
+IF (SANITIZE_ADDRESS)
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fno-omit-frame-pointer")
+    SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=address")
+ENDIF ()
 
 INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR})
 
