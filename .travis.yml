@@ -34,8 +34,7 @@ script:
 - make -j4
 - ls -la /home/travis/build/dirkvdb/ffmpegthumbnailer/test/
 - stat /home/travis/build/dirkvdb/ffmpegthumbnailer/test/test_sample.flv
-- pwd
-- ./test/ffmpegthumbnailertest
+- sudo ./test/ffmpegthumbnailertest
 
 addons:
   coverity_scan:
