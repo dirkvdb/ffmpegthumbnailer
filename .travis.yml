@@ -34,7 +34,8 @@ script:
 - make -j4
 - ls -la /home/travis/build/dirkvdb/ffmpegthumbnailer/test/
 - stat /home/travis/build/dirkvdb/ffmpegthumbnailer/test/test_sample.flv
-- CTEST_OUTPUT_ON_FAILURE=1 make test
+- pwd
+- ./test/ffmpegthumbnailertest
 
 addons:
   coverity_scan:
