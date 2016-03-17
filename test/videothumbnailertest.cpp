@@ -2,145 +2,90 @@
 
 #include <vector>
 #include <fstream>
-#include <gtest/gtest.h>
+#include <iostream>
+#include <catch.hpp>
 
 #include "libffmpegthumbnailer/videothumbnailer.h"
 #include "libffmpegthumbnailer/imagetypes.h"
 #include "libffmpegthumbnailer/histogram.h"
-
-using namespace std;
+#include "libffmpegthumbnailer/histogramutils.h"
 
 namespace ffmpegthumbnailer
 {
 
-class VideoThumbnailerTest : public testing::Test
+TEST_CASE("C++ API Usage")
 {
-    protected:
-
-    virtual void SetUp()
-    {
-        frame.width = 10;
-        frame.height = 10;
-        frame.lineSize = 30;
-        frame.frameData.resize(300);
-
-        videoThumbnailer.setLogCallback([] (ThumbnailerLogLevel, const std::string& msg) {
-            std::cout << msg << std::endl;
-        });
-    }
-
-    void generateHistogram()
-    {
-        videoThumbnailer.generateHistogram(frame, histogram);
-    }
-
-    int getBestThumbnailIndex(vector<VideoFrame>& videoFrames, const vector<Histogram<int> >& histograms)
-    {
-        return videoThumbnailer.getBestThumbnailIndex(videoFrames, histograms);
-    }
-
     Histogram<int> histogram;
+
     VideoFrame frame;
+    frame.width = 10;
+    frame.height = 10;
+    frame.lineSize = 30;
+    frame.frameData.resize(300);
+
     VideoThumbnailer videoThumbnailer;
-};
 
-TEST_F(VideoThumbnailerTest, DISABLED_CreateThumb)
-{
-    std::string input = std::string(TEST_DATADIR) + "/test_sample.flv";
+    videoThumbnailer.setLogCallback([] (ThumbnailerLogLevel, const std::string& msg) {
+        std::cout << msg << std::endl;
+    });
 
-    std::vector<uint8_t> buffer;
-    videoThumbnailer.generateThumbnail(input, Png, buffer);
-    ASSERT_FALSE(buffer.empty());
-}
-
-TEST_F(VideoThumbnailerTest, DISABLED_CreateThumbNonAscii)
-{
-    std::string input = std::string(TEST_DATADIR) + "/test_Кругом_шумел.flv";
-
-    std::vector<uint8_t> buffer;
-    videoThumbnailer.generateThumbnail(input, Png, buffer);
-    ASSERT_FALSE(buffer.empty());
-}
-
-TEST_F(VideoThumbnailerTest, CreateThumbInvalidFile)
-{
-    std::vector<uint8_t> buffer;
-    EXPECT_THROW(videoThumbnailer.generateThumbnail("invalidfile.mpg", Png, buffer), std::logic_error);
-}
-
-TEST_F(VideoThumbnailerTest, CreateHistogramBlackFrame)
-{
-    fill(frame.frameData.begin(), frame.frameData.end(), 0);
-    generateHistogram();
-
-    EXPECT_EQ(100, histogram.r[0]);
-    EXPECT_EQ(100, histogram.g[0]);
-    EXPECT_EQ(100, histogram.b[0]);
-
-    for (int i = 1; i < 255; ++i)
+    SECTION("CreateThumb")
     {
-        EXPECT_EQ(0, histogram.r[i]);
-        EXPECT_EQ(0, histogram.g[i]);
-        EXPECT_EQ(0, histogram.b[i]);
+        std::string input = std::string(TEST_DATADIR) + "/test_sample.flv";
+
+        std::vector<uint8_t> buffer;
+        videoThumbnailer.generateThumbnail(input, Png, buffer);
+        CHECK_FALSE(buffer.empty());
     }
-}
 
-TEST_F(VideoThumbnailerTest, CreateHistogramWhiteFrame)
-{
-    fill(frame.frameData.begin(), frame.frameData.end(), 255);
-    generateHistogram();
-
-    EXPECT_EQ(100, histogram.r[255]);
-    EXPECT_EQ(100, histogram.g[255]);
-    EXPECT_EQ(100, histogram.b[255]);
-
-    for (int i = 0; i < 254; ++i)
+    SECTION("CreateThumbNonAscii")
     {
-        EXPECT_EQ(0, histogram.r[i]) << "index " << i;
-        EXPECT_EQ(0, histogram.g[i]) << "index " << i;
-        EXPECT_EQ(0, histogram.b[i]) << "index " << i;
+        std::string input = std::string(TEST_DATADIR) + "/test_Кругом_шумел.flv";
+
+        std::vector<uint8_t> buffer;
+        videoThumbnailer.generateThumbnail(input, Png, buffer);
+        CHECK_FALSE(buffer.empty());
     }
-}
 
-TEST_F(VideoThumbnailerTest, FrameSelection)
-{
-    vector<VideoFrame> videoFrames;
-    vector<Histogram<int> > histograms;
+    SECTION("CreateThumbInvalidFile")
+    {
+        std::vector<uint8_t> buffer;
+        CHECK_THROWS_AS(videoThumbnailer.generateThumbnail("invalidfile.mpg", Png, buffer), std::logic_error);
+    }
 
-    VideoFrame frame1(5, 5, 15);
-    fill(frame1.frameData.begin(), frame1.frameData.end(), 255);
+    SECTION("CreateHistogramBlackFrame")
+    {
+        std::fill(frame.frameData.begin(), frame.frameData.end(), 0);
+        utils::generateHistogram(frame, histogram);
 
-    VideoFrame frame2(5, 5, 15);
-    fill(frame2.frameData.begin(), frame2.frameData.end(), 0);
+        CHECK(100 == histogram.r[0]);
+        CHECK(100 == histogram.g[0]);
+        CHECK(100 == histogram.b[0]);
 
-    VideoFrame frame3(5, 5, 15);
-    fill(frame3.frameData.begin(), frame3.frameData.end(), 128);
+        for (int i = 1; i < 255; ++i)
+        {
+            CHECK(0 == histogram.r[i]);
+            CHECK(0 == histogram.g[i]);
+            CHECK(0 == histogram.b[i]);
+        }
+    }
 
-    Histogram<int> hist1;
-    hist1.r[255] = 25;
-    hist1.g[255] = 25;
-    hist1.b[255] = 25;
+    SECTION("CreateHistogramWhiteFrame")
+    {
+        std::fill(frame.frameData.begin(), frame.frameData.end(), 255);
+        utils::generateHistogram(frame, histogram);
 
-    Histogram<int> hist2;
-    hist2.r[0] = 25;
-    hist2.g[0] = 25;
-    hist2.b[0] = 25;
+        CHECK(100 == histogram.r[255]);
+        CHECK(100 == histogram.g[255]);
+        CHECK(100 == histogram.b[255]);
 
-    Histogram<int> hist3;
-    hist3.r[128] = 25;
-    hist3.g[128] = 25;
-    hist3.b[128] = 25;
-
-    videoFrames.push_back(frame1);
-    videoFrames.push_back(frame2);
-    videoFrames.push_back(frame3);
-
-    histograms.push_back(hist1);
-    histograms.push_back(hist2);
-    histograms.push_back(hist3);
-
-    //This test is bad
-    //EXPECT_EQ(getBestThumbnailIndex(videoFrames, histograms), 1);
+        for (int i = 0; i < 254; ++i)
+        {
+            CHECK(0 == histogram.r[i]);
+            CHECK(0 == histogram.g[i]);
+            CHECK(0 == histogram.b[i]);
+        }
+    }
 }
 
 }

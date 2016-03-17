@@ -2,33 +2,33 @@
 #include <vector>
 #include <iostream>
 
-#include <gtest/gtest.h>
+#include <catch.hpp>
 #include "libffmpegthumbnailer/histogram.h"
 
 namespace ffmpegthumbnailer
 {
 
-TEST(HistogramTest, CreationInt)
+TEST_CASE("CreationInt")
 {
     Histogram<int> hist;
 
     for (int i = 0; i < 255; ++i)
     {
-        EXPECT_EQ(0, hist.r[i]);
-        EXPECT_EQ(0, hist.g[i]);
-        EXPECT_EQ(0, hist.b[i]);
+        REQUIRE(0 == hist.r[i]);
+        REQUIRE(0 == hist.g[i]);
+        REQUIRE(0 == hist.b[i]);
     }
 }
 
-TEST(HistogramTest, CreationFloat)
+TEST_CASE("CreationFloat")
 {
     Histogram<float> hist;
 
     for (int i = 0; i < 255; ++i)
     {
-        EXPECT_EQ(0.0, hist.r[i]);
-        EXPECT_EQ(0.0, hist.g[i]);
-        EXPECT_EQ(0.0, hist.b[i]);
+        REQUIRE(0.0 == hist.r[i]);
+        REQUIRE(0.0 == hist.g[i]);
+        REQUIRE(0.0 == hist.b[i]);
     }
 }
 
