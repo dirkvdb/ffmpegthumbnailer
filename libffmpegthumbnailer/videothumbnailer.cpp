@@ -19,6 +19,7 @@
 #include "videothumbnailer.h"
 
 #include "histogram.h"
+#include "histogramutils.h"
 #include "moviedecoder.h"
 #include "stringoperations.h"
 #include "filmstripfilter.h"
@@ -177,7 +178,7 @@ void VideoThumbnailer::generateSmartThumbnail(MovieDecoder& movieDecoder, VideoF
     {
         movieDecoder.decodeVideoFrame();
         movieDecoder.getScaledVideoFrame(m_ThumbnailSize, m_MaintainAspectRatio, videoFrames[i]);
-        generateHistogram(videoFrames[i], histograms[i]);
+        utils::generateHistogram(videoFrames[i], histograms[i]);
     }
 
     int bestFrame = getBestThumbnailIndex(videoFrames, histograms);
@@ -316,20 +317,6 @@ void VideoThumbnailer::applyFilters(VideoFrame& frameData)
     for (auto filter : m_Filters)
     {
         filter->process(frameData);
-    }
-}
-
-void VideoThumbnailer::generateHistogram(const VideoFrame& videoFrame, Histogram<int>& histogram)
-{
-    for (int i = 0; i < videoFrame.height; ++i)
-    {
-        int pixelIndex = i * videoFrame.lineSize;
-        for (int j = 0; j < videoFrame.width * 3; j += 3)
-        {
-            ++histogram.r[videoFrame.frameData[pixelIndex + j]];
-            ++histogram.g[videoFrame.frameData[pixelIndex + j + 1]];
-            ++histogram.b[videoFrame.frameData[pixelIndex + j + 2]];
-        }
     }
 }
 

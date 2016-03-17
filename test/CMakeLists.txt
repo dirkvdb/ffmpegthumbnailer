@@ -1,5 +1,5 @@
 INCLUDE_DIRECTORIES(SYSTEM
-    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/testframework
 )
 
 INCLUDE_DIRECTORIES(
@@ -11,7 +11,6 @@ LINK_DIRECTORIES(
 )
 
 ADD_EXECUTABLE(ffmpegthumbnailertest
-    gmock-gtest-all.cpp
     testrunner.cpp
     histogramtest.cpp
     videothumbnailertest.cpp

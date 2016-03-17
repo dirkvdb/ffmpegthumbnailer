@@ -68,7 +68,6 @@ private:
     std::string getMimeType(const std::string& videoFile);
     std::string getExtension(const std::string& videoFilename);
 
-    void generateHistogram(const VideoFrame& videoFrame, Histogram<int>& histogram);
     int getBestThumbnailIndex(std::vector<VideoFrame>& videoFrames, const std::vector<Histogram<int> >& histograms);
     void applyFilters(VideoFrame& frameData);
 
@@ -86,8 +85,6 @@ private:
     std::vector<IFilter*>                           m_Filters;
 
     std::function<void(ThumbnailerLogLevel, const std::string&)> m_LogCb;
-
-    friend class VideoThumbnailerTest;
 };
 
 }
