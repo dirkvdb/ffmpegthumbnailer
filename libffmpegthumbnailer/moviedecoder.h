@@ -26,13 +26,15 @@
 
 #include "ffmpegthumbnailertypes.h"
 
-extern "C" {
-#include <libavcodec/avcodec.h>
-#include <libavformat/avformat.h>
-}
-
 struct AVFilterGraph;
 struct AVFilterContext;
+struct AVFormatContext;
+struct AVCodecContext;
+struct AVCodec;
+struct AVStream;
+struct AVFrame;
+struct AVPacket;
+struct AVRational;
 
 namespace ffmpegthumbnailer
 {
@@ -42,7 +44,7 @@ struct VideoFrame;
 class MovieDecoder
 {
 public:
-    MovieDecoder(const std::string& filename, AVFormatContext* pavContext = NULL);
+    MovieDecoder(const std::string& filename, AVFormatContext* pavContext = nullptr);
     ~MovieDecoder();
 
     std::string getCodec();
@@ -59,14 +61,13 @@ public:
 
 private:
     void initializeVideo();
-    void initializeFilterGraph(AVRational timeBase, int size, bool maintainAspectRatio);
+    void initializeFilterGraph(const AVRational& timeBase, int size, bool maintainAspectRatio);
 
     bool decodeVideoPacket();
     bool getVideoPacket();
     int32_t getStreamRotation();
     std::string createScaleString(int size, bool maintainAspectRatio);
 
-    void addLogCallback();
     void checkRc(int ret, const std::string& message);
 
 private:

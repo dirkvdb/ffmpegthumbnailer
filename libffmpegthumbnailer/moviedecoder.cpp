@@ -18,22 +18,18 @@
 
 #include "videoframe.h"
 
-#include <stdexcept>
-#include <algorithm>
 #include <cassert>
-#include <cstring>
 #include <array>
 #include <sstream>
-#include <memory>
 
 extern "C" {
-#include <libavutil/opt.h>
 #include <libavutil/display.h>
 #include <libavutil/imgutils.h>
 #include <libavfilter/avfilter.h>
-#include <libavfilter/avfiltergraph.h>
 #include <libavfilter/buffersink.h>
 #include <libavfilter/buffersrc.h>
+#include <libavformat/avformat.h>
+#include <libavcodec/avcodec.h>
 }
 
 
@@ -207,7 +203,7 @@ std::string MovieDecoder::createScaleString(int size, bool maintainAspectRatio)
     return scale.str();
 }
 
-void MovieDecoder::initializeFilterGraph(AVRational timeBase, int size, bool maintainAspectRatio)
+void MovieDecoder::initializeFilterGraph(const AVRational& timeBase, int size, bool maintainAspectRatio)
 {
     static const AVPixelFormat pixelFormats[] = { AV_PIX_FMT_RGB24, AV_PIX_FMT_NONE };
 
