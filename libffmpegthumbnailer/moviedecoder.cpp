@@ -21,6 +21,7 @@
 #include <cassert>
 #include <array>
 #include <sstream>
+#include <memory>
 
 extern "C" {
 #include <libavutil/display.h>
