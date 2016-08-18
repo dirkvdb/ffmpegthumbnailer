@@ -44,7 +44,7 @@ struct VideoFrame;
 class MovieDecoder
 {
 public:
-    MovieDecoder(const std::string& filename, AVFormatContext* pavContext = nullptr);
+    MovieDecoder(AVFormatContext* pavContext = nullptr);
     ~MovieDecoder();
 
     std::string getCodec();
@@ -56,11 +56,13 @@ public:
     int getHeight();
     int getDuration();
 
-    void initialize(const std::string& filename);
+    void initialize(const std::string& filename, bool preferEmbeddedMetadata);
     void destroy();
 
 private:
-    void initializeVideo();
+    int32_t findPreferedVideoStream(bool preferEmbeddedMetadata);
+
+    void initializeVideo(bool preferEmbeddedMetadata);
     void initializeFilterGraph(const AVRational& timeBase, int size, bool maintainAspectRatio);
 
     bool decodeVideoPacket();

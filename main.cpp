@@ -50,6 +50,7 @@ int main(int argc, char** argv)
     bool    workaroundIssues = false;
     bool    maintainAspectRatio = true;
     bool    smartFrameSelection = false;
+    bool    preferEmbeddedMetadata = false;
     string  inputFile;
     string  outputFile;
     string  imageFormat;
@@ -59,7 +60,7 @@ int main(int argc, char** argv)
         std::cerr << "Failed to set locale" << std::endl;
     }
 
-    while ((option = getopt (argc, argv, "i:o:s:t:q:c:afwhvp")) != -1)
+    while ((option = getopt (argc, argv, "i:o:s:t:q:c:afwhvpm")) != -1)
     {
         switch (option)
         {
@@ -80,6 +81,9 @@ int main(int argc, char** argv)
                 break;
             case 'p':
                 smartFrameSelection = true;
+                break;
+            case 'm':
+                preferEmbeddedMetadata = true;
                 break;
             case 't':
                 if (string(optarg).find(':') != string::npos)
@@ -150,6 +154,8 @@ int main(int argc, char** argv)
             filmStripFilter = new FilmStripFilter();
             videoThumbnailer.addFilter(filmStripFilter);
         }
+
+        videoThumbnailer.setPreferEmbeddedMetadata(preferEmbeddedMetadata);
 
         if (!seekTime.empty())
         {

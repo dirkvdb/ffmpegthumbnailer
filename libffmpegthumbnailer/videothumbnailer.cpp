@@ -66,10 +66,6 @@ VideoThumbnailer::VideoThumbnailer(int thumbnailSize, bool workaroundIssues, boo
 {
 }
 
-VideoThumbnailer::~VideoThumbnailer()
-{
-}
-
 void VideoThumbnailer::setSeekPercentage(int percentage)
 {
     m_SeekTime.clear();
@@ -101,6 +97,11 @@ void VideoThumbnailer::setMaintainAspectRatio(bool enabled)
     m_MaintainAspectRatio = enabled;
 }
 
+void VideoThumbnailer::setPreferEmbeddedMetadata(bool enabled)
+{
+    m_PreferEmbeddedMetadata = true;
+}
+
 void VideoThumbnailer::setSmartFrameSelection(bool enabled)
 {
     m_SmartFrameSelection = enabled;
@@ -116,7 +117,8 @@ int timeToSeconds(const std::string& time)
 
 void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageWriter& imageWriter, AVFormatContext* pAvContext)
 {
-    MovieDecoder movieDecoder(videoFile, pAvContext);
+    MovieDecoder movieDecoder(pAvContext);
+    movieDecoder.initialize(videoFile, m_PreferEmbeddedMetadata);
     movieDecoder.decodeVideoFrame(); //before seeking, a frame has to be decoded
 
     if ((!m_WorkAroundIssues) || (movieDecoder.getCodec() != "h264")) //workaround for bug in older ffmpeg (100% cpu usage when seeking in h264 files)
@@ -124,7 +126,7 @@ void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageWriter& i
         try
         {
             int secondToSeekTo = m_SeekTime.empty() ? movieDecoder.getDuration() * m_SeekPercentage / 100
-													: timeToSeconds(m_SeekTime);
+                                                    : timeToSeconds(m_SeekTime);
             movieDecoder.seek(secondToSeekTo);
         }
         catch (const exception& e)
@@ -133,7 +135,7 @@ void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageWriter& i
 
             //seeking failed, try the first frame again
             movieDecoder.destroy();
-            movieDecoder.initialize(videoFile);
+            movieDecoder.initialize(videoFile, m_PreferEmbeddedMetadata);
             movieDecoder.decodeVideoFrame();
          }
     }
@@ -155,6 +157,7 @@ void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageWriter& i
     }
     else
     {
+        std::cout << "getScaledVideoFrame" << std::endl;
         movieDecoder.getScaledVideoFrame(m_ThumbnailSize, m_MaintainAspectRatio, videoFrame);
     }
 

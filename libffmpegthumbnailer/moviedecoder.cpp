@@ -23,6 +23,8 @@
 #include <sstream>
 #include <memory>
 
+#include <iostream>
+
 extern "C" {
 #include <libavutil/display.h>
 #include <libavutil/imgutils.h>
@@ -44,7 +46,7 @@ struct SilenceLogLevel
     SilenceLogLevel() { av_log_set_level(AV_LOG_QUIET); }
 };
 
-MovieDecoder::MovieDecoder(const string& filename, AVFormatContext* pavContext)
+MovieDecoder::MovieDecoder(AVFormatContext* pavContext)
 : m_VideoStream(-1)
 , m_pFormatContext(pavContext)
 , m_pVideoCodecContext(nullptr)
@@ -58,7 +60,6 @@ MovieDecoder::MovieDecoder(const string& filename, AVFormatContext* pavContext)
 , m_FormatContextWasGiven(pavContext != nullptr)
 , m_AllowSeek(true)
 {
-    initialize(filename);
 }
 
 MovieDecoder::~MovieDecoder()
@@ -66,7 +67,7 @@ MovieDecoder::~MovieDecoder()
     destroy();
 }
 
-void MovieDecoder::initialize(const string& filename)
+void MovieDecoder::initialize(const string& filename, bool preferEmbeddedMetadata)
 {
     av_register_all();
     avcodec_register_all();
@@ -87,7 +88,7 @@ void MovieDecoder::initialize(const string& filename)
         throw logic_error("Could not find stream information");
     }
 
-    initializeVideo();
+    initializeVideo(preferEmbeddedMetadata);
     m_pFrame = av_frame_alloc();
 }
 
@@ -131,16 +132,44 @@ string MovieDecoder::getCodec()
     return "";
 }
 
-void MovieDecoder::initializeVideo()
+static bool isStillImageCodec(AVCodecID codecId)
 {
+    return     codecId == AV_CODEC_ID_MJPEG
+            || codecId == AV_CODEC_ID_PNG;
+}
+
+int32_t MovieDecoder::findPreferedVideoStream(bool preferEmbeddedMetadata)
+{
+    int32_t videoStream = -1;
+    int32_t embeddedDataStream = -1;
+    int32_t embeddedDataStreamSize = 0;
+
     for (unsigned int i = 0; i < m_pFormatContext->nb_streams; ++i)
     {
-        if (m_pFormatContext->streams[i]->codec->codec_type == AVMEDIA_TYPE_VIDEO)
+        auto str = m_pFormatContext->streams[i];
+        if (m_pFormatContext->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO)
         {
-            m_pVideoStream = m_pFormatContext->streams[i];
-            m_VideoStream = i;
-            break;
+            if (isStillImageCodec(m_pFormatContext->streams[i]->codecpar->codec_id))
+            {
+                std::cout << "Image" << std::endl;
+            }
         }
+
+        std::cout << "Attached pic: " << i << " " << str->attached_pic.size << std::endl;
+    }
+
+    return videoStream;
+}
+
+void MovieDecoder::initializeVideo(bool preferEmbeddedMetadata)
+{
+    findPreferedVideoStream(preferEmbeddedMetadata);
+
+    for (unsigned int i = 0; i < m_pFormatContext->nb_streams; ++i)
+    {
+        m_pVideoStream = m_pFormatContext->streams[i];
+        m_VideoStream = i;
+        break;
     }
 
     if (m_VideoStream == -1)
@@ -149,7 +178,7 @@ void MovieDecoder::initializeVideo()
         throw logic_error("Could not find video stream");
     }
 
-    m_pVideoCodecContext = m_pFormatContext->streams[m_VideoStream]->codec;
+    m_pVideoCodecContext = m_pVideoStream->codec;
     m_pVideoCodec = avcodec_find_decoder(m_pVideoCodecContext->codec_id);
 
     if (m_pVideoCodec == nullptr)
@@ -340,10 +369,12 @@ void MovieDecoder::seek(int timeInSeconds)
 
 void MovieDecoder::decodeVideoFrame()
 {
+    std::cout << "decodeVideoFrame" << std::endl;
     bool frameFinished = false;
 
     while (!frameFinished && getVideoPacket())
     {
+        std::cout << "decode packet" << std::endl;
         frameFinished = decodeVideoPacket();
     }
 
@@ -351,6 +382,8 @@ void MovieDecoder::decodeVideoFrame()
     {
         throw logic_error("decodeVideoFrame() failed: frame not finished");
     }
+
+    std::cout << "decoded frame" << std::endl;
 }
 
 bool MovieDecoder::decodeVideoPacket()
@@ -370,6 +403,8 @@ bool MovieDecoder::decodeVideoPacket()
         throw logic_error("Failed to decode video frame: bytesDecoded < 0");
     }
 
+    std::cout << "decode " << bytesDecoded << std::endl;
+
     return frameFinished > 0;
 }
 
@@ -388,7 +423,7 @@ bool MovieDecoder::getVideoPacket()
 
     m_pPacket = new AVPacket();
 
-    while (framesAvailable && !frameDecoded && (attempts++ < 1000))
+    while (framesAvailable && !frameDecoded)
     {
         framesAvailable = av_read_frame(m_pFormatContext, m_pPacket) >= 0;
         if (framesAvailable)
@@ -408,9 +443,10 @@ void MovieDecoder::getScaledVideoFrame(int scaledSize, bool maintainAspectRatio,
 {
     initializeFilterGraph(m_pFormatContext->streams[m_VideoStream]->time_base, scaledSize, maintainAspectRatio);
 
-    checkRc(av_buffersrc_write_frame(m_pFilterSource, m_pFrame), "Failed to write frame tp filter graph");
     decodeVideoFrame();
-    checkRc(av_buffersrc_write_frame(m_pFilterSource, m_pFrame), "Failed to write frame tp filter graph");
+    checkRc(av_buffersrc_write_frame(m_pFilterSource, m_pFrame), "Failed to write frame to filter graph");
+    //decodeVideoFrame();
+    checkRc(av_buffersrc_write_frame(m_pFilterSource, m_pFrame), "Failed to write frame to filter graph");
 
     auto del = [] (AVFrame* f) { av_frame_free(&f); };
     std::unique_ptr<AVFrame, decltype(del)> res(av_frame_alloc(), del);
