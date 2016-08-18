@@ -1,3 +1,8 @@
+FFmpegThumbnailer 2.1.2
+- Restored deinterlace functionality using the libavfilter library (additional ffmpeg dependency)
+- Additional video mime types added to the thumbnailer file
+- Take rotation metadata into account when generating thumbnails
+
 FFmpegThumbnailer 2.1.1
 - Buildable agains latest ffmpeg (currently breaks deinterlacing)
 - Fallback when smart frame detection fails (thanks to johnnydeez)
