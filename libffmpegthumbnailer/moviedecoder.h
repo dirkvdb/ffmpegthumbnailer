@@ -59,6 +59,8 @@ public:
     void initialize(const std::string& filename, bool preferEmbeddedMetadata);
     void destroy();
 
+    bool embeddedMetaDataIsAvailable();
+
 private:
     int32_t findPreferedVideoStream(bool preferEmbeddedMetadata);
 
@@ -85,6 +87,7 @@ private:
     AVPacket*               m_pPacket;
     bool                    m_FormatContextWasGiven;
     bool                    m_AllowSeek;
+    bool                    m_UseEmbeddedData;
 };
 
 }

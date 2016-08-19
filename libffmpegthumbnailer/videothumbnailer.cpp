@@ -25,7 +25,6 @@
 #include "filmstripfilter.h"
 #include "imagewriterfactory.h"
 
-#include <iostream>
 #include <iomanip>
 #include <sstream>
 #include <cfloat>
@@ -52,6 +51,7 @@ VideoThumbnailer::VideoThumbnailer()
 , m_ImageQuality(8)
 , m_MaintainAspectRatio(true)
 , m_SmartFrameSelection(false)
+, m_PreferEmbeddedMetadata(false)
 {
 }
 
@@ -63,6 +63,7 @@ VideoThumbnailer::VideoThumbnailer(int thumbnailSize, bool workaroundIssues, boo
 , m_ImageQuality(imageQuality)
 , m_MaintainAspectRatio(maintainAspectRatio)
 , m_SmartFrameSelection(smartFrameSelection)
+, m_PreferEmbeddedMetadata(false)
 {
 }
 
@@ -99,7 +100,7 @@ void VideoThumbnailer::setMaintainAspectRatio(bool enabled)
 
 void VideoThumbnailer::setPreferEmbeddedMetadata(bool enabled)
 {
-    m_PreferEmbeddedMetadata = true;
+    m_PreferEmbeddedMetadata = enabled;
 }
 
 void VideoThumbnailer::setSmartFrameSelection(bool enabled)
@@ -121,7 +122,7 @@ void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageWriter& i
     movieDecoder.initialize(videoFile, m_PreferEmbeddedMetadata);
     movieDecoder.decodeVideoFrame(); //before seeking, a frame has to be decoded
 
-    if ((!m_WorkAroundIssues) || (movieDecoder.getCodec() != "h264")) //workaround for bug in older ffmpeg (100% cpu usage when seeking in h264 files)
+    if (!movieDecoder.embeddedMetaDataIsAvailable())
     {
         try
         {
@@ -137,12 +138,12 @@ void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageWriter& i
             movieDecoder.destroy();
             movieDecoder.initialize(videoFile, m_PreferEmbeddedMetadata);
             movieDecoder.decodeVideoFrame();
-         }
+        }
     }
 
     VideoFrame  videoFrame;
 
-    if (m_SmartFrameSelection)
+    if (m_SmartFrameSelection && !movieDecoder.embeddedMetaDataIsAvailable())
     {
         try
         {
@@ -157,7 +158,6 @@ void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageWriter& i
     }
     else
     {
-        std::cout << "getScaledVideoFrame" << std::endl;
         movieDecoder.getScaledVideoFrame(m_ThumbnailSize, m_MaintainAspectRatio, videoFrame);
     }
 
@@ -218,7 +218,7 @@ void VideoThumbnailer::writeImage(const string& videoFile, ImageWriter& imageWri
         }
         else
         {
-            cout << "Warn: Failed to stat file " << videoFile << " (" << strerror(errno) << ")" << endl;
+            TraceMessage(ThumbnailerLogLevelError, std::string("Failed to stat file ") + videoFile + " (" + strerror(errno) + ")");
         }
 
         string mimeType = getMimeType(videoFile);
