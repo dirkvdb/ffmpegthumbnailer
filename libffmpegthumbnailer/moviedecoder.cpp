@@ -151,7 +151,7 @@ int32_t MovieDecoder::findPreferedVideoStream(bool preferEmbeddedMetadata)
     for (unsigned int i = 0; i < m_pFormatContext->nb_streams; ++i)
     {
         AVStream *stream = m_pFormatContext->streams[i];
-        auto ctx = m_pFormatContext->streams[i]->codecpar;
+        auto ctx = m_pFormatContext->streams[i]->codec;
         if (ctx->codec_type == AVMEDIA_TYPE_VIDEO)
         {
             if (!isStillImageCodec(ctx->codec_id))
@@ -283,8 +283,11 @@ void MovieDecoder::initializeFilterGraph(const AVRational& timeBase, int size, b
     buffersinkParams.release();
 
     AVFilterContext* yadifFilter = nullptr;
-    checkRc(avfilter_graph_create_filter(&yadifFilter, avfilter_get_by_name("yadif"), "thumb_deint", "deint=1", nullptr, m_pFilterGraph),
-            "Failed to create deinterlace filter");
+    if (m_pFrame->interlaced_frame != 0)
+    {
+        checkRc(avfilter_graph_create_filter(&yadifFilter, avfilter_get_by_name("yadif"), "thumb_deint", "deint=1", nullptr, m_pFilterGraph),
+                "Failed to create deinterlace filter");
+    }
 
     AVFilterContext* scaleFilter = nullptr;
     checkRc(avfilter_graph_create_filter(&scaleFilter, avfilter_get_by_name("scale"), "thumb_scale", createScaleString(size, maintainAspectRatio).c_str(), nullptr, m_pFilterGraph),
@@ -310,9 +313,13 @@ void MovieDecoder::initializeFilterGraph(const AVRational& timeBase, int size, b
     }
 
     checkRc(avfilter_link(scaleFilter, 0, formatFilter, 0), "Failed to link scale filter");
-    checkRc(avfilter_link(yadifFilter, 0, scaleFilter, 0), "Failed to link yadif filter");
-    checkRc(avfilter_link(m_pFilterSource, 0, yadifFilter, 0), "Failed to link source filter");
 
+    if (yadifFilter)
+    {
+        checkRc(avfilter_link(yadifFilter, 0, scaleFilter, 0), "Failed to link yadif filter");
+    }
+
+    checkRc(avfilter_link(m_pFilterSource, 0, yadifFilter ? yadifFilter : scaleFilter, 0), "Failed to link source filter");
     checkRc(avfilter_graph_config(m_pFilterGraph, nullptr), "Failed to configure filter graph");
 }
 
@@ -461,13 +468,21 @@ void MovieDecoder::getScaledVideoFrame(int scaledSize, bool maintainAspectRatio,
 {
     initializeFilterGraph(m_pFormatContext->streams[m_VideoStream]->time_base, scaledSize, maintainAspectRatio);
 
-    checkRc(av_buffersrc_write_frame(m_pFilterSource, m_pFrame), "Failed to write frame to filter graph");
-    //decodeVideoFrame();
-    checkRc(av_buffersrc_write_frame(m_pFilterSource, m_pFrame), "Failed to write frame to filter graph");
-
     auto del = [] (AVFrame* f) { av_frame_free(&f); };
     std::unique_ptr<AVFrame, decltype(del)> res(av_frame_alloc(), del);
-    checkRc(av_buffersink_get_frame(m_pFilterSink, res.get()), "Failed to get buffer from filter");
+
+    checkRc(av_buffersrc_write_frame(m_pFilterSource, m_pFrame), "Failed to write frame to filter graph");
+
+    int attempts = 0;
+    int rc = av_buffersink_get_frame(m_pFilterSink, res.get());
+    while (rc == AVERROR(EAGAIN) && attempts++ < 10)
+    {
+        decodeVideoFrame();
+        checkRc(av_buffersrc_write_frame(m_pFilterSource, m_pFrame), "Failed to write frame to filter graph");
+        rc = av_buffersink_get_frame(m_pFilterSink, res.get());
+    }
+
+    checkRc(rc, "Failed to get buffer from filter");
 
     videoFrame.width = res->width;
     videoFrame.height = res->height;
