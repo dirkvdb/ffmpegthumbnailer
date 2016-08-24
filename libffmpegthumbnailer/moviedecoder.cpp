@@ -37,6 +37,26 @@ extern "C" {
 
 using namespace std;
 
+namespace
+{
+    std::string av_make_error_string(int errnum)
+    {
+        char errbuf[AV_ERROR_MAX_STRING_SIZE];
+        av_strerror(errnum, errbuf, AV_ERROR_MAX_STRING_SIZE);
+        return errbuf;
+    }
+
+    void checkRc(int ret, const std::string& message)
+    {
+        if (ret < 0)
+        {
+            stringstream ss;
+            ss << message << " " << av_make_error_string(ret);
+            throw std::logic_error(ss.str());
+        }
+    }
+}
+
 namespace ffmpegthumbnailer
 {
 
@@ -49,6 +69,7 @@ MovieDecoder::MovieDecoder(AVFormatContext* pavContext)
 : m_VideoStream(-1)
 , m_pFormatContext(pavContext)
 , m_pVideoCodecContext(nullptr)
+, m_pVideoCodecParameters(nullptr)
 , m_pVideoCodec(nullptr)
 , m_pFilterGraph(nullptr)
 , m_pFilterSource(nullptr)
@@ -96,7 +117,7 @@ void MovieDecoder::destroy()
 {
     if (m_pVideoCodecContext)
     {
-        avcodec_close(m_pVideoCodecContext);
+        avcodec_free_context(&m_pVideoCodecContext);
         m_pVideoCodecContext = nullptr;
     }
 
@@ -117,6 +138,7 @@ void MovieDecoder::destroy()
         av_frame_free(&m_pFrame);
     }
 
+    m_pVideoCodecParameters = nullptr;
     m_VideoStream = -1;
 
     avformat_network_deinit();
@@ -151,10 +173,10 @@ int32_t MovieDecoder::findPreferedVideoStream(bool preferEmbeddedMetadata)
     for (unsigned int i = 0; i < m_pFormatContext->nb_streams; ++i)
     {
         AVStream *stream = m_pFormatContext->streams[i];
-        auto ctx = m_pFormatContext->streams[i]->codec;
-        if (ctx->codec_type == AVMEDIA_TYPE_VIDEO)
+        auto* codecPar = m_pFormatContext->streams[i]->codecpar;
+        if (codecPar->codec_type == AVMEDIA_TYPE_VIDEO)
         {
-            if (!isStillImageCodec(ctx->codec_id))
+            if (!isStillImageCodec(codecPar->codec_id))
             {
                 videoStreams.push_back(i);
                 continue;
@@ -202,9 +224,17 @@ void MovieDecoder::initializeVideo(bool preferEmbeddedMetadata)
     }
 
     m_pVideoStream = m_pFormatContext->streams[m_VideoStream];
-    m_pVideoCodecContext = m_pVideoStream->codec;
-    m_pVideoCodec = avcodec_find_decoder(m_pVideoCodecContext->codec_id);
+    m_pVideoCodecParameters = m_pVideoStream->codecpar;
+    auto* codecContext = avcodec_alloc_context3(nullptr);
+    auto ret = avcodec_parameters_to_context(codecContext, m_pVideoCodecParameters);
+    if (ret < 0)
+    {
+        avcodec_free_context(&codecContext);
+        throw logic_error("Failed to convert codec parameters " + av_make_error_string(ret));
+    }
 
+    m_pVideoCodecContext = codecContext;
+    m_pVideoCodec = avcodec_find_decoder(m_pVideoCodecParameters->codec_id);
     if (m_pVideoCodec == nullptr)
     {
         // set to nullptr, otherwise avcodec_close(m_pVideoCodecContext) crashes
@@ -368,24 +398,23 @@ void MovieDecoder::seek(int timeInSeconds)
     }
 
     checkRc(av_seek_frame(m_pFormatContext, -1, timestamp, 0), "Seeking in video failed");
-    avcodec_flush_buffers(m_pFormatContext->streams[m_VideoStream]->codec);
+    avcodec_flush_buffers(m_pVideoCodecContext);
 
     int keyFrameAttempts = 0;
-    bool gotFrame = 0;
+    bool gotFrame = false;
 
     do
     {
         int count = 0;
-        gotFrame = 0;
+        gotFrame = false;
 
-        while (!gotFrame && count < 20)
+        while (!gotFrame && count < 20 && getVideoPacket())
         {
-            getVideoPacket();
             try
             {
                 gotFrame = decodeVideoPacket();
             }
-            catch(logic_error&) {}
+            catch(const exception&) {}
             ++count;
         }
 
@@ -400,14 +429,14 @@ void MovieDecoder::seek(int timeInSeconds)
 
 void MovieDecoder::decodeVideoFrame()
 {
-    bool frameFinished = false;
+    bool frameDecoded = false;
 
-    while (!frameFinished && getVideoPacket())
+    while (!frameDecoded && getVideoPacket())
     {
-        frameFinished = decodeVideoPacket();
+        frameDecoded = decodeVideoPacket();
     }
 
-    if (!frameFinished)
+    if (!frameDecoded)
     {
         throw logic_error("decodeVideoFrame() failed: frame not finished");
     }
@@ -415,22 +444,19 @@ void MovieDecoder::decodeVideoFrame()
 
 bool MovieDecoder::decodeVideoPacket()
 {
-    if (m_pPacket->stream_index != m_VideoStream)
+    assert(m_pPacket->stream_index == m_VideoStream);
+
+    av_frame_unref(m_pFrame);
+    checkRc(avcodec_send_packet(m_pVideoCodecContext, m_pPacket), "Failed to send packet");
+
+    auto rc = avcodec_receive_frame(m_pVideoCodecContext, m_pFrame);
+    if (rc == AVERROR(EAGAIN))
     {
         return false;
     }
 
-    av_frame_unref(m_pFrame);
-
-    int frameFinished;
-
-    int bytesDecoded = avcodec_decode_video2(m_pVideoCodecContext, m_pFrame, &frameFinished, m_pPacket);
-    if (bytesDecoded < 0)
-    {
-        throw logic_error("Failed to decode video frame: bytesDecoded < 0");
-    }
-
-    return frameFinished > 0;
+    checkRc(rc, "Failed to receive frame");
+    return true;
 }
 
 bool MovieDecoder::getVideoPacket()
@@ -496,18 +522,6 @@ void MovieDecoder::getScaledVideoFrame(int scaledSize, bool maintainAspectRatio,
         avfilter_graph_free(&m_pFilterGraph);
     }
 }
-
-void MovieDecoder::checkRc(int ret, const std::string& message)
-{
-    if (ret < 0)
-    {
-        char buf[256];
-        buf[0] = ' ';
-        av_strerror(ret, &buf[1], sizeof(buf) - 1);
-        throw std::logic_error(message + buf);
-    }
-}
-
 
 int32_t MovieDecoder::getStreamRotation()
 {

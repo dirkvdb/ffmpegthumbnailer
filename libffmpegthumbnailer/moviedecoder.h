@@ -30,6 +30,7 @@ struct AVFilterGraph;
 struct AVFilterContext;
 struct AVFormatContext;
 struct AVCodecContext;
+struct AVCodecParameters;
 struct AVCodec;
 struct AVStream;
 struct AVFrame;
@@ -69,15 +70,15 @@ private:
 
     bool decodeVideoPacket();
     bool getVideoPacket();
+
     int32_t getStreamRotation();
     std::string createScaleString(int size, bool maintainAspectRatio);
-
-    void checkRc(int ret, const std::string& message);
 
 private:
     int                     m_VideoStream;
     AVFormatContext*        m_pFormatContext;
     AVCodecContext*         m_pVideoCodecContext;
+    AVCodecParameters*      m_pVideoCodecParameters;
     AVCodec*                m_pVideoCodec;
     AVFilterGraph*          m_pFilterGraph;
     AVFilterContext*        m_pFilterSource;
