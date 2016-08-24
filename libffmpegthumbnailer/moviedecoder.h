@@ -26,6 +26,10 @@
 
 #include "ffmpegthumbnailertypes.h"
 
+extern "C" {
+#include <libavcodec/avcodec.h>
+}
+
 struct AVFilterGraph;
 struct AVFilterContext;
 struct AVFormatContext;
@@ -34,7 +38,6 @@ struct AVCodecParameters;
 struct AVCodec;
 struct AVStream;
 struct AVFrame;
-struct AVPacket;
 struct AVRational;
 
 namespace ffmpegthumbnailer
@@ -85,7 +88,7 @@ private:
     AVFilterContext*        m_pFilterSink;
     AVStream*               m_pVideoStream;
     AVFrame*                m_pFrame;
-    AVPacket*               m_pPacket;
+    AVPacket                m_Packet;
     bool                    m_FormatContextWasGiven;
     bool                    m_AllowSeek;
     bool                    m_UseEmbeddedData;

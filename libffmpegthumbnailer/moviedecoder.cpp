@@ -31,7 +31,6 @@ extern "C" {
 #include <libavfilter/buffersink.h>
 #include <libavfilter/buffersrc.h>
 #include <libavformat/avformat.h>
-#include <libavcodec/avcodec.h>
 }
 
 
@@ -76,11 +75,11 @@ MovieDecoder::MovieDecoder(AVFormatContext* pavContext)
 , m_pFilterSink(nullptr)
 , m_pVideoStream(nullptr)
 , m_pFrame(nullptr)
-, m_pPacket(nullptr)
 , m_FormatContextWasGiven(pavContext != nullptr)
 , m_AllowSeek(true)
 , m_UseEmbeddedData(false)
 {
+    av_init_packet(&m_Packet);
 }
 
 MovieDecoder::~MovieDecoder()
@@ -126,12 +125,7 @@ void MovieDecoder::destroy()
         avformat_close_input(&m_pFormatContext);
     }
 
-    if (m_pPacket)
-    {
-        av_packet_unref(m_pPacket);
-        delete m_pPacket;
-        m_pPacket = nullptr;
-    }
+    av_packet_unref(&m_Packet);
 
     if (m_pFrame)
     {
@@ -182,6 +176,7 @@ int32_t MovieDecoder::findPreferedVideoStream(bool preferEmbeddedMetadata)
                 continue;
             }
 
+            bool coverFound = false;
             if (stream->metadata)
             {
                 AVDictionaryEntry* tag = nullptr;
@@ -190,12 +185,16 @@ int32_t MovieDecoder::findPreferedVideoStream(bool preferEmbeddedMetadata)
                     if (strcmp(tag->key, "filename") == 0 && strncmp(tag->value, "cover.", 6) == 0)
                     {
                         embeddedDataStream.insert(embeddedDataStream.begin(), i);
-                        continue;
+                        coverFound = true;
+                        break;
                     }
                 }
             }
 
-            embeddedDataStream.push_back(i);
+            if (!coverFound)
+            {
+                embeddedDataStream.push_back(i);
+            }
         }
     }
 
@@ -444,10 +443,10 @@ void MovieDecoder::decodeVideoFrame()
 
 bool MovieDecoder::decodeVideoPacket()
 {
-    assert(m_pPacket->stream_index == m_VideoStream);
+    assert(m_Packet.stream_index == m_VideoStream);
 
     av_frame_unref(m_pFrame);
-    checkRc(avcodec_send_packet(m_pVideoCodecContext, m_pPacket), "Failed to send packet");
+    checkRc(avcodec_send_packet(m_pVideoCodecContext, &m_Packet), "Failed to send packet");
 
     auto rc = avcodec_receive_frame(m_pVideoCodecContext, m_pFrame);
     if (rc == AVERROR(EAGAIN))
@@ -464,26 +463,15 @@ bool MovieDecoder::getVideoPacket()
     bool framesAvailable = true;
     bool frameDecoded = false;
 
-    int attempts = 0;
-
-    if (m_pPacket)
-    {
-        av_packet_unref(m_pPacket);
-        delete m_pPacket;
-    }
-
-    m_pPacket = new AVPacket();
+    av_packet_unref(&m_Packet);
+    av_init_packet(&m_Packet);
 
     while (framesAvailable && !frameDecoded)
     {
-        framesAvailable = av_read_frame(m_pFormatContext, m_pPacket) >= 0;
+        framesAvailable = av_read_frame(m_pFormatContext, &m_Packet) >= 0;
         if (framesAvailable)
         {
-            frameDecoded = m_pPacket->stream_index == m_VideoStream;
-            if (!frameDecoded)
-            {
-                av_packet_unref(m_pPacket);
-            }
+            frameDecoded = m_Packet.stream_index == m_VideoStream;
         }
     }
 
