@@ -201,7 +201,7 @@ void printUsage()
          << "  -a      : ignore aspect ratio and generate square thumbnail" << endl
          << "  -f      : create a movie strip overlay" << endl
          //<< "  -p      : use smarter frame selection (slower)" << endl
-         << "  -m      : prefer embedded metadata cover image over video content" << endl
+         << "  -m      : prefer embedded image metadata over video content" << endl
          << "  -w      : workaround issues in old versions of ffmpeg" << endl
          << "  -v      : print version number" << endl
          << "  -h      : display this help" << endl;

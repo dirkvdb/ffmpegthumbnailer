@@ -32,17 +32,18 @@ typedef void(*thumbnailer_log_callback)(ThumbnailerLogLevel, const char*);
 
 typedef struct video_thumbnailer_struct
 {
-    int                         thumbnail_size;         /* default = 128 */
-    int                         seek_percentage;        /* default = 10 */
-    char*                       seek_time;              /* default = NULL (format hh:mm:ss, overrides seek_percentage if set) */
-    int                         overlay_film_strip;     /* default = 0 */
-    int                         workaround_bugs;        /* default = 0 */
-    int                         thumbnail_image_quality;/* default = 8 (0 is bad, 10 is best)*/
-    ThumbnailerImageType        thumbnail_image_type;   /* default = Png */
-    struct AVFormatContext*     av_format_context;      /* default = NULL */
-    int                         maintain_aspect_ratio;  /* default = 1 */
+    int                         thumbnail_size;             /* default = 128 */
+    int                         seek_percentage;            /* default = 10 */
+    char*                       seek_time;                  /* default = NULL (format hh:mm:ss, overrides seek_percentage if set) */
+    int                         overlay_film_strip;         /* default = 0 */
+    int                         workaround_bugs;            /* default = 0 */
+    int                         thumbnail_image_quality;    /* default = 8 (0 is bad, 10 is best)*/
+    ThumbnailerImageType        thumbnail_image_type;       /* default = Png */
+    struct AVFormatContext*     av_format_context;          /* default = NULL */
+    int                         maintain_aspect_ratio;      /* default = 1 */
+    int                         prefer_embedded_metadata;   /* default = 0 */
 
-    struct thumbnailer_data*    tdata;                  /* for internal use only */
+    struct thumbnailer_data*    tdata;                      /* for internal use only */
 } video_thumbnailer;
 
 typedef struct image_data_struct
