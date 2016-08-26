@@ -1,3 +1,7 @@
+FFmpegThumbnailer 2.2.0
+- New option to prefer embedded image metadata over video content (command line argument: -m)
+- Fixed 'Resource temporarily unavailable' errors when using ffmpeg < 3.0
+
 FFmpegThumbnailer 2.1.2
 - Restored deinterlace functionality using the libavfilter library (additional ffmpeg dependency)
 - Additional video mime types added to the thumbnailer file
