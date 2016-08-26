@@ -9,7 +9,7 @@ to decode frames from the video files, so supported videoformats depend on the
 configuration flags of ffmpeg.
 
 This thumbnailer was designed to be as fast and lightweight as possible. The
-only dependencies are ffmpeg and libpng/libgjpeg.
+only dependencies are ffmpeg and libpng/libjpeg.
 
 # Usage #
 ffmpegthumbnailer is called from the command line
