@@ -3,3 +3,4 @@ out
 build
 *.sublime-workspace
 xcode
+.vscode
