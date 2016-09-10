@@ -154,7 +154,7 @@ int32_t MovieDecoder::findPreferedVideoStream(bool preferEmbeddedMetadata)
         auto ctx = m_pFormatContext->streams[i]->codec;
         if (ctx->codec_type == AVMEDIA_TYPE_VIDEO)
         {
-            if (!isStillImageCodec(ctx->codec_id))
+            if (!preferEmbeddedMetadata || !isStillImageCodec(ctx->codec_id))
             {
                 videoStreams.push_back(i);
                 continue;
