@@ -208,6 +208,7 @@ void VideoThumbnailer::writeImage(const string& videoFile, ImageWriter& imageWri
     if ((videoFile != "-") &&
         (videoFile.compare(0, 7, "rtsp://") != 0) &&
         (videoFile.compare(0, 6, "udp://") != 0) &&
+        (videoFile.compare(0, 8, "https://") != 0) &&
         (videoFile.compare(0, 7, "http://") != 0))
     {
         struct stat statInfo;
