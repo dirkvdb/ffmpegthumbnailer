@@ -29,20 +29,20 @@ namespace ffmpegthumbnailer
 class PngWriter : public ImageWriter
 {
 public:
-	PngWriter(const std::string& outputFile);
+    PngWriter(const std::string& outputFile);
     PngWriter(std::vector<uint8_t>& outputBuffer);
-	~PngWriter();
-	
-	void setText(const std::string& key, const std::string& value);
-	void writeFrame(uint8_t** rgbData, int width, int height, int quality);
-	
+    ~PngWriter();
+
+    void setText(const std::string& key, const std::string& value);
+    void writeFrame(uint8_t** rgbData, int width, int height, int quality);
+
 private:
     void init();
-	
+
 private:
-	FILE* 		            m_FilePtr;
-	png_structp             m_PngPtr;
-	png_infop 	            m_InfoPtr;
+    FILE*                   m_FilePtr;
+    png_structp             m_PngPtr;
+    png_infop               m_InfoPtr;
 };
 
 }

@@ -33,13 +33,13 @@ PngWriter::PngWriter(const string& outputFile)
 , m_InfoPtr(NULL)
 {
     init();
-	m_FilePtr = outputFile == "-" ? stdout : fopen(outputFile.c_str(), "wb");
-	
-	if (!m_FilePtr)
+    m_FilePtr = outputFile == "-" ? stdout : fopen(outputFile.c_str(), "wb");
+
+    if (!m_FilePtr)
     {
        throw logic_error(string("Failed to open output file: ") + outputFile);
     }
-    
+
     png_init_io(m_PngPtr, m_FilePtr);
 }
 
@@ -59,49 +59,49 @@ PngWriter::~PngWriter()
     {
         fclose(m_FilePtr);
     }
-	png_destroy_write_struct(&m_PngPtr, &m_InfoPtr);
+    png_destroy_write_struct(&m_PngPtr, &m_InfoPtr);
 }
 
 void PngWriter::init()
 {
     m_PngPtr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-	if (!m_PngPtr)
-	{
-		throw logic_error("Failed to create png write structure");
-	}
-	
-	m_InfoPtr = png_create_info_struct(m_PngPtr);
-	if (!m_InfoPtr)
+    if (!m_PngPtr)
     {
-		png_destroy_write_struct(&m_PngPtr, (png_infopp) NULL);
-		throw logic_error("Failed to create png info structure");
-	}
+        throw logic_error("Failed to create png write structure");
+    }
+
+    m_InfoPtr = png_create_info_struct(m_PngPtr);
+    if (!m_InfoPtr)
+    {
+        png_destroy_write_struct(&m_PngPtr, (png_infopp) NULL);
+        throw logic_error("Failed to create png info structure");
+    }
 }
 
 void PngWriter::setText(const string& key, const string& value)
 {
-	png_text pngText;
-		
-	pngText.compression = -1;
-	pngText.key = const_cast<char*>(key.c_str());
-	pngText.text = const_cast<char*>(value.c_str());
+    png_text pngText;
 
-	png_set_text(m_PngPtr, m_InfoPtr, &pngText, 1);	
+    pngText.compression = -1;
+    pngText.key = const_cast<char*>(key.c_str());
+    pngText.text = const_cast<char*>(value.c_str());
+
+    png_set_text(m_PngPtr, m_InfoPtr, &pngText, 1);
 }
 
 void PngWriter::writeFrame(uint8_t** rgbData, int width, int height, int /*quality*/)
 {
     if (setjmp(png_jmpbuf(m_PngPtr)))
-	{
-		throw logic_error("Writing png file failed");
-	}
-	
-	png_set_IHDR(m_PngPtr, m_InfoPtr, width, height, 8,
-				 PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE,
-				 PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+    {
+        throw logic_error("Writing png file failed");
+    }
+
+    png_set_IHDR(m_PngPtr, m_InfoPtr, width, height, 8,
+                 PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE,
+                 PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
 
     png_set_rows(m_PngPtr, m_InfoPtr, rgbData);
-    png_write_png(m_PngPtr, m_InfoPtr, 0, NULL);	
+    png_write_png(m_PngPtr, m_InfoPtr, 0, NULL);
 }
 
 void writeDataCallback(png_structp png_ptr, png_bytep data, png_size_t length)
