@@ -205,6 +205,11 @@ void VideoThumbnailer::generateThumbnail(const string& videoFile, ThumbnailerIma
 
 void VideoThumbnailer::writeImage(const string& videoFile, ImageWriter& imageWriter, const VideoFrame& videoFrame, int duration, vector<uint8_t*>& rowPointers)
 {
+    if (videoFrame.width == 0 || videoFrame.height == 0)
+    {
+        throw std::runtime_error("No video frame could be decoded");
+    }
+
     if ((videoFile != "-") &&
         (videoFile.compare(0, 7, "rtsp://") != 0) &&
         (videoFile.compare(0, 6, "udp://") != 0) &&
