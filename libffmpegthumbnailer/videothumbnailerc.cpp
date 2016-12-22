@@ -93,7 +93,7 @@ static void setProperties(video_thumbnailer* thumbnailer)
     videoThumbnailer.setWorkAroundIssues(thumbnailer->workaround_bugs != 0);
     videoThumbnailer.setImageQuality(thumbnailer->thumbnail_image_quality);
     videoThumbnailer.setMaintainAspectRatio(thumbnailer->maintain_aspect_ratio != 0);
-    videoThumbnailer.setPreferEmbeddedMetadata(thumbnailer->maintain_aspect_ratio != 0);
+    videoThumbnailer.setPreferEmbeddedMetadata(thumbnailer->prefer_embedded_metadata != 0);
 
     if (thumbnailer->overlay_film_strip)
     {
