@@ -299,9 +299,14 @@ void MovieDecoder::initializeFilterGraph(const AVRational& timeBase, int size, b
 
     AVFilterContext* rotateFilter = nullptr;
     auto rotation = getStreamRotation();
-    if (rotation != -1)
+    if (rotation == 3)
     {
-        checkRc(avfilter_graph_create_filter(&rotateFilter, avfilter_get_by_name("transpose"), "thumb_rotate", std::to_string(rotation).c_str(), nullptr, m_pFilterGraph),
+        checkRc(avfilter_graph_create_filter(&rotateFilter, avfilter_get_by_name("rotate"), "thumb_rotate", "PI", nullptr, m_pFilterGraph),
+            "Failed to create rotate filter");
+    }
+    else if (rotation != -1)
+    {
+        checkRc(avfilter_graph_create_filter(&rotateFilter, avfilter_get_by_name("transpose"), "thumb_transpose", std::to_string(rotation).c_str(), nullptr, m_pFilterGraph),
             "Failed to create rotate filter");
     }
 
@@ -515,7 +520,11 @@ int32_t MovieDecoder::getStreamRotation()
     if (matrix)
     {
         auto angle = lround(av_display_rotation_get(matrix));
-        if (angle > 45 && angle < 135)
+        if (angle < -135)
+        {
+            return 3;
+        }
+        else if (angle > 45 && angle < 135)
         {
             return 2;
         }
