@@ -3,11 +3,11 @@ INCLUDE_DIRECTORIES(SYSTEM
 )
 
 INCLUDE_DIRECTORIES(
-	${CMAKE_CURRENT_SOURCE_DIR}/..
+    ${CMAKE_CURRENT_SOURCE_DIR}/..
 )
 
 LINK_DIRECTORIES(
-	${XDGBASEDIR_LIBRARY_DIRS}
+    ${XDGBASEDIR_LIBRARY_DIRS}
 )
 
 ADD_EXECUTABLE(ffmpegthumbnailertest
@@ -26,7 +26,7 @@ ELSE ()
 ENDIF ()
 
 IF (UNIX)
-    TARGET_LINK_LIBRARIES(ffmpegthumbnailertest -lpthread)
+    TARGET_LINK_LIBRARIES(ffmpegthumbnailertest pthread)
 ENDIF ()
 
 ADD_TEST(NAME ffmpegthumbnailertest COMMAND ffmpegthumbnailertest)
