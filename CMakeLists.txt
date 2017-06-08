@@ -191,7 +191,7 @@ ADD_EXECUTABLE(ffmpegthumbnailer main.cpp)
 IF (ENABLE_SHARED)
     TARGET_LINK_LIBRARIES(ffmpegthumbnailer ${SHARED_LIB})
 ELSE ()
-    TARGET_LINK_LIBRARIES(ffmpegthumbnailer ${STATIC_LIB})
+    TARGET_LINK_LIBRARIES(ffmpegthumbnailer ${STATIC_LIB} ${FFMPEGTHUMBNAILER_PKG_LIBS} pthread)
 ENDIF ()
 
 INSTALL(TARGETS ffmpegthumbnailer ${STATIC_LIB} ${SHARED_LIB}
