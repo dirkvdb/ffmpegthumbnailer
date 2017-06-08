@@ -242,15 +242,32 @@ std::string MovieDecoder::createScaleString(int size, bool maintainAspectRatio)
         if (anamorphic)
         {
             width = width * par.num / par.den;
-        }
 
-        if (height > width)
-        {
-            scale << "w=-1:h=" << (size == 0 ? height : size);
+            if (size) {
+                if (height > width)
+                {
+                    width = width * size / height;
+                    height = size;
+                }
+                else
+                {
+                    height = height * size / width;
+                    width = size;
+                }
+            }
+
+            scale << "w=" << width << ":h=" << height;
         }
         else
         {
-            scale << "h=-1:w=" << (size == 0 ? width : size);
+            if (height > width)
+            {
+                scale << "w=-1:h=" << (size == 0 ? height : size);
+            }
+            else
+            {
+                scale << "h=-1:w=" << (size == 0 ? width : size);
+            }
         }
     }
 
