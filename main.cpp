@@ -54,6 +54,7 @@ int main(int argc, char** argv)
     string  inputFile;
     string  outputFile;
     string  imageFormat;
+    string  tmpFileNameSuffix;
     int     sleepTime = 0;
 
     if (!std::setlocale(LC_CTYPE, ""))
@@ -135,6 +136,11 @@ int main(int argc, char** argv)
         return 0;
     }
 
+    if(outputFile != "-")
+    {
+        tmpFileNameSuffix = ".tmp";
+    }
+
     try
     {
 #ifdef ENABLE_GIO
@@ -171,7 +177,12 @@ int main(int argc, char** argv)
         }
 
         do {
-            videoThumbnailer.generateThumbnail(inputFile, imageType, outputFile);
+            string tmpFileName = outputFile + tmpFileNameSuffix;
+            videoThumbnailer.generateThumbnail(inputFile, imageType, tmpFileName);
+            if (tmpFileNameSuffix.length() > 0)
+            {
+                rename(tmpFileName.c_str(), outputFile.c_str());
+            }
             if(sleepTime == 0)
                 break;
             sleep(sleepTime);
