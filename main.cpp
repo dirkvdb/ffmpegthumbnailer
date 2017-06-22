@@ -177,7 +177,7 @@ int main(int argc, char** argv)
         }
 
         do {
-            string tmpFileName = outputFile + tmpFileNameSuffix;
+            string tmpFileName = "." + outputFile + tmpFileNameSuffix;
             videoThumbnailer.generateThumbnail(inputFile, imageType, tmpFileName);
             if (tmpFileNameSuffix.length() > 0)
             {
