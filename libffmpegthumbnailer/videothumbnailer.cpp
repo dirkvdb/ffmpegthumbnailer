@@ -44,7 +44,7 @@ namespace ffmpegthumbnailer
 static const int SMART_FRAME_ATTEMPTS = 25;
 
 VideoThumbnailer::VideoThumbnailer()
-: m_ThumbnailSize(128)
+: m_ThumbnailSize("128")
 , m_SeekPercentage(10)
 , m_OverlayFilmStrip(false)
 , m_WorkAroundIssues(false)
@@ -56,7 +56,7 @@ VideoThumbnailer::VideoThumbnailer()
 }
 
 VideoThumbnailer::VideoThumbnailer(int thumbnailSize, bool workaroundIssues, bool maintainAspectRatio, int imageQuality, bool smartFrameSelection)
-: m_ThumbnailSize(thumbnailSize)
+: m_ThumbnailSize(std::to_string(thumbnailSize))
 , m_SeekPercentage(10)
 , m_OverlayFilmStrip(false)
 , m_WorkAroundIssues(workaroundIssues)
@@ -80,6 +80,36 @@ void VideoThumbnailer::setSeekTime(const std::string& seekTime)
 
 void VideoThumbnailer::setThumbnailSize(int size)
 {
+    m_ThumbnailSize = std::to_string(size);
+}
+
+void VideoThumbnailer::setThumbnailSize(const std::string& size)
+{
+    if (size.empty())
+    {
+        throw std::invalid_argument("Invalid size");
+    }
+
+    if (size.size() > 1)
+    {
+        // This is potentially a string starting with w= or h=
+        if (size[1] == '=')
+        {
+            if (size.size() == 2 || (size[0] != 'w' && size[0] != 'h'))
+            {
+                throw std::invalid_argument("Invalid size");
+            }
+
+            // throws invalid argument if it is no integer
+            std::stoi(&size[2]);
+        }
+        else
+        {
+            std::stoi(size);
+        }
+    }
+
+    // size contains a valid size specification
     m_ThumbnailSize = size;
 }
 

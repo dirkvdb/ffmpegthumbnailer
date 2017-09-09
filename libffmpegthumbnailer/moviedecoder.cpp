@@ -222,8 +222,20 @@ void MovieDecoder::initializeVideo(bool preferEmbeddedMetadata)
     }
 }
 
-std::string MovieDecoder::createScaleString(int size, bool maintainAspectRatio)
+std::string MovieDecoder::createScaleString(const std::string& sizeString, bool maintainAspectRatio)
 {
+    int size;
+    bool pureNumericSize = true;
+    if (sizeString.size() > 2 && sizeString[1] == '=')
+    {
+        pureNumericSize = false;
+        size = std::stoi(&sizeString[2]);
+    }
+    else
+    {
+        size = std::stoi(sizeString);
+    }
+
     std::stringstream scale;
 
     if (!maintainAspectRatio)
@@ -243,16 +255,33 @@ std::string MovieDecoder::createScaleString(int size, bool maintainAspectRatio)
         {
             width = width * par.num / par.den;
 
-            if (size) {
-                if (height > width)
+            if (size)
+            {
+                if (pureNumericSize)
                 {
-                    width = width * size / height;
-                    height = size;
+                    if (height > width)
+                    {
+                        width = width * size / height;
+                        height = size;
+                    }
+                    else
+                    {
+                        height = height * size / width;
+                        width = size;
+                    }
                 }
                 else
                 {
-                    height = height * size / width;
-                    width = size;
+                    if (sizeString[0] == 'h')
+                    {
+                        width = width * size / height;
+                        height = size;
+                    }
+                    else
+                    {
+                        height = height * size / width;
+                        width = size;
+                    }
                 }
             }
 
@@ -260,13 +289,27 @@ std::string MovieDecoder::createScaleString(int size, bool maintainAspectRatio)
         }
         else
         {
-            if (height > width)
+            if (pureNumericSize)
             {
-                scale << "w=-1:h=" << (size == 0 ? height : size);
+                if (height > width)
+                {
+                    scale << "w=-1:h=" << (size == 0 ? height : size);
+                }
+                else
+                {
+                    scale << "h=-1:w=" << (size == 0 ? width : size);
+                }
             }
             else
             {
-                scale << "h=-1:w=" << (size == 0 ? width : size);
+                if (sizeString[0] == 'w')
+                {
+                    scale << "h=-1:w=" << (size == 0 ? width : size);
+                }
+                else
+                {
+                    scale << "w=-1:h=" << (size == 0 ? height : size);
+                }
             }
         }
     }
@@ -274,7 +317,7 @@ std::string MovieDecoder::createScaleString(int size, bool maintainAspectRatio)
     return scale.str();
 }
 
-void MovieDecoder::initializeFilterGraph(const AVRational& timeBase, int size, bool maintainAspectRatio)
+void MovieDecoder::initializeFilterGraph(const AVRational& timeBase, const std::string& size, bool maintainAspectRatio)
 {
     static const AVPixelFormat pixelFormats[] = { AV_PIX_FMT_RGB24, AV_PIX_FMT_NONE };
 
@@ -486,7 +529,7 @@ bool MovieDecoder::getVideoPacket()
     return frameDecoded;
 }
 
-void MovieDecoder::getScaledVideoFrame(int scaledSize, bool maintainAspectRatio, VideoFrame& videoFrame)
+void MovieDecoder::getScaledVideoFrame(const std::string& scaledSize, bool maintainAspectRatio, VideoFrame& videoFrame)
 {
     initializeFilterGraph(m_pFormatContext->streams[m_VideoStream]->time_base, scaledSize, maintainAspectRatio);
 

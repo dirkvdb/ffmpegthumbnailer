@@ -47,6 +47,7 @@ public:
     void generateThumbnail(const std::string& videoFile, ThumbnailerImageType type, std::vector<uint8_t>& buffer, AVFormatContext* pAvContext = nullptr);
 
     void setThumbnailSize(int size);
+    void setThumbnailSize(const std::string& size);
     void setSeekPercentage(int percentage);
     void setSeekTime(const std::string& seekTime);
     void setWorkAroundIssues(bool workAround);
@@ -74,7 +75,7 @@ private:
     void TraceMessage(ThumbnailerLogLevel lvl, const std::string& msg);
 
 private:
-    int                                             m_ThumbnailSize;
+    std::string                                     m_ThumbnailSize;
     uint16_t                                        m_SeekPercentage;
     bool                                            m_OverlayFilmStrip;
     bool                                            m_WorkAroundIssues;
