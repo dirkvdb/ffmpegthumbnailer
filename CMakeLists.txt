@@ -1,121 +1,68 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.1)
-CMAKE_POLICY(VERSION 3.1)
+cmake_minimum_required(VERSION 3.5)
 
-SET(PACKAGE "ffmpegthumbnailer")
-SET(PACKAGE_VERSION_MAJOR 2)
-SET(PACKAGE_VERSION_MINOR 2)
-SET(PACKAGE_VERSION_PATCH 0)
-SET(PACKAGE_VERSION ${PACKAGE_VERSION_MAJOR}.${PACKAGE_VERSION_MINOR}.${PACKAGE_VERSION_PATCH})
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-SET(CPACK_PACKAGE_NAME ${PACKAGE})
-SET(CPACK_PACKAGE_VERSION_MAJOR ${PACKAGE_VERSION_MAJOR})
-SET(CPACK_PACKAGE_VERSION_MINOR ${PACKAGE_VERSION_MINOR})
-SET(CPACK_PACKAGE_VERSION_PATCH ${PACKAGE_VERSION_PATCH})
-SET(CPACK_SOURCE_GENERATOR "TBZ2")
-SET(CPACK_PACKAGE_FILE_NAME $CPACK_PACKAGE_NAME)
-SET(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}-bin")
-SET(CPACK_SOURCE_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
-SET(CPACK_SOURCE_IGNORE_FILES "/build/;/debug/;/release/;/gfx/;/include/;/lib/;/.git/;/src/tags;out-.*;/.*[.]sublime-.*;~$;${CPACK_SOURCE_IGNORE_FILES}")
-SET(CPACK_RESOURCE_FILE_README ${CMAKE_CURRENT_SOURCE_DIR}/README)
-SET(CPACK_RESOURCE_FILE_LICENSE ${CMAKE_CURRENT_SOURCE_DIR}/COPYING)
+set(PACKAGE "ffmpegthumbnailer")
+set(PACKAGE_VERSION_MAJOR 2)
+set(PACKAGE_VERSION_MINOR 2)
+set(PACKAGE_VERSION_PATCH 0)
+set(PACKAGE_VERSION ${PACKAGE_VERSION_MAJOR}.${PACKAGE_VERSION_MINOR}.${PACKAGE_VERSION_PATCH})
 
-IF (APPLE)
-    SET (MACOSX_RPATH ON)
-ENDIF ()
+set(CPACK_PACKAGE_NAME ${PACKAGE})
+set(CPACK_PACKAGE_VERSION_MAJOR ${PACKAGE_VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR ${PACKAGE_VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH ${PACKAGE_VERSION_PATCH})
+set(CPACK_SOURCE_GENERATOR "TBZ2")
+set(CPACK_PACKAGE_FILE_NAME $CPACK_PACKAGE_NAME)
+set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}-bin")
+set(CPACK_SOURCE_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
+set(CPACK_SOURCE_IGNORE_FILES "/build/;/debug/;/release/;/gfx/;/include/;/lib/;/.git/;/.vscode/;/src/tags;out-.*;/.*[.]sublime-.*;~$;${CPACK_SOURCE_IGNORE_FILES}")
+set(CPACK_RESOURCE_FILE_README ${CMAKE_CURRENT_SOURCE_DIR}/README)
+set(CPACK_RESOURCE_FILE_LICENSE ${CMAKE_CURRENT_SOURCE_DIR}/COPYING)
 
-PROJECT(${PACKAGE})
-INCLUDE(CPack)
-INCLUDE(GNUInstallDirs)
+if (APPLE)
+    set(MACOSX_RPATH ON)
+endif ()
 
-SET(CMAKE_EXPORT_COMPILE_COMMANDS 1)
+project(${PACKAGE})
+include(CPack)
+include(GNUInstallDirs)
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
-OPTION(ENABLE_SHARED "Build shared library" ON)
-OPTION(ENABLE_STATIC "Build static library" OFF)
-OPTION(ENABLE_TESTS "Build unit tests" ON)
-OPTION(ENABLE_GIO "Support for gio file uris" OFF)
-OPTION(ENABLE_THUMBNAILER "Register ffmpegthumbnailer as thumbnailer" OFF)
-OPTION(SANITIZE_ADDRESS "Build with address sanitizer (detect invalid memory access and memory leaks)" OFF)
+option(ENABLE_SHARED "Build shared library" ON)
+option(ENABLE_STATIC "Build static library" OFF)
+option(ENABLE_TESTS "Build unit tests" ON)
+option(ENABLE_GIO "Support for gio file uris" OFF)
+option(ENABLE_THUMBNAILER "Register ffmpegthumbnailer as thumbnailer" OFF)
+option(SANITIZE_ADDRESS "Build with address sanitizer (detect invalid memory access and memory leaks)" OFF)
 
-IF (SANITIZE_ADDRESS)
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fno-omit-frame-pointer")
-    SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=address")
-ENDIF ()
+if (SANITIZE_ADDRESS)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fno-omit-frame-pointer")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=address")
+endif ()
 
-FIND_PACKAGE(JPEG)
-IF (JPEG_FOUND)
-    OPTION(HAVE_JPEG "Jpeg support" ON)
-ENDIF ()
+find_package(FFmpeg REQUIRED)
+if (NOT FFmpeg_FOUND)
+    message(FATAL_ERROR "BAAM")
+endif ()
+if (NOT TARGET FFmpeg::avcodec)
+    message(FATAL_ERROR "BOOM")
+endif ()
 
-FIND_PACKAGE(PNG)
-IF (PNG_FOUND)
-    OPTION(HAVE_PNG "Png support" ON)
-ENDIF ()
+find_package(JPEG)
+if (JPEG_FOUND)
+    set(HAVE_JPEG ON)
+endif ()
 
-FIND_PACKAGE(PkgConfig)
-PKG_CHECK_MODULES(AVCODEC_PKG libavcodec REQUIRED)
-PKG_CHECK_MODULES(AVFORMAT_PKG libavformat REQUIRED)
-PKG_CHECK_MODULES(AVUTIL_PKG libavutil REQUIRED)
-PKG_CHECK_MODULES(AVFILTER_PKG libavfilter REQUIRED)
+find_package(PNG)
+if (TARGET PNG::PNG)
+    set(HAVE_PNG ON)
+endif ()
 
-FIND_PATH(AVCODEC_INCLUDE_DIR
-    NAMES libavcodec/avcodec.h
-    PATHS ${AVCODEC_PKG_INCLUDE_DIRS}
-)
-
-FIND_PATH(AVFORMAT_INCLUDE_DIR
-    NAMES libavcodec/avcodec.h
-    PATHS ${AVFORMAT_PKG_INCLUDE_DIRS}
-)
-
-FIND_PATH(AVUTIL_INCLUDE_DIR
-    NAMES libavutil/avutil.h
-    PATHS ${AVUTIL_PKG_INCLUDE_DIRS}
-)
-
-FIND_PATH(AVFILTER_INCLUDE_DIR
-    NAMES libavfilter/avfilter.h
-    PATHS ${AVFILTER_PKG_INCLUDE_DIRS}
-)
-
-FIND_LIBRARY(AVCODEC_LIBRARY
-    NAMES ${AVCODEC_PKG_LIBRARIES}
-    PATHS ${AVCODEC_PKG_LIBRARY_DIRS}
-)
-
-FIND_LIBRARY(AVFORMAT_LIBRARY
-    NAMES ${AVFORMAT_PKG_LIBRARIES}
-    PATHS ${AVFORMAT_PKG_LIBRARY_DIRS}
-)
-
-FIND_LIBRARY(AVUTIL_LIBRARY
-    NAMES ${AVUTIL_PKG_LIBRARIES}
-    PATHS ${AVUTIL_PKG_LIBRARY_DIRS}
-)
-
-FIND_LIBRARY(AVFILTER_LIBRARY
-    NAMES ${AVFILTER_PKG_LIBRARIES}
-    PATHS ${AVFILTER_PKG_LIBRARY_DIRS}
-)
-
-IF (ENABLE_GIO)
-    FIND_PATH(DL_INCLUDES dlfcn.h)
-    LIST(APPEND FFMPEGTHUMBNAILER_INCLUDE_DIRS ${DL_INCLUDES})
-    LIST(APPEND FFMPEGTHUMBNAILER_LIBRARIES ${CMAKE_DL_LIBS})
-ENDIF ()
-
-LIST(APPEND FFMPEGTHUMBNAILER_INCLUDE_DIRS ${AVFORMAT_INCLUDE_DIR} ${AVCODEC_INCLUDE_DIR} ${AVUTIL_INCLUDE_DIR} ${AVFILTER_INCLUDE_DIR})
-LIST(APPEND FFMPEGTHUMBNAILER_LIBRARIES ${AVFORMAT_LIBRARY} ${AVCODEC_LIBRARY} ${AVUTIL_LIBRARY} ${AVFILTER_LIBRARY})
-
-SET(FFMPEGTHUMBNAILER_PKG_LIBS "-L${AVCODEC_PKG_LIBRARY_DIRS} -l${AVCODEC_PKG_LIBRARIES} -l${AVFILTER_PKG_LIBRARIES} -l${AVFORMAT_PKG_LIBRARIES} -l${AVUTIL_PKG_LIBRARIES}")
-FOREACH(VAL ${JPEG_LIBRARIES})
-    SET(FFMPEGTHUMBNAILER_PKG_LIBS "${FFMPEGTHUMBNAILER_PKG_LIBS} ${VAL}")
-ENDFOREACH()
-FOREACH(VAL ${PNG_LIBRARIES})
-    SET(FFMPEGTHUMBNAILER_PKG_LIBS "${FFMPEGTHUMBNAILER_PKG_LIBS} ${VAL}")
-ENDFOREACH()
-
-SET(LIB_HDRS
+set(LIB_HDRS
     libffmpegthumbnailer/videothumbnailer.h
     libffmpegthumbnailer/videothumbnailerc.h
     libffmpegthumbnailer/imagetypes.h
@@ -125,7 +72,7 @@ SET(LIB_HDRS
     libffmpegthumbnailer/filmstripfilter.h
 )
 
-SET (LIB_SRC_LIST
+add_library(libffmpegthumbnailerobj OBJECT
     libffmpegthumbnailer/moviedecoder.h
     libffmpegthumbnailer/moviedecoder.cpp
     libffmpegthumbnailer/imagewriter.h
@@ -143,116 +90,150 @@ SET (LIB_SRC_LIST
     libffmpegthumbnailer/filmstripfilter.cpp
 )
 
-IF (HAVE_JPEG)
-    LIST(APPEND LIB_SRC_LIST libffmpegthumbnailer/jpegwriter.h libffmpegthumbnailer/jpegwriter.cpp)
-    LIST(APPEND FFMPEGTHUMBNAILER_INCLUDE_DIRS ${JPEG_INCLUDE_DIR})
-    LIST(APPEND FFMPEGTHUMBNAILER_LIBRARY_DIRS ${JPEG_LIBRARY_DIRS})
-    LIST(APPEND FFMPEGTHUMBNAILER_LIBRARIES ${JPEG_LIBRARIES})
-ENDIF ()
+set_target_properties(libffmpegthumbnailerobj PROPERTIES POSITION_INDEPENDENT_CODE ON)
+target_compile_definitions(libffmpegthumbnailerobj PRIVATE -D__STDC_CONSTANT_MACROS)
+target_include_directories(libffmpegthumbnailerobj PRIVATE
+    $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}>
+)
 
-IF (HAVE_PNG)
-    LIST(APPEND LIB_SRC_LIST libffmpegthumbnailer/pngwriter.h libffmpegthumbnailer/pngwriter.cpp)
-    LIST(APPEND FFMPEGTHUMBNAILER_INCLUDE_DIRS ${PNG_INCLUDE_DIR})
-    LIST(APPEND FFMPEGTHUMBNAILER_LIBRARY_DIRS ${PNG_LIBRARY_DIRS})
-    LIST(APPEND FFMPEGTHUMBNAILER_LIBRARIES ${PNG_LIBRARIES})
-ENDIF ()
+if (HAVE_JPEG)
+    target_sources(libffmpegthumbnailerobj PRIVATE libffmpegthumbnailer/jpegwriter.h libffmpegthumbnailer/jpegwriter.cpp)
+    target_include_directories(libffmpegthumbnailerobj PRIVATE ${JPEG_INCLUDE_DIR})
+endif ()
 
-SET (FFMPEGTHUMBNAILER_SOVERSION_CURRENT 4)
-SET (FFMPEGTHUMBNAILER_SOVERSION_REVISION 13)
-SET (FFMPEGTHUMBNAILER_SOVERSION_AGE 1)
+if (HAVE_PNG)
+    target_sources(libffmpegthumbnailerobj PRIVATE libffmpegthumbnailer/pngwriter.h libffmpegthumbnailer/pngwriter.cpp)
+endif ()
 
-ADD_DEFINITIONS("-D__STDC_CONSTANT_MACROS")
+set (FFMPEGTHUMBNAILER_SOVERSION_CURRENT 4)
+set (FFMPEGTHUMBNAILER_SOVERSION_REVISION 13)
+set (FFMPEGTHUMBNAILER_SOVERSION_AGE 1)
 
-IF (ENABLE_STATIC)
-    ADD_LIBRARY(libffmpegthumbnailerstatic STATIC ${LIB_SRC_LIST})
-    TARGET_INCLUDE_DIRECTORIES(libffmpegthumbnailerstatic PRIVATE ${FFMPEGTHUMBNAILER_INCLUDE_DIRS} ${CMAKE_BINARY_DIR})
-    TARGET_LINK_LIBRARIES(libffmpegthumbnailerstatic ${FFMPEGTHUMBNAILER_LIBRARIES})
-    SET_TARGET_PROPERTIES(libffmpegthumbnailerstatic PROPERTIES
+if (ENABLE_STATIC)
+    add_library(libffmpegthumbnailerstatic STATIC $<TARGET_OBJECTS:libffmpegthumbnailerobj>)
+    target_link_libraries(libffmpegthumbnailerstatic
+        FFmpeg::avformat
+        FFmpeg::avcodec
+        FFmpeg::avutil
+        FFmpeg::avfilter
+        $<$<BOOL:${HAVE_JPEG}>:${JPEG_LIBRARIES}>
+        $<$<BOOL:${HAVE_PNG}>:PNG::PNG>
+        $<$<BOOL:${ENABLE_GIO}>:${CMAKE_DL_LIBS}>
+    )
+
+    set_target_properties(libffmpegthumbnailerstatic PROPERTIES
         OUTPUT_NAME ffmpegthumbnailer
     )
-    SET (STATIC_LIB libffmpegthumbnailerstatic)
-ENDIF ()
-IF (ENABLE_SHARED)
-    ADD_LIBRARY(libffmpegthumbnailer SHARED ${LIB_SRC_LIST})
-    TARGET_INCLUDE_DIRECTORIES(libffmpegthumbnailer PRIVATE ${FFMPEGTHUMBNAILER_INCLUDE_DIRS} ${CMAKE_BINARY_DIR})
-    TARGET_LINK_LIBRARIES(libffmpegthumbnailer ${FFMPEGTHUMBNAILER_LIBRARIES})
-    SET_TARGET_PROPERTIES(libffmpegthumbnailer PROPERTIES
+    set (STATIC_LIB libffmpegthumbnailerstatic)
+endif ()
+
+if (ENABLE_SHARED)
+    add_library(libffmpegthumbnailer SHARED $<TARGET_OBJECTS:libffmpegthumbnailerobj>)
+    target_link_libraries(libffmpegthumbnailer
+        FFmpeg::avformat
+        FFmpeg::avcodec
+        FFmpeg::avutil
+        FFmpeg::avfilter
+        $<$<BOOL:${HAVE_JPEG}>:${JPEG_LIBRARIES}>
+        $<$<BOOL:${HAVE_PNG}>:PNG::PNG>
+    )
+
+    set_target_properties(libffmpegthumbnailer PROPERTIES
         PREFIX ""
         VERSION ${FFMPEGTHUMBNAILER_SOVERSION_CURRENT}.${FFMPEGTHUMBNAILER_SOVERSION_REVISION}.${FFMPEGTHUMBNAILER_SOVERSION_AGE}
         SOVERSION ${FFMPEGTHUMBNAILER_SOVERSION_CURRENT}
         PUBLIC_HEADER "${LIB_HDRS}"
         MACOSX_RPATH TRUE
     )
-    SET (SHARED_LIB libffmpegthumbnailer)
-ENDIF ()
+    set (SHARED_LIB libffmpegthumbnailer)
+endif ()
 
 ADD_EXECUTABLE(ffmpegthumbnailer main.cpp)
-TARGET_INCLUDE_DIRECTORIES(ffmpegthumbnailer PRIVATE ${CMAKE_BINARY_DIR})
-IF (ENABLE_SHARED)
-    TARGET_LINK_LIBRARIES(ffmpegthumbnailer ${SHARED_LIB})
-ELSE ()
-    TARGET_LINK_LIBRARIES(ffmpegthumbnailer ${STATIC_LIB} ${FFMPEGTHUMBNAILER_PKG_LIBS} pthread)
-ENDIF ()
+target_include_directories(ffmpegthumbnailer PRIVATE ${CMAKE_BINARY_DIR})
 
-INSTALL(TARGETS ffmpegthumbnailer ${STATIC_LIB} ${SHARED_LIB}
+if (ENABLE_GIO)
+    find_path(DL_INCLUDE dlfcn.h)
+    target_include_directories(ffmpegthumbnailer PRIVATE ${DL_INCLUDE})
+    target_link_libraries(ffmpegthumbnailer ${CMAKE_DL_LIBS})
+endif ()
+
+if (ENABLE_SHARED)
+    target_link_libraries(ffmpegthumbnailer ${SHARED_LIB})
+else ()
+    target_link_libraries(ffmpegthumbnailer ${STATIC_LIB})
+endif ()
+
+install(TARGETS ffmpegthumbnailer ${STATIC_LIB} ${SHARED_LIB}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/libffmpegthumbnailer
 )
 
-INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/man/ffmpegthumbnailer.1 DESTINATION ${CMAKE_INSTALL_MANDIR}/man1)
-INSTALL(FILES ${CMAKE_BINARY_DIR}/libffmpegthumbnailer.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/man/ffmpegthumbnailer.1 DESTINATION ${CMAKE_INSTALL_MANDIR}/man1)
+install(FILES ${CMAKE_BINARY_DIR}/libffmpegthumbnailer.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 
-IF (ENABLE_THUMBNAILER)
-    INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/dist/ffmpegthumbnailer.thumbnailer DESTINATION ${CMAKE_INSTALL_DATADIR}/thumbnailers)
-ENDIF ()
+if (ENABLE_THUMBNAILER)
+    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/dist/ffmpegthumbnailer.thumbnailer DESTINATION ${CMAKE_INSTALL_DATADIR}/thumbnailers)
+endif ()
 
-CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/config.h.in ${CMAKE_BINARY_DIR}/config.h)
-CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/libffmpegthumbnailer.pc.in ${CMAKE_BINARY_DIR}/libffmpegthumbnailer.pc @ONLY)
-CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/CMakeUninstall.cmake.in" "${CMAKE_CURRENT_BINARY_DIR}/CMakeUninstall.cmake" IMMEDIATE @ONLY)
-ADD_CUSTOM_TARGET(uninstall COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/CMakeUninstall.cmake)
+configure_file(${CMAKE_SOURCE_DIR}/config.h.in ${CMAKE_BINARY_DIR}/config.h)
+configure_file(${CMAKE_SOURCE_DIR}/libffmpegthumbnailer.pc.in ${CMAKE_BINARY_DIR}/libffmpegthumbnailer.pc @ONLY)
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/CMakeUninstall.cmake.in" "${CMAKE_CURRENT_BINARY_DIR}/CMakeUninstall.cmake" IMMEDIATE @ONLY)
+add_custom_target(uninstall COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/CMakeUninstall.cmake)
 
-IF (ENABLE_TESTS)
-    ENABLE_TESTING()
+if (ENABLE_TESTS)
+    enable_testing()
     ADD_SUBDIRECTORY(test)
-ENDIF ()
+endif ()
 
-MESSAGE(STATUS "")
-MESSAGE(STATUS "CONFIGURATION SUMMARY")
+message(STATUS "")
+message(STATUS "CONFIGURATION SUMMARY")
 
-IF (HAVE_PNG)
-    MESSAGE(STATUS "png support          : enabled")
-ELSE ()
-    MESSAGE(STATUS "png support          : disabled")
-ENDIF ()
+if (HAVE_PNG)
+    message(STATUS "png support          : enabled")
+else ()
+    message(STATUS "png support          : disabled")
+endif ()
 
-IF (HAVE_JPEG)
-    MESSAGE(STATUS "jpeg support         : enabled")
-ELSE ()
-    MESSAGE(STATUS "jpeg support         : disabled")
-ENDIF ()
+if (HAVE_JPEG)
+    message(STATUS "jpeg support         : enabled")
+else ()
+    message(STATUS "jpeg support         : disabled")
+endif ()
 
-IF (ENABLE_GIO)
-    MESSAGE(STATUS "gio support          : enabled")
-ELSE ()
-    MESSAGE(STATUS "gio support          : disabled")
-ENDIF ()
+if (ENABLE_GIO)
+    message(STATUS "gio support          : enabled")
+else ()
+    message(STATUS "gio support          : disabled")
+endif ()
 
-IF (ENABLE_THUMBNAILER)
-    MESSAGE(STATUS "register thumbnailer : enabled")
-ELSE ()
-    MESSAGE(STATUS "register thumbnailer : disabled")
-ENDIF ()
+if (ENABLE_THUMBNAILER)
+    message(STATUS "register thumbnailer : enabled")
+else ()
+    message(STATUS "register thumbnailer : disabled")
+endif ()
 
-IF (ENABLE_TESTS)
-    MESSAGE(STATUS "unittests            : enabled")
-ELSE ()
-    MESSAGE(STATUS "unittests            : disabled")
-ENDIF ()
+if (ENABLE_TESTS)
+    message(STATUS "unittests            : enabled")
+else ()
+    message(STATUS "unittests            : disabled")
+endif ()
 
-IF (CMAKE_BUILD_TYPE STREQUAL "Debug")
-    MESSAGE(STATUS "debug mode           : enabled")
-ELSE ()
-    MESSAGE(STATUS "debug mode           : disabled")
-ENDIF ()
+if (ENABLE_SHARED)
+    message(STATUS "shared library       : enabled")
+else ()
+    message(STATUS "shared library       : disabled")
+endif ()
+
+if (ENABLE_STATIC)
+    message(STATUS "static library       : enabled")
+else ()
+    message(STATUS "static library       : disabled")
+endif ()
+
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    message(STATUS "debug mode           : enabled")
+else ()
+    message(STATUS "debug mode           : disabled")
+endif ()

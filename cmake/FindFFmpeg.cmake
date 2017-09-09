@@ -1,0 +1,108 @@
+include(FindPackageHandleStandardArgs)
+
+find_package(PkgConfig)
+pkg_check_modules(AVCODEC libavcodec)
+pkg_check_modules(AVFORMAT libavformat)
+pkg_check_modules(AVUTIL libavutil)
+pkg_check_modules(AVFILTER libavfilter)
+
+find_package_handle_standard_args(FFmpeg
+    FOUND_VAR FFmpeg_FOUND
+    REQUIRED_VARS AVCODEC_FOUND AVFORMAT_FOUND AVUTIL_FOUND AVFILTER_FOUND
+)
+
+FIND_LIBRARY(AVCODEC_LIBRARY_PATH
+    NAMES ${AVCODEC_LIBRARIES}
+    PATHS ${AVCODEC_LIBRARY_DIRS}
+)
+if (NOT AVCODEC_LIBRARY_PATH)
+    message(FATAL_ERROR "Could not determine full avcodec library path")
+endif ()
+
+FIND_LIBRARY(AVFORMAT_LIBRARY_PATH
+    NAMES ${AVFORMAT_LIBRARIES}
+    PATHS ${AVFORMAT_LIBRARY_DIRS}
+)
+if (NOT AVFORMAT_LIBRARY_PATH)
+    message(FATAL_ERROR "Could not determine full avformat library path")
+endif ()
+
+FIND_LIBRARY(AVFILTER_LIBRARY_PATH
+    NAMES ${AVFILTER_LIBRARIES}
+    PATHS ${AVFILTER_LIBRARY_DIRS}
+)
+if (NOT AVFILTER_LIBRARY_PATH)
+    message(FATAL_ERROR "Could not determine full avfilter library path")
+endif ()
+
+FIND_LIBRARY(AVUTIL_LIBRARY_PATH
+    NAMES ${AVUTIL_LIBRARIES}
+    PATHS ${AVUTIL_LIBRARY_DIRS}
+)
+if (NOT AVUTIL_LIBRARY_PATH)
+    message(FATAL_ERROR "Could not determine full avutil library path")
+endif ()
+
+mark_as_advanced(
+    AVFORMAT_LIBRARY_PATH
+    AVUTIL_LIBRARY_PATH
+    AVCODEC_LIBRARY_PATH
+    AVFILTER_LIBRARY_PATH
+)
+
+message(STATUS "FFmpeg found: ${FFmpeg_FOUND}")
+message(STATUS "  avcodec:  ${AVCODEC_LIBRARY_PATH}")
+message(STATUS "  avformat: ${AVFORMAT_LIBRARY_PATH}")
+message(STATUS "  avfilter: ${AVFILTER_LIBRARY_PATH}")
+message(STATUS "  avutil:   ${AVUTIL_LIBRARY_PATH}")
+
+if(FFmpeg_FOUND AND NOT TARGET FFmpeg::avformat)
+    add_library(FFmpeg::avformat UNKNOWN IMPORTED)
+    set_target_properties(FFmpeg::avformat PROPERTIES
+        IMPORTED_LINK_INTERFACE_LANGUAGES "C"
+        INTERFACE_INCLUDE_DIRECTORIES "${AVFORMAT_INCLUDE_DIRS}"
+        INTERFACE_COMPILE_DEFINITIONS __STDC_CONSTANT_MACROS
+        INTERFACE_COMPILE_OPTIONS "${AVFORMAT_CFLAGS_OTHER}"
+        IMPORTED_LOCATION ${AVFORMAT_LIBRARY_PATH}
+        LINK_FLAGS "${AVFORMAT_LDFLAGS}"
+    )
+endif()
+
+if(FFmpeg_FOUND AND NOT TARGET FFmpeg::avutil)
+    add_library(FFmpeg::avutil UNKNOWN IMPORTED)
+    set_target_properties(FFmpeg::avutil PROPERTIES
+        IMPORTED_LINK_INTERFACE_LANGUAGES "C"
+        INTERFACE_INCLUDE_DIRECTORIES "${AVUTIL_INCLUDE_DIRS}"
+        INTERFACE_COMPILE_DEFINITIONS __STDC_CONSTANT_MACROS
+        INTERFACE_COMPILE_OPTIONS "${AVUTIL_CFLAGS_OTHER}"
+        IMPORTED_LOCATION ${AVUTIL_LIBRARY_PATH}
+        LINK_FLAGS "${AVUTIL_LDFLAGS}"
+    )
+endif()
+
+if(FFmpeg_FOUND AND NOT TARGET FFmpeg::avcodec)
+    add_library(FFmpeg::avcodec UNKNOWN IMPORTED)
+    set_target_properties(FFmpeg::avcodec PROPERTIES
+        IMPORTED_LINK_INTERFACE_LANGUAGES "C"
+        INTERFACE_INCLUDE_DIRECTORIES "${AVCODEC_INCLUDE_DIRS}"
+        INTERFACE_COMPILE_DEFINITIONS __STDC_CONSTANT_MACROS
+        INTERFACE_COMPILE_OPTIONS "${AVCODEC_CFLAGS_OTHER}"
+        IMPORTED_LOCATION ${AVCODEC_LIBRARY_PATH}
+        LINK_FLAGS "${AVCODEC_LDFLAGS}"
+    )
+endif()
+
+if(FFmpeg_FOUND AND NOT TARGET FFmpeg::avfilter)
+    add_library(FFmpeg::avfilter UNKNOWN IMPORTED)
+    set_target_properties(FFmpeg::avfilter PROPERTIES
+        IMPORTED_LINK_INTERFACE_LANGUAGES "C"
+        INTERFACE_INCLUDE_DIRECTORIES "${AVFILTER_INCLUDE_DIRS}"
+        INTERFACE_COMPILE_DEFINITIONS __STDC_CONSTANT_MACROS
+        INTERFACE_COMPILE_OPTIONS "${AVFILTER_CFLAGS_OTHER}"
+        IMPORTED_LOCATION ${AVFILTER_LIBRARY_PATH}
+        LINK_FLAGS "${AVFILTER_LDFLAGS}"
+    )
+endif()
+
+find_package(Threads)
+set_property(TARGET FFmpeg::avutil APPEND PROPERTY INTERFACE_LINK_LIBRARIES Threads::Threads)
