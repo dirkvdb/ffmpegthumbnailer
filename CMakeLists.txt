@@ -177,8 +177,8 @@ if (ENABLE_THUMBNAILER)
     install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/dist/ffmpegthumbnailer.thumbnailer DESTINATION ${CMAKE_INSTALL_DATADIR}/thumbnailers)
 endif ()
 
-configure_file(${CMAKE_SOURCE_DIR}/config.h.in ${CMAKE_BINARY_DIR}/config.h)
-configure_file(${CMAKE_SOURCE_DIR}/libffmpegthumbnailer.pc.in ${CMAKE_BINARY_DIR}/libffmpegthumbnailer.pc @ONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_BINARY_DIR}/config.h)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/libffmpegthumbnailer.pc.in ${CMAKE_BINARY_DIR}/libffmpegthumbnailer.pc @ONLY)
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/CMakeUninstall.cmake.in" "${CMAKE_CURRENT_BINARY_DIR}/CMakeUninstall.cmake" IMMEDIATE @ONLY)
 add_custom_target(uninstall COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/CMakeUninstall.cmake)
 
