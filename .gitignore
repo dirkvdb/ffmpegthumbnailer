@@ -3,4 +3,5 @@ out
 build
 *.sublime-workspace
 xcode
-.vscode
+.cmaketools.json
+launch.json
