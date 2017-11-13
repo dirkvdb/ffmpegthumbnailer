@@ -1,5 +1,8 @@
 {
     "cmake.buildDirectory": "${workspaceRoot}/build/ninja",
     "C_Cpp.intelliSenseEngine": "Default",
-    "C_Cpp.intelliSenseEngineFallback": "Disabled"
+    "C_Cpp.intelliSenseEngineFallback": "Disabled",
+    "files.associations": {
+        "config.h": "c"
+    }
 }

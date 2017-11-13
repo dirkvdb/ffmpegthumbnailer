@@ -24,7 +24,7 @@ if (APPLE)
     set(MACOSX_RPATH ON)
 endif ()
 
-project(${PACKAGE})
+project(${PACKAGE} LANGUAGES C CXX)
 include(CPack)
 include(GNUInstallDirs)
 
@@ -92,8 +92,9 @@ add_library(libffmpegthumbnailerobj OBJECT
 
 set_target_properties(libffmpegthumbnailerobj PROPERTIES POSITION_INDEPENDENT_CODE ON)
 target_compile_definitions(libffmpegthumbnailerobj PRIVATE -D__STDC_CONSTANT_MACROS)
-target_include_directories(libffmpegthumbnailerobj PRIVATE
-    $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}>
+target_include_directories(libffmpegthumbnailerobj
+    PRIVATE
+        $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}>
 )
 
 if (HAVE_JPEG)
@@ -124,6 +125,10 @@ if (ENABLE_STATIC)
     set_target_properties(libffmpegthumbnailerstatic PROPERTIES
         OUTPUT_NAME ffmpegthumbnailer
     )
+    target_include_directories(libffmpegthumbnailerstatic
+        PUBLIC
+            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    )   
     set (STATIC_LIB libffmpegthumbnailerstatic)
 endif ()
 
@@ -144,6 +149,10 @@ if (ENABLE_SHARED)
         SOVERSION ${FFMPEGTHUMBNAILER_SOVERSION_CURRENT}
         PUBLIC_HEADER "${LIB_HDRS}"
         MACOSX_RPATH TRUE
+    )
+    target_include_directories(libffmpegthumbnailer
+        PUBLIC
+            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
     )
     set (SHARED_LIB libffmpegthumbnailer)
 endif ()
