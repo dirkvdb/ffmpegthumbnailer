@@ -38,6 +38,15 @@ TEST_CASE("C++ API Usage")
         CHECK_FALSE(buffer.empty());
     }
 
+    SECTION("CreateThumbRawData")
+    {
+        std::string input = std::string(TEST_DATADIR) + "/test_sample.flv";
+
+        std::vector<uint8_t> buffer;
+        videoThumbnailer.generateThumbnail(input, Rgb, buffer);
+        CHECK_FALSE(buffer.empty());
+    }
+
     SECTION("SpecifyInvalidSize")
     {
         CHECK_THROWS_AS(videoThumbnailer.setThumbnailSize("w="), std::invalid_argument);

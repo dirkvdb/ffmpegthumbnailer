@@ -77,6 +77,8 @@ add_library(libffmpegthumbnailerobj OBJECT
     libffmpegthumbnailer/moviedecoder.cpp
     libffmpegthumbnailer/imagewriter.h
     libffmpegthumbnailer/imagewriterfactory.h
+    libffmpegthumbnailer/rgbwriter.h
+    libffmpegthumbnailer/rgbwriter.cpp
     libffmpegthumbnailer/stringoperations.h
     libffmpegthumbnailer/stringoperations.cpp
     libffmpegthumbnailer/videothumbnailer.cpp

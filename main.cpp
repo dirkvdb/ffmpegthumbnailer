@@ -198,7 +198,7 @@ void printUsage()
          << "  -s<n>   : thumbnail size (use 0 for original size) (default: 128)\n"
          << "  -t<n|s> : time to seek to (percentage or absolute time hh:mm:ss) (default: 10%)\n"
          << "  -q<n>   : image quality (0 = bad, 10 = best) (default: 8)\n"
-         << "  -c      : override image format (jpeg or png) (default: determined by filename)\n"
+         << "  -c      : override image format (jpeg, png or rgb) (default: determined by filename)\n"
          << "  -a      : ignore aspect ratio and generate square thumbnail\n"
          << "  -f      : create a movie strip overlay\n"
          //<< "  -p      : use smarter frame selection (slower)\n"
@@ -221,6 +221,11 @@ ThumbnailerImageType determineImageTypeFromString(const std::string& type)
     if (lowercaseType == "jpeg" || lowercaseType == "jpg")
     {
         return Jpeg;
+    }
+
+    if (lowercaseType == "raw" || lowercaseType == "rgb")
+    {
+        return Rgb;
     }
 
     throw logic_error("Invalid image type specified");

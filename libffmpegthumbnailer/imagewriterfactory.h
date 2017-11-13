@@ -21,6 +21,7 @@
 
 #include "imagewriter.h"
 #include "imagetypes.h"
+#include "rgbwriter.h"
 
 #ifdef HAVE_PNG
 #include "pngwriter.h"
@@ -58,6 +59,8 @@ public:
 #else
                 throw std::logic_error("ffmpegthumbnailer was not compiled with jpeg support");
 #endif
+            case Rgb:
+                return new RgbWriter(output);
             default:
                 throw std::logic_error("ImageWriterFactory::createImageWriter: Invalid image type specified");
         }
