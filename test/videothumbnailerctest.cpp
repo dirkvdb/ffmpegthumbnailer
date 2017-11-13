@@ -6,6 +6,7 @@
 #include <fstream>
 #include <string.h>
 #include <catch.hpp>
+#include <iostream>
 
 using namespace std;
 
@@ -17,14 +18,22 @@ TEST_CASE("C API Usage")
     auto* thumbnailer = video_thumbnailer_create();
     auto* imageData = video_thumbnailer_create_image_data();
 
+    thumbnailer->seek_percentage        = 15;
+    thumbnailer->overlay_film_strip     = 1;
+    thumbnailer->thumbnail_size         = 256;
+
+    video_thumbnailer_set_log_callback(thumbnailer, [] (ThumbnailerLogLevel lvl, const char* msg) {
+        if (lvl == ThumbnailerLogLevelError)
+        {
+            std::cerr << msg << "\n";
+        }
+    });
+
 #ifdef HAVE_JPEG
     SECTION("CreateThumbJpeg")
     {
-        thumbnailer->seek_percentage        = 15;
-        thumbnailer->overlay_film_strip     = 1;
-        thumbnailer->thumbnail_size         = 256;
-        thumbnailer->thumbnail_image_type   = Jpeg;
 
+        thumbnailer->thumbnail_image_type   = Jpeg;
         std::string input = std::string(TEST_DATADIR) + "/test_sample.flv";
         REQUIRE(0 == video_thumbnailer_generate_thumbnail_to_buffer(thumbnailer, input.c_str(), imageData));
 
@@ -36,9 +45,6 @@ TEST_CASE("C API Usage")
 #ifdef HAVE_PNG
     SECTION("CreateThumbPng")
     {
-        thumbnailer->seek_percentage = 15;
-        thumbnailer->overlay_film_strip = 1;
-        thumbnailer->thumbnail_size = 256;
         thumbnailer->thumbnail_image_type = Png;
 
         std::string input = std::string(TEST_DATADIR) + "/test_sample.flv";
@@ -48,6 +54,44 @@ TEST_CASE("C API Usage")
         CHECK(nullptr != imageData->image_data_ptr);
     }
 #endif
+
+    SECTION("CreateThumbRgb")
+    {
+        thumbnailer->thumbnail_image_type = Rgb;
+
+        std::string input = std::string(TEST_DATADIR) + "/test_sample.flv";
+        REQUIRE(0 == video_thumbnailer_generate_thumbnail_to_buffer(thumbnailer, input.c_str(), imageData));
+
+        CHECK(0 != imageData->image_data_size);
+        CHECK(nullptr != imageData->image_data_ptr);
+    }
+
+    SECTION("CreateThumbRgbStringSizeSpecification1")
+    {
+        thumbnailer->thumbnail_image_type = Rgb;
+        thumbnailer->thumbnail_size_string = (char*)"h=234";
+
+        std::string input = std::string(TEST_DATADIR) + "/test_sample.flv";
+        REQUIRE(0 == video_thumbnailer_generate_thumbnail_to_buffer(thumbnailer, input.c_str(), imageData));
+
+        CHECK(0 != imageData->image_data_size);
+        CHECK(234 == imageData->image_data_height);
+        CHECK(nullptr != imageData->image_data_ptr);
+    }
+
+    SECTION("CreateThumbRgbStringSizeSpecification2")
+    {
+        thumbnailer->thumbnail_image_type = Rgb;
+        thumbnailer->thumbnail_size_string = (char*)"w=200:h=234";
+
+        std::string input = std::string(TEST_DATADIR) + "/test_sample.flv";
+        REQUIRE(0 == video_thumbnailer_generate_thumbnail_to_buffer(thumbnailer, input.c_str(), imageData));
+
+        CHECK(0 != imageData->image_data_size);
+        CHECK(234 == imageData->image_data_height);
+        CHECK(200 == imageData->image_data_width);
+        CHECK(nullptr != imageData->image_data_ptr);
+    }
 
     SECTION("CreateThumbInvalidFile")
     {

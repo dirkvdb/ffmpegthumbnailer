@@ -10,7 +10,7 @@ target_include_directories(ffmpegthumbnailertest PRIVATE
     ${CMAKE_BINARY_DIR}
 )
 
-# test binary built with gcc instead of g++
+# test binary built with a c compiler instead of c++ compiler
 add_executable(ffmpegthumbnailerctest
     testrunner.c
 )

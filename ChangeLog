@@ -6,6 +6,7 @@ FFmpegThumbnailer 2.x.x
 - Fix prefer_embedded_metadata in c api (thanks to aedis)
 - Fix crash when setting a log callback using the c api
 - Check for https as well when skipping stat call (thanks to HearstCorp)
+- Support specifying the size as string using the c api
 - Support raw rgb data as image type
 
 FFmpegThumbnailer 2.2.0

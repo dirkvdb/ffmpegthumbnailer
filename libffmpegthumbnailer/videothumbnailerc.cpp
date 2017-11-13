@@ -52,6 +52,7 @@ extern "C" video_thumbnailer* video_thumbnailer_create(void)
     thumbnailer->maintain_aspect_ratio      = 1;
     thumbnailer->prefer_embedded_metadata   = 0;
     thumbnailer->av_format_context          = nullptr;
+    thumbnailer->thumbnail_size_string      = nullptr;
     thumbnailer->tdata                      = new thumbnailer_data();
 
     return thumbnailer;
@@ -93,7 +94,16 @@ extern "C" void video_thumbnailer_destroy_image_data(image_data* data)
 static void setProperties(video_thumbnailer* thumbnailer)
 {
     auto& videoThumbnailer = thumbnailer->tdata->thumbnailer;
-    videoThumbnailer.setThumbnailSize(thumbnailer->thumbnail_size);
+
+    if (thumbnailer->thumbnail_size_string)
+    {
+        videoThumbnailer.setThumbnailSize(thumbnailer->thumbnail_size_string);
+    }
+    else
+    {
+        videoThumbnailer.setThumbnailSize(thumbnailer->thumbnail_size);
+    }
+
     videoThumbnailer.setWorkAroundIssues(thumbnailer->workaround_bugs != 0);
     videoThumbnailer.setImageQuality(thumbnailer->thumbnail_image_quality);
     videoThumbnailer.setMaintainAspectRatio(thumbnailer->maintain_aspect_ratio != 0);

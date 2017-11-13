@@ -22,6 +22,7 @@
 #include <array>
 #include <sstream>
 #include <memory>
+#include <regex>
 
 extern "C" {
 #include <libavutil/display.h>
@@ -224,28 +225,70 @@ void MovieDecoder::initializeVideo(bool preferEmbeddedMetadata)
 
 std::string MovieDecoder::createScaleString(const std::string& sizeString, bool maintainAspectRatio)
 {
-    int size;
+    int width = -1;
+    int height = -1;
     bool pureNumericSize = true;
-    if (sizeString.size() > 2 && sizeString[1] == '=')
+
+    std::regex sizeRegex(R"r(([w|h])=(\d+)(?::([w|h])=(\d+))?)r");
+    std::smatch baseMatch;
+    if (std::regex_match(sizeString, baseMatch, sizeRegex))
     {
+        if (baseMatch.size() != 3 && baseMatch.size() != 5)
+        {
+            throw std::runtime_error("Failed to parse size string");
+        }
+
+        auto parseMatch = [&width, &height] (std::smatch& match, size_t index) {
+            auto specifier = match[index].str();
+            if (specifier == "w")
+            {
+                width = std::stoi(match[index+1].str());
+            }
+            else if (specifier == "h")
+            {
+                height = std::stoi(match[index+1].str());
+            }
+        };
+
         pureNumericSize = false;
-        size = std::stoi(&sizeString[2]);
+        if (baseMatch.size() >= 3)
+        {
+            parseMatch(baseMatch, 1);
+        }
+
+        if (baseMatch.size() == 5)
+        {
+            parseMatch(baseMatch, 3);
+        }
     }
     else
     {
-        size = std::stoi(sizeString);
+        width = std::stoi(sizeString);
     }
 
     std::stringstream scale;
 
-    if (!maintainAspectRatio)
+    if (width != -1 && height != -1)
     {
-        scale << "w=" << size << ":h=" << size;
+        scale << "w=" << width << ":h=" << height;
+    }
+    else if (!maintainAspectRatio)
+    {
+        if (width == -1)
+        {
+            scale << "w=" << height << ":h=" << height;
+        }
+        else
+        {
+            scale << "w=" << width << ":h=" << width;
+        }
     }
     else
     {
-        auto width      = m_pVideoCodecContext->width;
-        auto height     = m_pVideoCodecContext->height;
+        auto size = (height == -1) ? width : height;
+
+        width      = m_pVideoCodecContext->width;
+        height     = m_pVideoCodecContext->height;
 
         AVRational par = av_guess_sample_aspect_ratio(m_pFormatContext, m_pVideoStream, m_pFrame);
         // if the pixel aspect ratio is defined and is not 1, we have an anamorphic stream

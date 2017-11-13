@@ -42,6 +42,7 @@ typedef struct video_thumbnailer_struct
     struct AVFormatContext*     av_format_context;          /* default = NULL */
     int                         maintain_aspect_ratio;      /* default = 1 */
     int                         prefer_embedded_metadata;   /* default = 0 */
+    char*                       thumbnail_size_string;      /* default = NULL (format w=128:h=128, only one dimension is required, overrides thumbnail_size if set*/
 
     struct thumbnailer_data*    tdata;                      /* for internal use only */
 } video_thumbnailer;
