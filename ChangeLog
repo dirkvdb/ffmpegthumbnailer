@@ -4,6 +4,7 @@ FFmpegThumbnailer 2.x.x
 - Fix libffmpegthumbnailer.pc to work with multilib systems (thanks to orbea)
 - Fix rotation of 180° rotated videos (thanks to munzli)
 - Fix prefer_embedded_metadata in c api (thanks to aedis)
+- Fix crash when setting a log callback using the c api
 - Check for https as well when skipping stat call (thanks to HearstCorp)
 
 FFmpegThumbnailer 2.2.0
