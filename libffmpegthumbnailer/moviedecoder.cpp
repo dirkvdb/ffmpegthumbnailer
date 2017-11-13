@@ -229,41 +229,48 @@ std::string MovieDecoder::createScaleString(const std::string& sizeString, bool 
     int height = -1;
     bool pureNumericSize = true;
 
-    std::regex sizeRegex(R"r(([w|h])=(\d+)(?::([w|h])=(\d+))?)r");
-    std::smatch baseMatch;
-    if (std::regex_match(sizeString, baseMatch, sizeRegex))
+    try
     {
-        if (baseMatch.size() != 3 && baseMatch.size() != 5)
+        std::regex sizeRegex(R"r(([w|h])=(\d+)(?::([w|h])=(\d+))?)r");
+        std::smatch baseMatch;
+        if (std::regex_match(sizeString, baseMatch, sizeRegex))
         {
-            throw std::runtime_error("Failed to parse size string");
-        }
-
-        auto parseMatch = [&width, &height] (std::smatch& match, size_t index) {
-            auto specifier = match[index].str();
-            if (specifier == "w")
+            if (baseMatch.size() != 3 && baseMatch.size() != 5)
             {
-                width = std::stoi(match[index+1].str());
+                throw std::runtime_error("Failed to parse size string");
             }
-            else if (specifier == "h")
+
+            auto parseMatch = [&width, &height] (std::smatch& match, size_t index) {
+                auto specifier = match[index].str();
+                if (specifier == "w")
+                {
+                    width = std::stoi(match[index+1].str());
+                }
+                else if (specifier == "h")
+                {
+                    height = std::stoi(match[index+1].str());
+                }
+            };
+
+            pureNumericSize = false;
+            if (baseMatch.size() >= 3)
             {
-                height = std::stoi(match[index+1].str());
+                parseMatch(baseMatch, 1);
             }
-        };
 
-        pureNumericSize = false;
-        if (baseMatch.size() >= 3)
-        {
-            parseMatch(baseMatch, 1);
+            if (baseMatch.size() == 5)
+            {
+                parseMatch(baseMatch, 3);
+            }
         }
-
-        if (baseMatch.size() == 5)
+        else
         {
-            parseMatch(baseMatch, 3);
+            width = std::stoi(sizeString);
         }
     }
-    else
+    catch (const std::regex_error& e)
     {
-        width = std::stoi(sizeString);
+        throw std::runtime_error("Failed to parse size string: " + std::string(e.what()));
     }
 
     std::stringstream scale;
