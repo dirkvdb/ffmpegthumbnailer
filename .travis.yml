@@ -67,6 +67,11 @@ before_install:
       export PKG_CONFIG_PATH=${DEPS_DIR}/local/lib/pkgconfig
       export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${DEPS_DIR}/local/lib"
       export LDFLAGS="-L${DEPS_DIR}/local/lib"
+
+      if [[ "${CXX}" == "g++" ]]
+        export CC=gcc-4.9
+        export CXX=g++-4.9
+      fi
     fi
 
   ############################################################################
