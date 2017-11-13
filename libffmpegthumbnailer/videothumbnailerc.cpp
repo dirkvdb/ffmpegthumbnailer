@@ -69,6 +69,8 @@ extern "C" image_data* video_thumbnailer_create_image_data(void)
 
     data->image_data_ptr    = 0;
     data->image_data_size   = 0;
+    data->image_data_width  = 0;
+    data->image_data_height = 0;
     data->internal_data     = new std::vector<uint8_t>();
 
     return data;
@@ -78,6 +80,8 @@ extern "C" void video_thumbnailer_destroy_image_data(image_data* data)
 {
     data->image_data_ptr    = 0;
     data->image_data_size   = 0;
+    data->image_data_width  = 0;
+    data->image_data_height = 0;
 
     std::vector<uint8_t>* dataVector = reinterpret_cast<std::vector<uint8_t>* >(data->internal_data);
     delete dataVector;
@@ -118,9 +122,11 @@ extern "C" int video_thumbnailer_generate_thumbnail_to_buffer(video_thumbnailer*
         auto dataVector         = reinterpret_cast<std::vector<uint8_t>*>(generated_image_data->internal_data);
         auto& videoThumbnailer  = thumbnailer->tdata->thumbnailer;
         setProperties(thumbnailer);
-        videoThumbnailer.generateThumbnail(movie_filename, thumbnailer->thumbnail_image_type, *dataVector, thumbnailer->av_format_context);
+        auto info = videoThumbnailer.generateThumbnail(movie_filename, thumbnailer->thumbnail_image_type, *dataVector, thumbnailer->av_format_context);
         generated_image_data->image_data_ptr = &dataVector->front();
-        generated_image_data->image_data_size = dataVector->size();
+        generated_image_data->image_data_size = static_cast<int>(dataVector->size());
+        generated_image_data->image_data_width = info.width;
+        generated_image_data->image_data_height = info.height;
     }
     catch (const std::exception& e)
     {

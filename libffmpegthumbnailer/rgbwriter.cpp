@@ -57,16 +57,23 @@ void RgbWriter::setText(const string& /*key*/, const string& /*value*/)
 
 void RgbWriter::writeFrame(uint8_t** rgbData, int width, int height, int /*quality*/)
 {
-    size_t size = width * height * 3;
+    const size_t lineSize = static_cast<size_t>(width * 3);
 
     if (m_FilePtr)
     {
-        fwrite(rgbData, sizeof(uint8_t), size, m_FilePtr);
+        for (int i = 0; i < height; ++i)
+        {
+            fwrite(rgbData[i], sizeof(uint8_t), lineSize, m_FilePtr);
+        }
     }
     else 
     {
-        m_OutputBuffer->resize(size);
-        memcpy(m_OutputBuffer->data(), rgbData, size);
+        m_OutputBuffer->resize(width * height * 3);
+
+        for (int i = 0; i < height; ++i)
+        {
+            memcpy(m_OutputBuffer->data() + (lineSize * i), rgbData[i], lineSize);
+        }
     }
 }
 

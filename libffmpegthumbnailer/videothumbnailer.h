@@ -37,14 +37,20 @@ class MovieDecoder;
 template <typename T>
 struct Histogram;
 
+struct VideoFrameInfo
+{
+    int width = 0;
+    int height = 0;
+};
+
 class VideoThumbnailer
 {
 public:
     VideoThumbnailer();
     VideoThumbnailer(int thumbnailSize, bool workaroundIssues, bool maintainAspectRatio, int imageQuality, bool smartFrameSelection);
 
-    void generateThumbnail(const std::string& videoFile, ThumbnailerImageType type, const std::string& outputFile, AVFormatContext* pAvContext = nullptr);
-    void generateThumbnail(const std::string& videoFile, ThumbnailerImageType type, std::vector<uint8_t>& buffer, AVFormatContext* pAvContext = nullptr);
+    VideoFrameInfo generateThumbnail(const std::string& videoFile, ThumbnailerImageType type, const std::string& outputFile, AVFormatContext* pAvContext = nullptr);
+    VideoFrameInfo generateThumbnail(const std::string& videoFile, ThumbnailerImageType type, std::vector<uint8_t>& buffer, AVFormatContext* pAvContext = nullptr);
 
     void setThumbnailSize(int size);
     void setThumbnailSize(const std::string& size);
@@ -62,7 +68,7 @@ public:
     void setLogCallback(std::function<void(ThumbnailerLogLevel, const std::string&)> cb);
 
 private:
-    void generateThumbnail(const std::string& videoFile, ImageWriter& imageWriter, AVFormatContext* pAvContext = nullptr);
+    VideoFrameInfo generateThumbnail(const std::string& videoFile, ImageWriter& imageWriter, AVFormatContext* pAvContext = nullptr);
     void generateSmartThumbnail(MovieDecoder& movieDecoder, VideoFrame& videoFrame);
     void writeImage(const std::string& videoFile, ImageWriter& imageWriter, const VideoFrame& videoFrame, int duration, std::vector<uint8_t*>& rowPointers);
 

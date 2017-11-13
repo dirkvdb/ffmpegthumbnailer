@@ -146,7 +146,7 @@ int timeToSeconds(const std::string& time)
     return (hours * 3600) + (minutes * 60) + seconds;
 }
 
-void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageWriter& imageWriter, AVFormatContext* pAvContext)
+VideoFrameInfo VideoThumbnailer::generateThumbnail(const string& videoFile, ImageWriter& imageWriter, AVFormatContext* pAvContext)
 {
     MovieDecoder movieDecoder(pAvContext);
     movieDecoder.initialize(videoFile, m_PreferEmbeddedMetadata);
@@ -200,6 +200,11 @@ void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageWriter& i
     }
 
     writeImage(videoFile, imageWriter, videoFrame, movieDecoder.getDuration(), rowPointers);
+
+    VideoFrameInfo info;
+    info.width = videoFrame.width;
+    info.height = videoFrame.height;
+    return info;
 }
 
 void VideoThumbnailer::generateSmartThumbnail(MovieDecoder& movieDecoder, VideoFrame& videoFrame)
@@ -220,17 +225,17 @@ void VideoThumbnailer::generateSmartThumbnail(MovieDecoder& movieDecoder, VideoF
     videoFrame = videoFrames[bestFrame];
 }
 
-void VideoThumbnailer::generateThumbnail(const string& videoFile, ThumbnailerImageType type, const string& outputFile, AVFormatContext* pAvContext)
+VideoFrameInfo VideoThumbnailer::generateThumbnail(const string& videoFile, ThumbnailerImageType type, const string& outputFile, AVFormatContext* pAvContext)
 {
     std::unique_ptr<ImageWriter> imageWriter(ImageWriterFactory<const string&>::createImageWriter(type, outputFile));
-    generateThumbnail(videoFile, *imageWriter, pAvContext);
+    return generateThumbnail(videoFile, *imageWriter, pAvContext);
 }
 
-void VideoThumbnailer::generateThumbnail(const string& videoFile, ThumbnailerImageType type, vector<uint8_t>& buffer, AVFormatContext* pAvContext)
+VideoFrameInfo VideoThumbnailer::generateThumbnail(const string& videoFile, ThumbnailerImageType type, vector<uint8_t>& buffer, AVFormatContext* pAvContext)
 {
     buffer.clear();
     std::unique_ptr<ImageWriter> imageWriter(ImageWriterFactory<vector<uint8_t>&>::createImageWriter(type, buffer));
-    generateThumbnail(videoFile, *imageWriter, pAvContext);
+    return generateThumbnail(videoFile, *imageWriter, pAvContext);
 }
 
 void VideoThumbnailer::writeImage(const string& videoFile, ImageWriter& imageWriter, const VideoFrame& videoFrame, int duration, vector<uint8_t*>& rowPointers)
