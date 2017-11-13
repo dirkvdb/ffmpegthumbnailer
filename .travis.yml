@@ -28,22 +28,22 @@ matrix:
             - libjpeg-dev
       env:
         - BUILD_TYPE=Release
-    - compiler: clang
-      addons:
-        apt:
-          packages:
-            - libpng-dev
-            - libjpeg-dev
-      env:
-        - BUILD_TYPE=Debug
-    - compiler: clang
-      addons:
-        apt:
-          packages:
-            - libpng-dev
-            - libjpeg-dev
-      env:
-        - BUILD_TYPE=Release
+    # - compiler: clang
+    #   addons:
+    #     apt:
+    #       packages:
+    #         - libpng-dev
+    #         - libjpeg-dev
+    #   env:
+    #     - BUILD_TYPE=Debug
+    # - compiler: clang
+    #   addons:
+    #     apt:
+    #       packages:
+    #         - libpng-dev
+    #         - libjpeg-dev
+    #   env:
+    #     - BUILD_TYPE=Release
     - compiler: clang
       os: osx
       env:
@@ -71,6 +71,9 @@ before_install:
       if [[ "${CXX}" == "g++" ]]; then
         export CC=gcc-4.9
         export CXX=g++-4.9
+      else
+        export CC=clang-4.9
+        export CXX=clang++-4.9
       fi
     fi
 

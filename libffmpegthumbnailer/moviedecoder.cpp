@@ -268,9 +268,9 @@ std::string MovieDecoder::createScaleString(const std::string& sizeString, bool 
             width = std::stoi(sizeString);
         }
     }
-    catch (const std::regex_error& e)
+    catch (const std::regex_error&)
     {
-        throw std::runtime_error("Failed to parse size string: " + std::string(e.what()));
+        throw std::runtime_error("Failed to parse size string");
     }
 
     std::stringstream scale;
