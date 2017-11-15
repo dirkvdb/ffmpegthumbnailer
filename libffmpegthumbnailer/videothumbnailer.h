@@ -53,6 +53,7 @@ public:
     VideoFrameInfo generateThumbnail(const std::string& videoFile, ThumbnailerImageType type, std::vector<uint8_t>& buffer, AVFormatContext* pAvContext = nullptr);
 
     void setThumbnailSize(int size);
+    void setThumbnailSize(int width, int height);
     void setThumbnailSize(const std::string& size);
     void setSeekPercentage(int percentage);
     void setSeekTime(const std::string& seekTime);

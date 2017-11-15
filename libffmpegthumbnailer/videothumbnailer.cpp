@@ -33,6 +33,7 @@
 #include <cassert>
 #include <cerrno>
 #include <memory>
+#include <regex>
 #include <algorithm>
 #include <sys/stat.h>
 
@@ -83,33 +84,47 @@ void VideoThumbnailer::setThumbnailSize(int size)
     m_ThumbnailSize = std::to_string(size);
 }
 
+void VideoThumbnailer::setThumbnailSize(int width, int height)
+{
+    if (width <= 0 && height <= 0)
+    {
+        throw std::invalid_argument("At least one value should be positive");
+    }
+
+    std::stringstream ss;
+    if (width > 0)
+    {
+        ss << "w=" << width;
+    }
+
+    if (width > 0 && height > 0)
+    {
+        ss << ":";
+    }
+
+    if (height > 0)
+    {
+        ss << "h=" << height;
+    }
+
+    m_ThumbnailSize = ss.str();
+}
+
 void VideoThumbnailer::setThumbnailSize(const std::string& size)
 {
-    if (size.empty())
+    if (size.find('=') == std::string::npos)
     {
-        throw std::invalid_argument("Invalid size");
+        m_ThumbnailSize = size;
+        return;
     }
 
-    if (size.size() > 1)
+    std::regex sizeRegex(R"r(([w|h])=(-?\d+)(?::([w|h])=(-?\d+))?)r");
+    std::smatch baseMatch;
+    if (!std::regex_match(size, baseMatch, sizeRegex))
     {
-        // This is potentially a string starting with w= or h=
-        if (size[1] == '=')
-        {
-            if (size.size() == 2 || (size[0] != 'w' && size[0] != 'h'))
-            {
-                throw std::invalid_argument("Invalid size");
-            }
-
-            // throws invalid argument if it is no integer
-            std::stoi(&size[2]);
-        }
-        else
-        {
-            std::stoi(size);
-        }
+        throw std::invalid_argument("Invalid size string specification");
     }
 
-    // size contains a valid size specification
     m_ThumbnailSize = size;
 }
 

@@ -32,7 +32,7 @@ typedef void(*thumbnailer_log_callback)(ThumbnailerLogLevel, const char*);
 
 typedef struct video_thumbnailer_struct
 {
-    int                         thumbnail_size;             /* default = 128 */
+    int                         thumbnail_size;             /* default = 128 (deprecated, use video_thumbnailer_set_size)*/
     int                         seek_percentage;            /* default = 10 */
     char*                       seek_time;                  /* default = NULL (format hh:mm:ss, overrides seek_percentage if set) */
     int                         overlay_film_strip;         /* default = 0 */
@@ -42,7 +42,6 @@ typedef struct video_thumbnailer_struct
     struct AVFormatContext*     av_format_context;          /* default = NULL */
     int                         maintain_aspect_ratio;      /* default = 1 */
     int                         prefer_embedded_metadata;   /* default = 0 */
-    char*                       thumbnail_size_string;      /* default = NULL (format w=128:h=128, only one dimension is required, overrides thumbnail_size if set*/
 
     struct thumbnailer_data*    tdata;                      /* for internal use only */
 } video_thumbnailer;
@@ -74,6 +73,11 @@ int video_thumbnailer_generate_thumbnail_to_file(video_thumbnailer* thumbnailer,
 /* install a logging callback that gets called on errors and informational messages, reset by passing NULL.
    by default no logging is generated on stdout or stderr */
 void video_thumbnailer_set_log_callback(video_thumbnailer* thumbnailer, thumbnailer_log_callback cb);
+/* Finer control of the generate image thumbnail size
+   Using this function overrides the size setting of the video_thumbnailer struct
+   Use a value of 0 or less to ignore the setting:
+   e.g. Calling this function with 0 and 100 as arguments will set the width using the video aspect ratio */
+int video_thumbnailer_set_size(video_thumbnailer* thumbnailer, int width, int height);
 
 #ifdef __cplusplus
 }

@@ -66,10 +66,10 @@ TEST_CASE("C API Usage")
         CHECK(nullptr != imageData->image_data_ptr);
     }
 
-    SECTION("CreateThumbRgbStringSizeSpecification1")
+    SECTION("CreateThumbRgbStringSizeHeightOnly")
     {
         thumbnailer->thumbnail_image_type = Rgb;
-        thumbnailer->thumbnail_size_string = (char*)"h=234";
+        video_thumbnailer_set_size(thumbnailer, 0, 234);
 
         std::string input = std::string(TEST_DATADIR) + "/test_sample.flv";
         REQUIRE(0 == video_thumbnailer_generate_thumbnail_to_buffer(thumbnailer, input.c_str(), imageData));
@@ -79,15 +79,31 @@ TEST_CASE("C API Usage")
         CHECK(nullptr != imageData->image_data_ptr);
     }
 
-    SECTION("CreateThumbRgbStringSizeSpecification2")
+    SECTION("CreateThumbRgbSetSizeBothWidthHeightMaintainAspect")
     {
         thumbnailer->thumbnail_image_type = Rgb;
-        thumbnailer->thumbnail_size_string = (char*)"w=200:h=234";
+        thumbnailer->maintain_aspect_ratio = 1;
+        video_thumbnailer_set_size(thumbnailer, 200, 234);
 
         std::string input = std::string(TEST_DATADIR) + "/test_sample.flv";
         REQUIRE(0 == video_thumbnailer_generate_thumbnail_to_buffer(thumbnailer, input.c_str(), imageData));
 
         CHECK(0 != imageData->image_data_size);
+        CHECK(234 >= imageData->image_data_height);
+        CHECK(200 == imageData->image_data_width);
+        CHECK(nullptr != imageData->image_data_ptr);
+    }
+
+    SECTION("CreateThumbRgbSetSizeBothWidthHeightDoNotMaintainAspect")
+    {
+        thumbnailer->thumbnail_image_type = Rgb;
+        thumbnailer->maintain_aspect_ratio = 0;
+        video_thumbnailer_set_size(thumbnailer, 200, 234);
+
+        std::string input = std::string(TEST_DATADIR) + "/test_sample.flv";
+        REQUIRE(0 == video_thumbnailer_generate_thumbnail_to_buffer(thumbnailer, input.c_str(), imageData));
+
+        CHECK(234 * 200 * 3 == imageData->image_data_size);
         CHECK(234 == imageData->image_data_height);
         CHECK(200 == imageData->image_data_width);
         CHECK(nullptr != imageData->image_data_ptr);

@@ -231,7 +231,7 @@ std::string MovieDecoder::createScaleString(const std::string& sizeString, bool 
 
     try
     {
-        std::regex sizeRegex(R"r(([w|h])=(\d+)(?::([w|h])=(\d+))?)r");
+        std::regex sizeRegex(R"r(([w|h])=(-?\d+)(?::([w|h])=(-?\d+))?)r");
         std::smatch baseMatch;
         if (std::regex_match(sizeString, baseMatch, sizeRegex))
         {
@@ -245,10 +245,18 @@ std::string MovieDecoder::createScaleString(const std::string& sizeString, bool 
                 if (specifier == "w")
                 {
                     width = std::stoi(match[index+1].str());
+                    if (width <= 0)
+                    {
+                        width = -1;
+                    }
                 }
                 else if (specifier == "h")
                 {
                     height = std::stoi(match[index+1].str());
+                    if (height <= 0)
+                    {
+                        height = -1;
+                    }
                 }
             };
 
@@ -278,6 +286,10 @@ std::string MovieDecoder::createScaleString(const std::string& sizeString, bool 
     if (width != -1 && height != -1)
     {
         scale << "w=" << width << ":h=" << height;
+        if (maintainAspectRatio)
+        {
+            scale << ":force_original_aspect_ratio=decrease";
+        }
     }
     else if (!maintainAspectRatio)
     {

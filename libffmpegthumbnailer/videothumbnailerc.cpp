@@ -52,7 +52,6 @@ extern "C" video_thumbnailer* video_thumbnailer_create(void)
     thumbnailer->maintain_aspect_ratio      = 1;
     thumbnailer->prefer_embedded_metadata   = 0;
     thumbnailer->av_format_context          = nullptr;
-    thumbnailer->thumbnail_size_string      = nullptr;
     thumbnailer->tdata                      = new thumbnailer_data();
 
     return thumbnailer;
@@ -95,11 +94,7 @@ static void setProperties(video_thumbnailer* thumbnailer)
 {
     auto& videoThumbnailer = thumbnailer->tdata->thumbnailer;
 
-    if (thumbnailer->thumbnail_size_string)
-    {
-        videoThumbnailer.setThumbnailSize(thumbnailer->thumbnail_size_string);
-    }
-    else
+    if (thumbnailer->thumbnail_size > 0)
     {
         videoThumbnailer.setThumbnailSize(thumbnailer->thumbnail_size);
     }
@@ -178,5 +173,22 @@ extern "C" void video_thumbnailer_set_log_callback(video_thumbnailer* thumbnaile
         videoThumbnailer.setLogCallback([=] (ThumbnailerLogLevel lvl, const std::string& msg) {
             cb(lvl, msg.c_str());
         });
+    }
+}
+
+extern "C" int video_thumbnailer_set_size(video_thumbnailer* thumbnailer, int width, int height)
+{
+    auto& videoThumbnailer = thumbnailer->tdata->thumbnailer;
+
+    try
+    {
+        thumbnailer->thumbnail_size = -1;
+        videoThumbnailer.setThumbnailSize(width, height);
+        return 0;
+    }
+    catch (const std::exception& e)
+    {
+        trace_message(thumbnailer, ThumbnailerLogLevelError, e.what());
+        return -1;
     }
 }
