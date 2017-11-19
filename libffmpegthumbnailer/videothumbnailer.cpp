@@ -86,11 +86,6 @@ void VideoThumbnailer::setThumbnailSize(int size)
 
 void VideoThumbnailer::setThumbnailSize(int width, int height)
 {
-    if (width <= 0 && height <= 0)
-    {
-        throw std::invalid_argument("At least one value should be positive");
-    }
-
     std::stringstream ss;
     if (width > 0)
     {

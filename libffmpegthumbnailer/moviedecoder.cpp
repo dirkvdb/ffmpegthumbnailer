@@ -229,6 +229,11 @@ std::string MovieDecoder::createScaleString(const std::string& sizeString, bool 
     int height = -1;
     bool pureNumericSize = true;
 
+    if (sizeString.empty())
+    {
+        return "w=0:h=0";
+    }
+
     try
     {
         std::regex sizeRegex(R"r(([w|h])=(-?\d+)(?::([w|h])=(-?\d+))?)r");

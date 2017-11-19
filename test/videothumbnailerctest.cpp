@@ -79,6 +79,21 @@ TEST_CASE("C API Usage")
         CHECK(nullptr != imageData->image_data_ptr);
     }
 
+    SECTION("CreateThumbRgbOriginalSize")
+    {
+        thumbnailer->thumbnail_image_type = Rgb;
+        video_thumbnailer_set_size(thumbnailer, 0, 0);
+
+        std::string input = std::string(TEST_DATADIR) + "/test_sample.flv";
+        auto rc = video_thumbnailer_generate_thumbnail_to_buffer(thumbnailer, input.c_str(), imageData);
+        REQUIRE(0 == rc);
+
+        CHECK(9 != imageData->image_data_size);
+        CHECK(160 == imageData->image_data_width);
+        CHECK(120 == imageData->image_data_height);
+        CHECK(nullptr != imageData->image_data_ptr);
+    }
+
     SECTION("CreateThumbRgbSetSizeBothWidthHeightMaintainAspect")
     {
         thumbnailer->thumbnail_image_type = Rgb;
