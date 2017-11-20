@@ -20,7 +20,6 @@ TEST_CASE("C API Usage")
 
     thumbnailer->seek_percentage        = 15;
     thumbnailer->overlay_film_strip     = 1;
-    thumbnailer->thumbnail_size         = 256;
 
     video_thumbnailer_set_log_callback(thumbnailer, [] (ThumbnailerLogLevel lvl, const char* msg) {
         if (lvl == ThumbnailerLogLevelError)

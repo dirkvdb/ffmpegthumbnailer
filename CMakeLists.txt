@@ -92,6 +92,9 @@ add_library(libffmpegthumbnailerobj OBJECT
     libffmpegthumbnailer/filmstripfilter.cpp
 )
 
+# we use our own deprecated struct menbers, so disable the warning about it
+set_source_files_properties(libffmpegthumbnailer/videothumbnailerc.cpp PROPERTIES COMPILE_FLAGS -Wno-deprecated-declarations)
+
 set_target_properties(libffmpegthumbnailerobj PROPERTIES POSITION_INDEPENDENT_CODE ON)
 target_compile_definitions(libffmpegthumbnailerobj PRIVATE -D__STDC_CONSTANT_MACROS)
 target_include_directories(libffmpegthumbnailerobj

@@ -94,7 +94,7 @@ static void setProperties(video_thumbnailer* thumbnailer)
 {
     auto& videoThumbnailer = thumbnailer->tdata->thumbnailer;
 
-    if (thumbnailer->thumbnail_size > 0)
+    if (thumbnailer->thumbnail_size >= 0)
     {
         videoThumbnailer.setThumbnailSize(thumbnailer->thumbnail_size);
     }

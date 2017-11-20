@@ -32,7 +32,7 @@ typedef void(*thumbnailer_log_callback)(ThumbnailerLogLevel, const char*);
 
 typedef struct video_thumbnailer_struct
 {
-    int                         thumbnail_size;             /* default = 128 (deprecated, use video_thumbnailer_set_size)*/
+    int                         thumbnail_size __attribute__((deprecated)); /* default = 128 (deprecated, use video_thumbnailer_set_size)*/
     int                         seek_percentage;            /* default = 10 */
     char*                       seek_time;                  /* default = NULL (format hh:mm:ss, overrides seek_percentage if set) */
     int                         overlay_film_strip;         /* default = 0 */
