@@ -25,9 +25,11 @@ int main(int argc, char** argv)
 
     thumbnailer->seek_percentage        = 15;
     thumbnailer->overlay_film_strip     = 1;
-    thumbnailer->thumbnail_size         = 256;
 
     video_thumbnailer_set_log_callback(thumbnailer, log_cb);
+    if (0 != video_thumbnailer_set_size(thumbnailer, 256, 0)) {
+        return EXIT_FAILURE;
+    }
 
 #ifdef HAVE_JPEG
     thumbnailer->thumbnail_image_type   = Jpeg;
