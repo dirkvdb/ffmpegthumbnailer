@@ -63,6 +63,7 @@ TEST_CASE("C API Usage")
 
         CHECK(0 != imageData->image_data_size);
         CHECK(nullptr != imageData->image_data_ptr);
+        CHECK(ThumbnailerImageSourceVideoStream == imageData->image_data_source);
     }
 
     SECTION("CreateThumbRgbStringSizeHeightOnly")
@@ -76,6 +77,7 @@ TEST_CASE("C API Usage")
         CHECK(0 != imageData->image_data_size);
         CHECK(234 == imageData->image_data_height);
         CHECK(nullptr != imageData->image_data_ptr);
+        CHECK(ThumbnailerImageSourceVideoStream == imageData->image_data_source);
     }
 
     SECTION("CreateThumbRgbOriginalSize")
@@ -91,6 +93,7 @@ TEST_CASE("C API Usage")
         CHECK(160 == imageData->image_data_width);
         CHECK(120 == imageData->image_data_height);
         CHECK(nullptr != imageData->image_data_ptr);
+        CHECK(ThumbnailerImageSourceVideoStream == imageData->image_data_source);
     }
 
     SECTION("CreateThumbRgbSetSizeBothWidthHeightMaintainAspect")
@@ -106,6 +109,7 @@ TEST_CASE("C API Usage")
         CHECK(234 >= imageData->image_data_height);
         CHECK(200 == imageData->image_data_width);
         CHECK(nullptr != imageData->image_data_ptr);
+        CHECK(ThumbnailerImageSourceVideoStream == imageData->image_data_source);
     }
 
     SECTION("CreateThumbRgbSetSizeBothWidthHeightDoNotMaintainAspect")
@@ -121,6 +125,7 @@ TEST_CASE("C API Usage")
         CHECK(234 == imageData->image_data_height);
         CHECK(200 == imageData->image_data_width);
         CHECK(nullptr != imageData->image_data_ptr);
+        CHECK(ThumbnailerImageSourceVideoStream == imageData->image_data_source);
     }
 
     SECTION("CreateThumbInvalidFile")

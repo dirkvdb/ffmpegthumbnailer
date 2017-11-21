@@ -619,6 +619,7 @@ void MovieDecoder::getScaledVideoFrame(const std::string& scaledSize, bool maint
     videoFrame.width = res->width;
     videoFrame.height = res->height;
     videoFrame.lineSize = res->linesize[0];
+    videoFrame.imageSource = m_UseEmbeddedData ? ThumbnailerImageSourceMetadata : ThumbnailerImageSourceVideoStream;
 
     videoFrame.frameData.resize(videoFrame.lineSize * videoFrame.height);
     memcpy((videoFrame.frameData.data()), res->data[0], videoFrame.frameData.size());

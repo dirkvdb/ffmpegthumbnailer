@@ -132,6 +132,7 @@ extern "C" int video_thumbnailer_generate_thumbnail_to_buffer(video_thumbnailer*
         generated_image_data->image_data_size = static_cast<int>(dataVector->size());
         generated_image_data->image_data_width = info.width;
         generated_image_data->image_data_height = info.height;
+        generated_image_data->image_data_source = info.source;
     }
     catch (const std::exception& e)
     {

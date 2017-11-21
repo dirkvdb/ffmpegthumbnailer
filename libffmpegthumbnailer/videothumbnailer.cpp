@@ -214,6 +214,7 @@ VideoFrameInfo VideoThumbnailer::generateThumbnail(const string& videoFile, Imag
     VideoFrameInfo info;
     info.width = videoFrame.width;
     info.height = videoFrame.height;
+    info.source = videoFrame.imageSource;
     return info;
 }
 

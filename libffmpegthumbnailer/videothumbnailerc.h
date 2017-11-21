@@ -48,10 +48,11 @@ typedef struct video_thumbnailer_struct
 
 typedef struct image_data_struct
 {
-    uint8_t*    image_data_ptr;       /* points to the image data after call to generate_thumbnail_to_buffer */
-    int         image_data_size;      /* contains the size of the image data after call to generate_thumbnail_to_buffer (=width*height*3)*/
-    int         image_data_width;     /* contains the width of the image data after call to generate_thumbnail_to_buffer */
-    int         image_data_height;    /* contains the height of the image data after call to generate_thumbnail_to_buffer */
+    uint8_t*                image_data_ptr;       /* points to the image data after call to generate_thumbnail_to_buffer */
+    int                     image_data_size;      /* contains the size of the image data after call to generate_thumbnail_to_buffer (=width*height*3)*/
+    int                     image_data_width;     /* contains the width of the image data after call to generate_thumbnail_to_buffer */
+    int                     image_data_height;    /* contains the height of the image data after call to generate_thumbnail_to_buffer */
+    ThumbnailerImageSource  image_data_source;    /* contains the source that was used to generate the thumbnail */
 
     void*       internal_data;        /* for internal use only */
 } image_data;

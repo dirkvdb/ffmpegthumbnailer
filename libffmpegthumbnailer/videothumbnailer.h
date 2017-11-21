@@ -41,6 +41,7 @@ struct VideoFrameInfo
 {
     int width = 0;
     int height = 0;
+    ThumbnailerImageSource source = ThumbnailerImageSourceVideoStream;
 };
 
 class VideoThumbnailer
