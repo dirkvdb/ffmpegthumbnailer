@@ -16,127 +16,129 @@
 
 #include "config.h"
 
+#include <chrono>
+#include <clocale>
 #include <iostream>
-#include <unistd.h>
 #include <stdexcept>
 #include <stdlib.h>
-#include <clocale>
+#include <thread>
+#include <unistd.h>
 
 #ifdef ENABLE_GIO
 #include <dlfcn.h>
 #endif
 
-#include "libffmpegthumbnailer/videothumbnailer.h"
-#include "libffmpegthumbnailer/stringoperations.h"
 #include "libffmpegthumbnailer/filmstripfilter.h"
+#include "libffmpegthumbnailer/stringoperations.h"
+#include "libffmpegthumbnailer/videothumbnailer.h"
 
-using namespace std;
+using namespace std::chrono_literals;
 using namespace ffmpegthumbnailer;
 
-void printVersion();
-void printUsage();
-void tryUriConvert(std::string& filename);
+void                 printVersion();
+void                 printUsage();
+void                 tryUriConvert(std::string& filename);
 ThumbnailerImageType determineImageTypeFromString(const std::string& filename);
 ThumbnailerImageType determineImageTypeFromFilename(const std::string& filename);
 
 int main(int argc, char** argv)
 {
-    int     option;
-    int     seekPercentage = 10;
-    string  seekTime;
-    string  thumbnailSize = "128";
-    int     imageQuality = 8;
-    bool    filmStripOverlay = false;
-    bool    workaroundIssues = false;
-    bool    maintainAspectRatio = true;
-    bool    smartFrameSelection = false;
-    bool    preferEmbeddedMetadata = false;
-    string  inputFile;
-    string  outputFile;
-    string  imageFormat;
-    string  tmpFileNameSuffix;
-    int     sleepTime = 0;
+    int                  option;
+    int                  seekPercentage = 10;
+    std::string          seekTime;
+    std::string          thumbnailSize          = "128";
+    int                  imageQuality           = 8;
+    bool                 filmStripOverlay       = false;
+    bool                 workaroundIssues       = false;
+    bool                 maintainAspectRatio    = true;
+    bool                 smartFrameSelection    = false;
+    bool                 preferEmbeddedMetadata = false;
+    std::string          inputFile;
+    std::string          outputFile;
+    std::string          imageFormat;
+    std::string          tmpFileNameSuffix;
+    std::chrono::seconds sleepTime;
 
     if (!std::setlocale(LC_CTYPE, ""))
     {
         std::cerr << "Failed to set locale" << std::endl;
     }
 
-    while ((option = getopt (argc, argv, "i:o:s:t:q:c:r:afwhvpm")) != -1)
+    while ((option = getopt(argc, argv, "i:o:s:t:q:c:r:afwhvpm")) != -1)
     {
         switch (option)
         {
-            case 'a':
-                maintainAspectRatio = false;
-                break;
-            case 'i':
-                inputFile = optarg;
-                break;
-            case 'o':
-                outputFile = optarg;
-                break;
-            case 's':
-                thumbnailSize = optarg;
-                break;
-            case 'f':
-                filmStripOverlay = true;
-                break;
-            case 'p':
-                smartFrameSelection = true;
-                break;
-            case 'm':
-                preferEmbeddedMetadata = true;
-                break;
-            case 't':
-                if (string(optarg).find(':') != string::npos)
-                {
-                    seekTime = optarg;
-                }
-                else
-                {
-                    seekPercentage = atoi(optarg);
-                }
-                break;
-            case 'w':
-                workaroundIssues = true;
-                break;
-            case 'q':
-                imageQuality = atoi(optarg);
-                break;
-            case 'c':
-                imageFormat = optarg;
-                break;
-            case 'r':
-                sleepTime = atoi(optarg);
-                break;
-            case 'h':
-                printUsage();
-                return 0;
-            case 'v':
-                printVersion();
-                return 0;
-            case '?':
-            default:
-                cerr << "invalid arguments" << endl;
-                printUsage();
-                return -1;
+        case 'a':
+            maintainAspectRatio = false;
+            break;
+        case 'i':
+            inputFile = optarg;
+            break;
+        case 'o':
+            outputFile = optarg;
+            break;
+        case 's':
+            thumbnailSize = optarg;
+            break;
+        case 'f':
+            filmStripOverlay = true;
+            break;
+        case 'p':
+            smartFrameSelection = true;
+            break;
+        case 'm':
+            preferEmbeddedMetadata = true;
+            break;
+        case 't':
+            if (std::string(optarg).find(':') != std::string::npos)
+            {
+                seekTime = optarg;
+            }
+            else
+            {
+                seekPercentage = std::atoi(optarg);
+            }
+            break;
+        case 'w':
+            workaroundIssues = true;
+            break;
+        case 'q':
+            imageQuality = std::atoi(optarg);
+            break;
+        case 'c':
+            imageFormat = optarg;
+            break;
+        case 'r':
+            sleepTime = std::chrono::seconds(std::atoi(optarg));
+            break;
+        case 'h':
+            printUsage();
+            return 0;
+        case 'v':
+            printVersion();
+            return 0;
+        case '?':
+        default:
+            std::cerr << "invalid arguments" << std::endl;
+            printUsage();
+            return -1;
         }
     }
 
     if (inputFile.empty() || outputFile.empty())
     {
-        cerr << "invalid arguments" << endl;
+        std::cerr << "invalid arguments" << std::endl;
         printUsage();
         return 0;
     }
 
     if (outputFile == "-" && imageFormat.empty())
     {
-        cerr << "When writing to stdout the image format needs to be specified (e.g.: -c png)" << endl;
+        std::cerr << "When writing to stdout the image format needs to be specified (e.g.: -c png)" << std::endl;
         return 0;
     }
 
-    if(outputFile != "-")
+    if (outputFile != "-")
     {
         tmpFileNameSuffix = ".tmp";
     }
@@ -151,7 +153,7 @@ int main(int argc, char** argv)
 
         VideoThumbnailer videoThumbnailer(0, workaroundIssues, maintainAspectRatio, imageQuality, smartFrameSelection);
         videoThumbnailer.setThumbnailSize(thumbnailSize);
-        videoThumbnailer.setLogCallback([] (ThumbnailerLogLevel lvl, const std::string& msg) {
+        videoThumbnailer.setLogCallback([](ThumbnailerLogLevel lvl, const std::string& msg) {
             if (lvl == ThumbnailerLogLevelInfo)
                 std::cout << msg << std::endl;
             else
@@ -177,28 +179,32 @@ int main(int argc, char** argv)
             videoThumbnailer.setSeekPercentage(seekPercentage);
         }
 
-        do {
-            string tmpFileName = "." + outputFile + tmpFileNameSuffix;
+        do
+        {
+            std::string tmpFileName = "." + outputFile + tmpFileNameSuffix;
             videoThumbnailer.generateThumbnail(inputFile, imageType, tmpFileName);
             if (tmpFileNameSuffix.length() > 0)
             {
                 rename(tmpFileName.c_str(), outputFile.c_str());
             }
-            if(sleepTime == 0)
+            if (sleepTime == 0s)
+            {
                 break;
-            sleep(sleepTime);
+            }
+
+            std::this_thread::sleep_for(sleepTime);
         } while (true);
 
         delete filmStripFilter;
     }
-    catch (exception& e)
+    catch (std::exception& e)
     {
-        cerr << "Error: " << e.what() << endl;
+        std::cerr << "Error: " << e.what() << std::endl;
         return -1;
     }
     catch (...)
     {
-        cerr << "Unexpected rror" << endl;
+        std::cerr << "Unexpected rror" << std::endl;
         return -1;
     }
 
@@ -207,32 +213,32 @@ int main(int argc, char** argv)
 
 void printVersion()
 {
-    cout << PACKAGE " version: " PACKAGE_VERSION "\n";
+    std::cout << PACKAGE " version: " PACKAGE_VERSION "\n";
 }
 
 void printUsage()
 {
-    cout << "Usage: " PACKAGE " [options]\n\n"
-         << "Options:\n"
-         << "  -i<s>   : input file\n"
-         << "  -o<s>   : output file\n"
-         << "  -s<n>   : thumbnail size (use 0 for original size) (default: 128)\n"
-         << "  -t<n|s> : time to seek to (percentage or absolute time hh:mm:ss) (default: 10%)\n"
-         << "  -q<n>   : image quality (0 = bad, 10 = best) (default: 8)\n"
-         << "  -c      : override image format (jpeg, png or rgb) (default: determined by filename)\n"
-         << "  -a      : ignore aspect ratio and generate square thumbnail\n"
-         << "  -f      : create a movie strip overlay\n"
-         //<< "  -p      : use smarter frame selection (slower)\n"
-         << "  -m      : prefer embedded image metadata over video content\n"
-         << "  -w      : workaround issues in old versions of ffmpeg\n"
-         << "  -r<n>   : repeat thumbnail generation each n seconds, n=0 means disable repetition (default: 0)\n"
-         << "  -v      : print version number\n"
-         << "  -h      : display this help\n";
+    std::cout << "Usage: " PACKAGE " [options]\n\n"
+              << "Options:\n"
+              << "  -i<s>   : input file\n"
+              << "  -o<s>   : output file\n"
+              << "  -s<n>   : thumbnail size (use 0 for original size) (default: 128)\n"
+              << "  -t<n|s> : time to seek to (percentage or absolute time hh:mm:ss) (default: 10%)\n"
+              << "  -q<n>   : image quality (0 = bad, 10 = best) (default: 8)\n"
+              << "  -c      : override image format (jpeg, png or rgb) (default: determined by filename)\n"
+              << "  -a      : ignore aspect ratio and generate square thumbnail\n"
+              << "  -f      : create a movie strip overlay\n"
+              //<< "  -p      : use smarter frame selection (slower)\n"
+              << "  -m      : prefer embedded image metadata over video content\n"
+              << "  -w      : workaround issues in old versions of ffmpeg\n"
+              << "  -r<n>   : repeat thumbnail generation each n seconds, n=0 means disable repetition (default: 0)\n"
+              << "  -v      : print version number\n"
+              << "  -h      : display this help\n";
 }
 
 ThumbnailerImageType determineImageTypeFromString(const std::string& type)
 {
-    string lowercaseType = type;
+    std::string lowercaseType = type;
     StringOperations::lowercase(lowercaseType);
 
     if (lowercaseType == "png")
@@ -250,9 +256,8 @@ ThumbnailerImageType determineImageTypeFromString(const std::string& type)
         return Rgb;
     }
 
-    throw logic_error("Invalid image type specified");
+    throw std::logic_error("Invalid image type specified");
 }
-
 
 #ifdef ENABLE_GIO
 typedef void* (*FileCreateFunc)(const char*);
@@ -271,7 +276,10 @@ public:
         if (!m_pLib) cerr << dlerror() << endl;
     }
 
-    ~LibHandle() { if (m_pLib) dlclose(m_pLib); }
+    ~LibHandle()
+    {
+        if (m_pLib) dlclose(m_pLib);
+    }
 
     operator void*() const { return m_pLib; }
     operator bool() const { return m_pLib != nullptr; }
@@ -293,13 +301,13 @@ void tryUriConvert(std::string& filename)
 
     if (gioLib && gLib && gobjectLib)
     {
-        FileCreateFunc createUriFunc = (FileCreateFunc) dlsym(gioLib, "g_file_new_for_uri");
+        FileCreateFunc createUriFunc = (FileCreateFunc)dlsym(gioLib, "g_file_new_for_uri");
 
-        IsNativeFunc nativeFunc = (IsNativeFunc) dlsym(gioLib, "g_file_is_native");
-        FileGetFunc getFunc = (FileGetFunc) dlsym(gioLib, "g_file_get_path");
-        InitFunc initFunc = (InitFunc) dlsym(gobjectLib, "g_type_init");
-        UnrefFunc unrefFunc = (UnrefFunc) dlsym(gobjectLib, "g_object_unref");
-        FreeFunc freeFunc = (FreeFunc) dlsym(gLib, "g_free");
+        IsNativeFunc nativeFunc = (IsNativeFunc)dlsym(gioLib, "g_file_is_native");
+        FileGetFunc  getFunc    = (FileGetFunc)dlsym(gioLib, "g_file_get_path");
+        InitFunc     initFunc   = (InitFunc)dlsym(gobjectLib, "g_type_init");
+        UnrefFunc    unrefFunc  = (UnrefFunc)dlsym(gobjectLib, "g_object_unref");
+        FreeFunc     freeFunc   = (FreeFunc)dlsym(gLib, "g_free");
 
         if (!(createUriFunc && nativeFunc && getFunc && freeFunc && initFunc && unrefFunc))
         {
@@ -341,7 +349,7 @@ void tryUriConvert(std::string& filename)
 
 ThumbnailerImageType determineImageTypeFromFilename(const std::string& filename)
 {
-    string lowercaseFilename = filename;
+    std::string lowercaseFilename = filename;
     StringOperations::lowercase(lowercaseFilename);
 
     size_t size = lowercaseFilename.size();
