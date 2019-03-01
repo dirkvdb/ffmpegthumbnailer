@@ -5,3 +5,4 @@ build
 xcode
 .cmaketools.json
 launch.json
+.vscode/cquery_cached_index
