@@ -54,13 +54,15 @@ int main(int argc, char** argv)
     string  inputFile;
     string  outputFile;
     string  imageFormat;
+    string  tmpFileNameSuffix;
+    int     sleepTime = 0;
 
     if (!std::setlocale(LC_CTYPE, ""))
     {
         std::cerr << "Failed to set locale" << std::endl;
     }
 
-    while ((option = getopt (argc, argv, "i:o:s:t:q:c:afwhvpm")) != -1)
+    while ((option = getopt (argc, argv, "i:o:s:t:q:c:r:afwhvpm")) != -1)
     {
         switch (option)
         {
@@ -104,6 +106,9 @@ int main(int argc, char** argv)
             case 'c':
                 imageFormat = optarg;
                 break;
+            case 'r':
+                sleepTime = atoi(optarg);
+                break;
             case 'h':
                 printUsage();
                 return 0;
@@ -129,6 +134,11 @@ int main(int argc, char** argv)
     {
         cerr << "When writing to stdout the image format needs to be specified (e.g.: -c png)" << endl;
         return 0;
+    }
+
+    if(outputFile != "-")
+    {
+        tmpFileNameSuffix = ".tmp";
     }
 
     try
@@ -166,7 +176,18 @@ int main(int argc, char** argv)
         {
             videoThumbnailer.setSeekPercentage(seekPercentage);
         }
-        videoThumbnailer.generateThumbnail(inputFile, imageType, outputFile);
+
+        do {
+            string tmpFileName = "." + outputFile + tmpFileNameSuffix;
+            videoThumbnailer.generateThumbnail(inputFile, imageType, tmpFileName);
+            if (tmpFileNameSuffix.length() > 0)
+            {
+                rename(tmpFileName.c_str(), outputFile.c_str());
+            }
+            if(sleepTime == 0)
+                break;
+            sleep(sleepTime);
+        } while (true);
 
         delete filmStripFilter;
     }
@@ -204,6 +225,7 @@ void printUsage()
          //<< "  -p      : use smarter frame selection (slower)\n"
          << "  -m      : prefer embedded image metadata over video content\n"
          << "  -w      : workaround issues in old versions of ffmpeg\n"
+         << "  -r<n>   : repeat thumbnail generation each n seconds, n=0 means disable repetition (default: 0)\n"
          << "  -v      : print version number\n"
          << "  -h      : display this help\n";
 }

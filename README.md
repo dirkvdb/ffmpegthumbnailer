@@ -24,4 +24,5 @@ Available command line arguments:
   * -c: override image format (jpeg or png) (default: determined by filename)
   * -a: ignore aspect ratio and generate square thumbnail
   * -w: workaround some issues in older versions of ffmpeg (only use if you experience problems like 100% cpu usage on certain files)
+  * -rN: repeat thumbnail generation each N seconds, N=0 means disable repetition (default: 0)
   * -h: display the usage
