@@ -22,6 +22,7 @@
 #include <array>
 #include <sstream>
 #include <memory>
+#include <regex>
 
 extern "C" {
 #include <libavutil/display.h>
@@ -222,18 +223,96 @@ void MovieDecoder::initializeVideo(bool preferEmbeddedMetadata)
     }
 }
 
-std::string MovieDecoder::createScaleString(int size, bool maintainAspectRatio)
+std::string MovieDecoder::createScaleString(const std::string& sizeString, bool maintainAspectRatio)
 {
+    int width = -1;
+    int height = -1;
+    bool pureNumericSize = true;
+
+    if (sizeString.empty())
+    {
+        return "w=0:h=0";
+    }
+
+    try
+    {
+        std::regex sizeRegex(R"r(([w|h])=(-?\d+)(?::([w|h])=(-?\d+))?)r");
+        std::smatch baseMatch;
+        if (std::regex_match(sizeString, baseMatch, sizeRegex))
+        {
+            if (baseMatch.size() != 3 && baseMatch.size() != 5)
+            {
+                throw std::runtime_error("Failed to parse size string");
+            }
+
+            auto parseMatch = [&width, &height] (std::smatch& match, size_t index) {
+                auto specifier = match[index].str();
+                if (specifier == "w")
+                {
+                    width = std::stoi(match[index+1].str());
+                    if (width <= 0)
+                    {
+                        width = -1;
+                    }
+                }
+                else if (specifier == "h")
+                {
+                    height = std::stoi(match[index+1].str());
+                    if (height <= 0)
+                    {
+                        height = -1;
+                    }
+                }
+            };
+
+            pureNumericSize = false;
+            if (baseMatch.size() >= 3)
+            {
+                parseMatch(baseMatch, 1);
+            }
+
+            if (baseMatch.size() == 5)
+            {
+                parseMatch(baseMatch, 3);
+            }
+        }
+        else
+        {
+            width = std::stoi(sizeString);
+        }
+    }
+    catch (const std::regex_error&)
+    {
+        throw std::runtime_error("Failed to parse size string");
+    }
+
     std::stringstream scale;
 
-    if (!maintainAspectRatio)
+    if (width != -1 && height != -1)
     {
-        scale << "w=" << size << ":h=" << size;
+        scale << "w=" << width << ":h=" << height;
+        if (maintainAspectRatio)
+        {
+            scale << ":force_original_aspect_ratio=decrease";
+        }
+    }
+    else if (!maintainAspectRatio)
+    {
+        if (width == -1)
+        {
+            scale << "w=" << height << ":h=" << height;
+        }
+        else
+        {
+            scale << "w=" << width << ":h=" << width;
+        }
     }
     else
     {
-        auto width      = m_pVideoCodecContext->width;
-        auto height     = m_pVideoCodecContext->height;
+        auto size = (height == -1) ? width : height;
+
+        width      = m_pVideoCodecContext->width;
+        height     = m_pVideoCodecContext->height;
 
         AVRational par = av_guess_sample_aspect_ratio(m_pFormatContext, m_pVideoStream, m_pFrame);
         // if the pixel aspect ratio is defined and is not 1, we have an anamorphic stream
@@ -242,22 +321,70 @@ std::string MovieDecoder::createScaleString(int size, bool maintainAspectRatio)
         if (anamorphic)
         {
             width = width * par.num / par.den;
-        }
 
-        if (height > width)
-        {
-            scale << "w=-1:h=" << (size == 0 ? height : size);
+            if (size)
+            {
+                if (pureNumericSize)
+                {
+                    if (height > width)
+                    {
+                        width = width * size / height;
+                        height = size;
+                    }
+                    else
+                    {
+                        height = height * size / width;
+                        width = size;
+                    }
+                }
+                else
+                {
+                    if (sizeString[0] == 'h')
+                    {
+                        width = width * size / height;
+                        height = size;
+                    }
+                    else
+                    {
+                        height = height * size / width;
+                        width = size;
+                    }
+                }
+            }
+
+            scale << "w=" << width << ":h=" << height;
         }
         else
         {
-            scale << "h=-1:w=" << (size == 0 ? width : size);
+            if (pureNumericSize)
+            {
+                if (height > width)
+                {
+                    scale << "w=-1:h=" << (size == 0 ? height : size);
+                }
+                else
+                {
+                    scale << "h=-1:w=" << (size == 0 ? width : size);
+                }
+            }
+            else
+            {
+                if (sizeString[0] == 'w')
+                {
+                    scale << "h=-1:w=" << (size == 0 ? width : size);
+                }
+                else
+                {
+                    scale << "w=-1:h=" << (size == 0 ? height : size);
+                }
+            }
         }
     }
 
     return scale.str();
 }
 
-void MovieDecoder::initializeFilterGraph(const AVRational& timeBase, int size, bool maintainAspectRatio)
+void MovieDecoder::initializeFilterGraph(const AVRational& timeBase, const std::string& size, bool maintainAspectRatio)
 {
     static const AVPixelFormat pixelFormats[] = { AV_PIX_FMT_RGB24, AV_PIX_FMT_NONE };
 
@@ -469,7 +596,7 @@ bool MovieDecoder::getVideoPacket()
     return frameDecoded;
 }
 
-void MovieDecoder::getScaledVideoFrame(int scaledSize, bool maintainAspectRatio, VideoFrame& videoFrame)
+void MovieDecoder::getScaledVideoFrame(const std::string& scaledSize, bool maintainAspectRatio, VideoFrame& videoFrame)
 {
     initializeFilterGraph(m_pFormatContext->streams[m_VideoStream]->time_base, scaledSize, maintainAspectRatio);
 
@@ -492,6 +619,7 @@ void MovieDecoder::getScaledVideoFrame(int scaledSize, bool maintainAspectRatio,
     videoFrame.width = res->width;
     videoFrame.height = res->height;
     videoFrame.lineSize = res->linesize[0];
+    videoFrame.imageSource = m_UseEmbeddedData ? ThumbnailerImageSourceMetadata : ThumbnailerImageSourceVideoStream;
 
     videoFrame.frameData.resize(videoFrame.lineSize * videoFrame.height);
     memcpy((videoFrame.frameData.data()), res->data[0], videoFrame.frameData.size());

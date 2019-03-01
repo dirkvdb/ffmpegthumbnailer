@@ -33,6 +33,7 @@
 #include <cassert>
 #include <cerrno>
 #include <memory>
+#include <regex>
 #include <algorithm>
 #include <sys/stat.h>
 
@@ -44,7 +45,7 @@ namespace ffmpegthumbnailer
 static const int SMART_FRAME_ATTEMPTS = 25;
 
 VideoThumbnailer::VideoThumbnailer()
-: m_ThumbnailSize(128)
+: m_ThumbnailSize("128")
 , m_SeekPercentage(10)
 , m_OverlayFilmStrip(false)
 , m_WorkAroundIssues(false)
@@ -56,7 +57,7 @@ VideoThumbnailer::VideoThumbnailer()
 }
 
 VideoThumbnailer::VideoThumbnailer(int thumbnailSize, bool workaroundIssues, bool maintainAspectRatio, int imageQuality, bool smartFrameSelection)
-: m_ThumbnailSize(thumbnailSize)
+: m_ThumbnailSize(std::to_string(thumbnailSize))
 , m_SeekPercentage(10)
 , m_OverlayFilmStrip(false)
 , m_WorkAroundIssues(workaroundIssues)
@@ -80,6 +81,45 @@ void VideoThumbnailer::setSeekTime(const std::string& seekTime)
 
 void VideoThumbnailer::setThumbnailSize(int size)
 {
+    m_ThumbnailSize = std::to_string(size);
+}
+
+void VideoThumbnailer::setThumbnailSize(int width, int height)
+{
+    std::stringstream ss;
+    if (width > 0)
+    {
+        ss << "w=" << width;
+    }
+
+    if (width > 0 && height > 0)
+    {
+        ss << ":";
+    }
+
+    if (height > 0)
+    {
+        ss << "h=" << height;
+    }
+
+    m_ThumbnailSize = ss.str();
+}
+
+void VideoThumbnailer::setThumbnailSize(const std::string& size)
+{
+    if (size.find('=') == std::string::npos)
+    {
+        m_ThumbnailSize = size;
+        return;
+    }
+
+    std::regex sizeRegex(R"r(([w|h])=(-?\d+)(?::([w|h])=(-?\d+))?)r");
+    std::smatch baseMatch;
+    if (!std::regex_match(size, baseMatch, sizeRegex))
+    {
+        throw std::invalid_argument("Invalid size string specification");
+    }
+
     m_ThumbnailSize = size;
 }
 
@@ -116,7 +156,7 @@ int timeToSeconds(const std::string& time)
     return (hours * 3600) + (minutes * 60) + seconds;
 }
 
-void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageWriter& imageWriter, AVFormatContext* pAvContext)
+VideoFrameInfo VideoThumbnailer::generateThumbnail(const string& videoFile, ImageWriter& imageWriter, AVFormatContext* pAvContext)
 {
     MovieDecoder movieDecoder(pAvContext);
     movieDecoder.initialize(videoFile, m_PreferEmbeddedMetadata);
@@ -170,6 +210,12 @@ void VideoThumbnailer::generateThumbnail(const string& videoFile, ImageWriter& i
     }
 
     writeImage(videoFile, imageWriter, videoFrame, movieDecoder.getDuration(), rowPointers);
+
+    VideoFrameInfo info;
+    info.width = videoFrame.width;
+    info.height = videoFrame.height;
+    info.source = videoFrame.imageSource;
+    return info;
 }
 
 void VideoThumbnailer::generateSmartThumbnail(MovieDecoder& movieDecoder, VideoFrame& videoFrame)
@@ -190,17 +236,17 @@ void VideoThumbnailer::generateSmartThumbnail(MovieDecoder& movieDecoder, VideoF
     videoFrame = videoFrames[bestFrame];
 }
 
-void VideoThumbnailer::generateThumbnail(const string& videoFile, ThumbnailerImageType type, const string& outputFile, AVFormatContext* pAvContext)
+VideoFrameInfo VideoThumbnailer::generateThumbnail(const string& videoFile, ThumbnailerImageType type, const string& outputFile, AVFormatContext* pAvContext)
 {
     std::unique_ptr<ImageWriter> imageWriter(ImageWriterFactory<const string&>::createImageWriter(type, outputFile));
-    generateThumbnail(videoFile, *imageWriter, pAvContext);
+    return generateThumbnail(videoFile, *imageWriter, pAvContext);
 }
 
-void VideoThumbnailer::generateThumbnail(const string& videoFile, ThumbnailerImageType type, vector<uint8_t>& buffer, AVFormatContext* pAvContext)
+VideoFrameInfo VideoThumbnailer::generateThumbnail(const string& videoFile, ThumbnailerImageType type, vector<uint8_t>& buffer, AVFormatContext* pAvContext)
 {
     buffer.clear();
     std::unique_ptr<ImageWriter> imageWriter(ImageWriterFactory<vector<uint8_t>&>::createImageWriter(type, buffer));
-    generateThumbnail(videoFile, *imageWriter, pAvContext);
+    return generateThumbnail(videoFile, *imageWriter, pAvContext);
 }
 
 void VideoThumbnailer::writeImage(const string& videoFile, ImageWriter& imageWriter, const VideoFrame& videoFrame, int duration, vector<uint8_t*>& rowPointers)

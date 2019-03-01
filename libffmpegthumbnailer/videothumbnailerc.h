@@ -32,7 +32,7 @@ typedef void(*thumbnailer_log_callback)(ThumbnailerLogLevel, const char*);
 
 typedef struct video_thumbnailer_struct
 {
-    int                         thumbnail_size;             /* default = 128 */
+    int                         thumbnail_size __attribute__((deprecated("use video_thumbnailer_set_size()"))); /* default = 128 (deprecated, use video_thumbnailer_set_size)*/
     int                         seek_percentage;            /* default = 10 */
     char*                       seek_time;                  /* default = NULL (format hh:mm:ss, overrides seek_percentage if set) */
     int                         overlay_film_strip;         /* default = 0 */
@@ -48,8 +48,11 @@ typedef struct video_thumbnailer_struct
 
 typedef struct image_data_struct
 {
-    uint8_t*    image_data_ptr;       /* points to the image data after call to generate_thumbnail_to_buffer */
-    int         image_data_size;      /* contains the size of the image data after call to generate_thumbnail_to_buffer */
+    uint8_t*                image_data_ptr;       /* points to the image data after call to generate_thumbnail_to_buffer */
+    int                     image_data_size;      /* contains the size of the image data after call to generate_thumbnail_to_buffer (=width*height*3)*/
+    int                     image_data_width;     /* contains the width of the image data after call to generate_thumbnail_to_buffer */
+    int                     image_data_height;    /* contains the height of the image data after call to generate_thumbnail_to_buffer */
+    ThumbnailerImageSource  image_data_source;    /* contains the source that was used to generate the thumbnail */
 
     void*       internal_data;        /* for internal use only */
 } image_data;
@@ -71,6 +74,11 @@ int video_thumbnailer_generate_thumbnail_to_file(video_thumbnailer* thumbnailer,
 /* install a logging callback that gets called on errors and informational messages, reset by passing NULL.
    by default no logging is generated on stdout or stderr */
 void video_thumbnailer_set_log_callback(video_thumbnailer* thumbnailer, thumbnailer_log_callback cb);
+/* Finer control of the generate image thumbnail size
+   Using this function overrides the size setting of the video_thumbnailer struct
+   Use a value of 0 or less to ignore the setting:
+   e.g. Calling this function with 0 and 100 as arguments will set the width using the video aspect ratio */
+int video_thumbnailer_set_size(video_thumbnailer* thumbnailer, int width, int height);
 
 #ifdef __cplusplus
 }

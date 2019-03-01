@@ -44,7 +44,7 @@ int main(int argc, char** argv)
     int     option;
     int     seekPercentage = 10;
     string  seekTime;
-    int     thumbnailSize = 128;
+    string  thumbnailSize = "128";
     int     imageQuality = 8;
     bool    filmStripOverlay = false;
     bool    workaroundIssues = false;
@@ -76,7 +76,7 @@ int main(int argc, char** argv)
                 outputFile = optarg;
                 break;
             case 's':
-                thumbnailSize = atoi(optarg);
+                thumbnailSize = optarg;
                 break;
             case 'f':
                 filmStripOverlay = true;
@@ -149,7 +149,8 @@ int main(int argc, char** argv)
         ThumbnailerImageType imageType = imageFormat.empty() ? determineImageTypeFromFilename(outputFile)
                                                              : determineImageTypeFromString(imageFormat);
 
-        VideoThumbnailer videoThumbnailer(thumbnailSize, workaroundIssues, maintainAspectRatio, imageQuality, smartFrameSelection);
+        VideoThumbnailer videoThumbnailer(0, workaroundIssues, maintainAspectRatio, imageQuality, smartFrameSelection);
+        videoThumbnailer.setThumbnailSize(thumbnailSize);
         videoThumbnailer.setLogCallback([] (ThumbnailerLogLevel lvl, const std::string& msg) {
             if (lvl == ThumbnailerLogLevelInfo)
                 std::cout << msg << std::endl;
@@ -206,27 +207,27 @@ int main(int argc, char** argv)
 
 void printVersion()
 {
-    cout << PACKAGE " version: " PACKAGE_VERSION << endl;
+    cout << PACKAGE " version: " PACKAGE_VERSION "\n";
 }
 
 void printUsage()
 {
-    cout << "Usage: " PACKAGE " [options]" << endl << endl
-         << "Options:" << endl
-         << "  -i<s>   : input file" << endl
-         << "  -o<s>   : output file" << endl
-         << "  -s<n>   : thumbnail size (use 0 for original size) (default: 128)" << endl
-         << "  -t<n|s> : time to seek to (percentage or absolute time hh:mm:ss) (default: 10%)" << endl
-         << "  -q<n>   : image quality (0 = bad, 10 = best) (default: 8)" << endl
-         << "  -c      : override image format (jpeg or png) (default: determined by filename)" << endl
-         << "  -a      : ignore aspect ratio and generate square thumbnail" << endl
-         << "  -f      : create a movie strip overlay" << endl
-         //<< "  -p      : use smarter frame selection (slower)" << endl
-         << "  -m      : prefer embedded image metadata over video content" << endl
-         << "  -w      : workaround issues in old versions of ffmpeg" << endl
-         << "  -r<n>   : repeat thumbnail generation each n seconds, n=0 means disable repetition (default: 0)" << endl
-         << "  -v      : print version number" << endl
-         << "  -h      : display this help" << endl;
+    cout << "Usage: " PACKAGE " [options]\n\n"
+         << "Options:\n"
+         << "  -i<s>   : input file\n"
+         << "  -o<s>   : output file\n"
+         << "  -s<n>   : thumbnail size (use 0 for original size) (default: 128)\n"
+         << "  -t<n|s> : time to seek to (percentage or absolute time hh:mm:ss) (default: 10%)\n"
+         << "  -q<n>   : image quality (0 = bad, 10 = best) (default: 8)\n"
+         << "  -c      : override image format (jpeg, png or rgb) (default: determined by filename)\n"
+         << "  -a      : ignore aspect ratio and generate square thumbnail\n"
+         << "  -f      : create a movie strip overlay\n"
+         //<< "  -p      : use smarter frame selection (slower)\n"
+         << "  -m      : prefer embedded image metadata over video content\n"
+         << "  -w      : workaround issues in old versions of ffmpeg\n"
+         << "  -r<n>   : repeat thumbnail generation each n seconds, n=0 means disable repetition (default: 0)\n"
+         << "  -v      : print version number\n"
+         << "  -h      : display this help\n";
 }
 
 ThumbnailerImageType determineImageTypeFromString(const std::string& type)
@@ -242,6 +243,11 @@ ThumbnailerImageType determineImageTypeFromString(const std::string& type)
     if (lowercaseType == "jpeg" || lowercaseType == "jpg")
     {
         return Jpeg;
+    }
+
+    if (lowercaseType == "raw" || lowercaseType == "rgb")
+    {
+        return Rgb;
     }
 
     throw logic_error("Invalid image type specified");
@@ -276,10 +282,10 @@ private:
 
 void tryUriConvert(std::string& filename)
 {
-	if (filename.find(":") == string::npos)
-	{
-		return;
-	}
+    if (filename.find(":") == string::npos)
+    {
+        return;
+    }
 
     LibHandle gLib("libglib-2.0.so.0");
     LibHandle gobjectLib("libgobject-2.0.so.0");

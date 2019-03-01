@@ -1,32 +1,34 @@
-INCLUDE_DIRECTORIES(SYSTEM
-    ${CMAKE_CURRENT_SOURCE_DIR}/testframework
-)
-
-INCLUDE_DIRECTORIES(
-	${CMAKE_CURRENT_SOURCE_DIR}/..
-)
-
-LINK_DIRECTORIES(
-	${XDGBASEDIR_LIBRARY_DIRS}
-)
-
-ADD_EXECUTABLE(ffmpegthumbnailertest
+add_executable(ffmpegthumbnailertest
     testrunner.cpp
     histogramtest.cpp
     videothumbnailertest.cpp
     videothumbnailerctest.cpp
 )
 
-ADD_DEFINITIONS(-DTEST_DATADIR="${CMAKE_CURRENT_SOURCE_DIR}")
+target_include_directories(ffmpegthumbnailertest PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/testframework
+    ${CMAKE_BINARY_DIR}
+)
 
-IF (ENABLE_SHARED)
-    TARGET_LINK_LIBRARIES(ffmpegthumbnailertest ${SHARED_LIB})
-ELSE ()
-    TARGET_LINK_LIBRARIES(ffmpegthumbnailertest ${STATIC_LIB})
-ENDIF ()
+# test binary built with a c compiler instead of c++ compiler
+add_executable(ffmpegthumbnailerctest
+    testrunner.c
+)
 
-IF (UNIX)
-    TARGET_LINK_LIBRARIES(ffmpegthumbnailertest -lpthread)
-ENDIF ()
+target_include_directories(ffmpegthumbnailerctest PRIVATE
+    ${CMAKE_BINARY_DIR}
+)
 
-ADD_TEST(NAME ffmpegthumbnailertest COMMAND ffmpegthumbnailertest)
+target_compile_definitions(ffmpegthumbnailertest PRIVATE TEST_DATADIR="${CMAKE_CURRENT_SOURCE_DIR}")
+target_compile_definitions(ffmpegthumbnailerctest PRIVATE TEST_DATADIR="${CMAKE_CURRENT_SOURCE_DIR}")
+
+if (ENABLE_SHARED)
+    target_link_libraries(ffmpegthumbnailertest libffmpegthumbnailer)
+    target_link_libraries(ffmpegthumbnailerctest libffmpegthumbnailer)
+else ()
+    target_link_libraries(ffmpegthumbnailertest libffmpegthumbnailerstatic)
+    target_link_libraries(ffmpegthumbnailerctest libffmpegthumbnailerstatic)
+endif ()
+
+add_test(NAME ffmpegthumbnailertest COMMAND ffmpegthumbnailertest)
+add_test(NAME ffmpegthumbnailerctest COMMAND ffmpegthumbnailerctest)

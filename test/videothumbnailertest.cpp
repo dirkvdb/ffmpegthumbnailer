@@ -38,6 +38,55 @@ TEST_CASE("C++ API Usage")
         CHECK_FALSE(buffer.empty());
     }
 
+    SECTION("CreateThumbStringSize")
+    {
+        std::string input = std::string(TEST_DATADIR) + "/test_sample.flv";
+
+        std::vector<uint8_t> buffer;
+        videoThumbnailer.setThumbnailSize("w=128:h=-1");
+        auto info = videoThumbnailer.generateThumbnail(input, Png, buffer);
+        CHECK_FALSE(buffer.empty());
+        CHECK(128 == info.width);
+        CHECK(info.height > 0);
+    }
+
+    SECTION("CreateThumbRawData")
+    {
+        std::string input = std::string(TEST_DATADIR) + "/test_sample.flv";
+
+        std::vector<uint8_t> buffer;
+        videoThumbnailer.generateThumbnail(input, Rgb, buffer);
+        CHECK_FALSE(buffer.empty());
+    }
+
+    SECTION("SpecifyInvalidSize")
+    {
+        CHECK_THROWS_AS(videoThumbnailer.setThumbnailSize("w="), std::invalid_argument);
+        CHECK_THROWS_AS(videoThumbnailer.setThumbnailSize("h="), std::invalid_argument);
+        CHECK_THROWS_AS(videoThumbnailer.setThumbnailSize("w=?"), std::invalid_argument);
+        CHECK_THROWS_AS(videoThumbnailer.setThumbnailSize("h=?"), std::invalid_argument);
+    }
+
+    SECTION("CreateThumbSpecifyWidth")
+    {
+        std::string input = std::string(TEST_DATADIR) + "/test_sample.flv";
+
+        std::vector<uint8_t> buffer;
+        videoThumbnailer.setThumbnailSize("w=64");
+        videoThumbnailer.generateThumbnail(input, Png, buffer);
+        CHECK_FALSE(buffer.empty());
+    }
+
+    SECTION("CreateThumbSpecifyHeight")
+    {
+        std::string input = std::string(TEST_DATADIR) + "/test_sample.flv";
+
+        std::vector<uint8_t> buffer;
+        videoThumbnailer.setThumbnailSize("h=64");
+        videoThumbnailer.generateThumbnail(input, Png, buffer);
+        CHECK_FALSE(buffer.empty());
+    }
+
     SECTION("CreateThumbNonAscii")
     {
         std::string input = std::string(TEST_DATADIR) + "/test_Кругом_шумел.flv";

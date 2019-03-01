@@ -25,4 +25,10 @@ typedef enum ThumbnailerLogLevelEnum
     ThumbnailerLogLevelError
 } ThumbnailerLogLevel;
 
+typedef enum ThumbnailerImageSource
+{
+    ThumbnailerImageSourceVideoStream,
+    ThumbnailerImageSourceMetadata
+} ThumbnailerImageSource;
+
 #endif
