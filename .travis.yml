@@ -47,11 +47,6 @@ matrix:
     - compiler: clang
       os: osx
       env:
-        - BUILD_TYPE=Debug
-      osx_image: xcode7.3
-    - compiler: clang
-      os: osx
-      env:
         - BUILD_TYPE=Release
       osx_image: xcode9
 
