@@ -32,7 +32,6 @@
 #include "libffmpegthumbnailer/stringoperations.h"
 #include "libffmpegthumbnailer/videothumbnailer.h"
 
-using namespace std::chrono_literals;
 using namespace ffmpegthumbnailer;
 
 void                 printVersion();
@@ -187,7 +186,8 @@ int main(int argc, char** argv)
             {
                 rename(tmpFileName.c_str(), outputFile.c_str());
             }
-            if (sleepTime == 0s)
+
+            if (sleepTime.count() == 0)
             {
                 break;
             }
@@ -273,7 +273,7 @@ public:
     LibHandle(const std::string& libName)
     : m_pLib(dlopen(libName.c_str(), RTLD_LAZY))
     {
-        if (!m_pLib) cerr << dlerror() << endl;
+        if (!m_pLib) std::cerr << dlerror() << std::endl;
     }
 
     ~LibHandle()
@@ -311,7 +311,7 @@ void tryUriConvert(std::string& filename)
 
         if (!(createUriFunc && nativeFunc && getFunc && freeFunc && initFunc && unrefFunc))
         {
-            cerr << "Failed to obtain functions from gio libraries" << endl;
+            std::cerr << "Failed to obtain functions from gio libraries" << std::endl;
             return;
         }
 
@@ -320,14 +320,14 @@ void tryUriConvert(std::string& filename)
         void* pFile = createUriFunc(filename.c_str());
         if (!pFile)
         {
-            cerr << "Failed to create gio file: " << filename << endl;
+            std::cerr << "Failed to create gio file: " << filename << std::endl;
             return;
         }
 
         if (!nativeFunc(pFile))
         {
             unrefFunc(pFile);
-            cout << "Not a native file, thumbnailing will likely fail: " << filename << endl;
+            std::cout << "Not a native file, thumbnailing will likely fail: " << filename << std::endl;
             return;
         }
 
@@ -339,7 +339,7 @@ void tryUriConvert(std::string& filename)
         }
         else
         {
-            cerr << "Failed to get path: " << filename << endl;
+            std::cerr << "Failed to get path: " << filename << std::endl;
         }
 
         unrefFunc(pFile);
