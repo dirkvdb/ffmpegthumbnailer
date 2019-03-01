@@ -96,7 +96,7 @@ add_library(libffmpegthumbnailerobj OBJECT
 set_source_files_properties(libffmpegthumbnailer/videothumbnailerc.cpp PROPERTIES COMPILE_FLAGS -Wno-deprecated-declarations)
 
 set_target_properties(libffmpegthumbnailerobj PROPERTIES POSITION_INDEPENDENT_CODE ON)
-target_compile_definitions(libffmpegthumbnailerobj PRIVATE -D__STDC_CONSTANT_MACROS)
+target_compile_definitions(libffmpegthumbnailerobj PRIVATE __STDC_CONSTANT_MACROS _FILE_OFFSET_BITS=64)
 target_include_directories(libffmpegthumbnailerobj
     PRIVATE
         $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}>
