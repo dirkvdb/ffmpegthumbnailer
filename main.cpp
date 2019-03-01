@@ -290,7 +290,7 @@ private:
 
 void tryUriConvert(std::string& filename)
 {
-    if (filename.find(":") == string::npos)
+    if (filename.find(":") == std::string::npos)
     {
         return;
     }
