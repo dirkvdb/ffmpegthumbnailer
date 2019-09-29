@@ -1,4 +1,4 @@
-FFmpegThumbnailer 2.x.x
+FFmpegThumbnailer 2.2.1
 - CMake improvements: required CMake version is now 3.5 or newer
 - Fix anamorphic height (thanks to cmrd-senya)
 - Fix libffmpegthumbnailer.pc to work with multilib systems (thanks to orbea)
@@ -8,6 +8,8 @@ FFmpegThumbnailer 2.x.x
 - Check for https as well when skipping stat call (thanks to HearstCorp)
 - Support specifying the size as string using the c api
 - Support raw rgb data as image type
+- Print warnings on stderr instead of stdout
+- Support for continuous thumbnail creation
 
 FFmpegThumbnailer 2.2.0
 - New option to prefer embedded image metadata over video content (command line argument: -m)

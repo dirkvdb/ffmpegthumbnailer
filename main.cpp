@@ -153,10 +153,7 @@ int main(int argc, char** argv)
         VideoThumbnailer videoThumbnailer(0, workaroundIssues, maintainAspectRatio, imageQuality, smartFrameSelection);
         videoThumbnailer.setThumbnailSize(thumbnailSize);
         videoThumbnailer.setLogCallback([](ThumbnailerLogLevel lvl, const std::string& msg) {
-            if (lvl == ThumbnailerLogLevelInfo)
-                std::cout << msg << std::endl;
-            else
-                std::cerr << msg << std::endl;
+            std::cerr << msg << std::endl;
         });
 
         FilmStripFilter* filmStripFilter = nullptr;
