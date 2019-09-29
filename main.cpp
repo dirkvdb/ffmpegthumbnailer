@@ -327,7 +327,7 @@ void tryUriConvert(std::string& filename)
         if (!nativeFunc(pFile))
         {
             unrefFunc(pFile);
-            std::cout << "Not a native file, thumbnailing will likely fail: " << filename << std::endl;
+            std::cerr << "Not a native file, thumbnailing will likely fail: " << filename << std::endl;
             return;
         }
 
