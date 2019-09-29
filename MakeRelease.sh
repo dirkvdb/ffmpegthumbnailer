@@ -21,9 +21,9 @@ then
 fi
 
 #get version number
-version_major=`cat CMakeLists.txt | grep SET\(PACKAGE_VERSION_MAJOR | cut -d ' ' -f2 | sed 's/)//'`
-version_minor=`cat CMakeLists.txt | grep SET\(PACKAGE_VERSION_MINOR | cut -d ' ' -f2 | sed 's/)//'`
-version_patch=`cat CMakeLists.txt | grep SET\(PACKAGE_VERSION_PATCH | cut -d ' ' -f2 | sed 's/)//'`
+version_major=`cat CMakeLists.txt | grep set\(PACKAGE_VERSION_MAJOR | cut -d ' ' -f2 | sed 's/)//'`
+version_minor=`cat CMakeLists.txt | grep set\(PACKAGE_VERSION_MINOR | cut -d ' ' -f2 | sed 's/)//'`
+version_patch=`cat CMakeLists.txt | grep set\(PACKAGE_VERSION_PATCH | cut -d ' ' -f2 | sed 's/)//'`
 version="${version_major}.${version_minor}.${version_patch}"
 
 echo $version
