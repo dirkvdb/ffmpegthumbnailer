@@ -16,7 +16,6 @@
 
 #include "config.h"
 
-#include <chrono>
 #include <clocale>
 #include <iostream>
 #include <stdexcept>
@@ -42,21 +41,19 @@ ThumbnailerImageType determineImageTypeFromFilename(const std::string& filename)
 
 int main(int argc, char** argv)
 {
-    int                  option;
-    int                  seekPercentage = 10;
-    std::string          seekTime;
-    std::string          thumbnailSize          = "128";
-    int                  imageQuality           = 8;
-    bool                 filmStripOverlay       = false;
-    bool                 workaroundIssues       = false;
-    bool                 maintainAspectRatio    = true;
-    bool                 smartFrameSelection    = false;
-    bool                 preferEmbeddedMetadata = false;
-    std::string          inputFile;
-    std::string          outputFile;
-    std::string          imageFormat;
-    std::string          tmpFileNameSuffix;
-    std::chrono::seconds sleepTime;
+    int         option;
+    int         seekPercentage = 10;
+    std::string seekTime;
+    std::string thumbnailSize          = "128";
+    int         imageQuality           = 8;
+    bool        filmStripOverlay       = false;
+    bool        workaroundIssues       = false;
+    bool        maintainAspectRatio    = true;
+    bool        smartFrameSelection    = false;
+    bool        preferEmbeddedMetadata = false;
+    std::string inputFile;
+    std::string outputFile;
+    std::string imageFormat;
 
     if (!std::setlocale(LC_CTYPE, ""))
     {
@@ -107,9 +104,6 @@ int main(int argc, char** argv)
         case 'c':
             imageFormat = optarg;
             break;
-        case 'r':
-            sleepTime = std::chrono::seconds(std::atoi(optarg));
-            break;
         case 'h':
             printUsage();
             return 0;
@@ -137,11 +131,6 @@ int main(int argc, char** argv)
         return 0;
     }
 
-    if (outputFile != "-")
-    {
-        tmpFileNameSuffix = ".tmp";
-    }
-
     try
     {
 #ifdef ENABLE_GIO
@@ -156,12 +145,12 @@ int main(int argc, char** argv)
             std::cerr << msg << std::endl;
         });
 
-        FilmStripFilter* filmStripFilter = nullptr;
+        std::unique_ptr<FilmStripFilter> filmStripFilter;
 
         if (filmStripOverlay)
         {
-            filmStripFilter = new FilmStripFilter();
-            videoThumbnailer.addFilter(filmStripFilter);
+            filmStripFilter.reset(new FilmStripFilter());
+            videoThumbnailer.addFilter(filmStripFilter.get());
         }
 
         videoThumbnailer.setPreferEmbeddedMetadata(preferEmbeddedMetadata);
@@ -175,24 +164,7 @@ int main(int argc, char** argv)
             videoThumbnailer.setSeekPercentage(seekPercentage);
         }
 
-        do
-        {
-            std::string tmpFileName = "." + outputFile + tmpFileNameSuffix;
-            videoThumbnailer.generateThumbnail(inputFile, imageType, tmpFileName);
-            if (tmpFileNameSuffix.length() > 0)
-            {
-                rename(tmpFileName.c_str(), outputFile.c_str());
-            }
-
-            if (sleepTime.count() == 0)
-            {
-                break;
-            }
-
-            std::this_thread::sleep_for(sleepTime);
-        } while (true);
-
-        delete filmStripFilter;
+        videoThumbnailer.generateThumbnail(inputFile, imageType, outputFile);
     }
     catch (std::exception& e)
     {
@@ -228,7 +200,6 @@ void printUsage()
               //<< "  -p      : use smarter frame selection (slower)\n"
               << "  -m      : prefer embedded image metadata over video content\n"
               << "  -w      : workaround issues in old versions of ffmpeg\n"
-              << "  -r<n>   : repeat thumbnail generation each n seconds, n=0 means disable repetition (default: 0)\n"
               << "  -v      : print version number\n"
               << "  -h      : display this help\n";
 }

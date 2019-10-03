@@ -1,3 +1,6 @@
+FFmpegThumbnailer 2.2.2
+- Removed unstable continuous thumbnail creation
+
 FFmpegThumbnailer 2.2.1
 - CMake improvements: required CMake version is now 3.5 or newer
 - Fix anamorphic height (thanks to cmrd-senya)
