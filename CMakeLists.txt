@@ -92,6 +92,15 @@ add_library(libffmpegthumbnailerobj OBJECT
     libffmpegthumbnailer/filmstripfilter.cpp
 )
 
+target_link_libraries(libffmpegthumbnailerobj
+    FFmpeg::avformat
+    FFmpeg::avcodec
+    FFmpeg::avutil
+    FFmpeg::avfilter
+    $<$<BOOL:${HAVE_JPEG}>:${JPEG_LIBRARIES}>
+    $<$<BOOL:${HAVE_PNG}>:PNG::PNG>
+)
+
 # we use our own deprecated struct menbers, so disable the warning about it
 set_source_files_properties(libffmpegthumbnailer/videothumbnailerc.cpp PROPERTIES COMPILE_FLAGS -Wno-deprecated-declarations)
 
@@ -118,12 +127,7 @@ set (FFMPEGTHUMBNAILER_SOVERSION_AGE 1)
 if (ENABLE_STATIC)
     add_library(libffmpegthumbnailerstatic STATIC $<TARGET_OBJECTS:libffmpegthumbnailerobj>)
     target_link_libraries(libffmpegthumbnailerstatic
-        FFmpeg::avformat
-        FFmpeg::avcodec
-        FFmpeg::avutil
-        FFmpeg::avfilter
-        $<$<BOOL:${HAVE_JPEG}>:${JPEG_LIBRARIES}>
-        $<$<BOOL:${HAVE_PNG}>:PNG::PNG>
+        libffmpegthumbnailerobj
         $<$<BOOL:${ENABLE_GIO}>:${CMAKE_DL_LIBS}>
     )
 
@@ -140,12 +144,7 @@ endif ()
 if (ENABLE_SHARED)
     add_library(libffmpegthumbnailer SHARED $<TARGET_OBJECTS:libffmpegthumbnailerobj>)
     target_link_libraries(libffmpegthumbnailer
-        FFmpeg::avformat
-        FFmpeg::avcodec
-        FFmpeg::avutil
-        FFmpeg::avfilter
-        $<$<BOOL:${HAVE_JPEG}>:${JPEG_LIBRARIES}>
-        $<$<BOOL:${HAVE_PNG}>:PNG::PNG>
+        libffmpegthumbnailerobj
     )
 
     set_target_properties(libffmpegthumbnailer PROPERTIES
