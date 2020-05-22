@@ -1,11 +1,20 @@
 project(kffmpegthumbnailer)
 
-find_package(KDE4 REQUIRED)
-find_package(PkgConfig)
+cmake_minimum_required(VERSION 2.8.12 FATAL_ERROR)
+set(QT_MIN_VERSION "5.2.0")
 
-include(KDE4Defaults)
-include(MacroOptionalAddSubdirectory)
+find_package(ECM 1.0.0 REQUIRED NO_MODULE)
+set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+
+include(FeatureSummary)
+include(WriteBasicConfigVersionFile)
+include(KDEInstallDirs)
+include(KDECMakeSettings)
+include(KDECompilerSettings NO_POLICY_SCOPE)
 include(FindPkgConfig)
+
+find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED COMPONENTS Core Gui)
+find_package(KF5 REQUIRED COMPONENTS KIO I18n Config)
 
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "kffmpegthumbnailer video thumbnailer for kde")
 set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README")
@@ -20,19 +29,15 @@ set(CPACK_SOURCE_IGNORE_FILES "/out/;/.svn/;*~")
 
 include(CPack)
 
-pkg_check_modules(AVUTIL libavutil)
-pkg_check_modules(AVFORMAT libavformat)
-pkg_check_modules(AVCODEC libavcodec)
-pkg_check_modules(SWSCALE libswscale)
 pkg_check_modules(FFMPEG_THUMBNAILER libffmpegthumbnailer)
 
-include_directories( ${KDE4_INCLUDES} ${QT_INCLUDES} ${AVUTIL_INCLUDES} ${AVFORMAT_INCLUDES} ${AVCODEC_INCLUDES} ${SWSCALE_INCLUDES} ${FFMPEG_THUMBNAILER_INCLUDES})
+include_directories(${CMAKE_CURRENT_BINARY_DIR} ${QT_INCLUDES} ${FFMPEG_THUMBNAILER_INCLUDES})
 
 set(kffmpegthumbnailer_SRCS kffmpegthumbnailer.cpp)
 string(REGEX REPLACE "-fno-exceptions " "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
 
-kde4_add_plugin(kffmpegthumbnailer ${kffmpegthumbnailer_SRCS})
-target_link_libraries(kffmpegthumbnailer ${KDE4_KIO_LIBS} ${AVUTIL_LIBRARIES} ${AVFORMAT_LIBRARIES} ${AVCODEC_LIBRARIES} ${SWSCALE_LIBRARIES} ${FFMPEG_THUMBNAILER_LIBRARIES})
+add_library(kffmpegthumbnailer MODULE ${kffmpegthumbnailer_SRCS})
+target_link_libraries(kffmpegthumbnailer Qt5::Core Qt5::Gui KF5::KIOWidgets KF5::KIOCore ${FFMPEG_THUMBNAILER_LIBRARIES})
 
 install(TARGETS kffmpegthumbnailer DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES kffmpegthumbnailer.desktop DESTINATION ${SERVICES_INSTALL_DIR})
