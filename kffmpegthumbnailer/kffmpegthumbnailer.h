@@ -29,7 +29,7 @@ class KFFMpegThumbnailer : public QObject, public ThumbCreator
 public:
     KFFMpegThumbnailer();
     virtual ~KFFMpegThumbnailer();
-    virtual bool create(const QString& path, int width, int heught, QImage& img) override;
+    virtual bool create(const QString& path, int width, int height, QImage& img) override;
     virtual Flags flags() const override;
 
 private:

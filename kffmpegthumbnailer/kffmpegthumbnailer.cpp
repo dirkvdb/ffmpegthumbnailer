@@ -36,7 +36,7 @@ KFFMpegThumbnailer::~KFFMpegThumbnailer()
 {
 }
 
-bool KFFMpegThumbnailer::create(const QString& path, int width, int /*heigth*/, QImage& img)
+bool KFFMpegThumbnailer::create(const QString& path, int width, int /*height*/, QImage& img)
 {
     try
     {
