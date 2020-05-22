@@ -29,9 +29,9 @@ class KFFMpegThumbnailer : public QObject, public ThumbCreator
 public:
     KFFMpegThumbnailer();
     virtual ~KFFMpegThumbnailer();
-    virtual bool create(const QString& path, int width, int heught, QImage& img);
-    virtual Flags flags() const;
-    
+    virtual bool create(const QString& path, int width, int heught, QImage& img) override;
+    virtual Flags flags() const override;
+
 private:
     ffmpegthumbnailer::VideoThumbnailer    m_Thumbnailer;
     ffmpegthumbnailer::FilmStripFilter     m_FilmStrip;
