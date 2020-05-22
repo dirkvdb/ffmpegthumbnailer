@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
+      http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
+    <kcfgfile name="kffmpegthumbsrc"/>
+    <group name="General">
+      <entry name="addFilmstrip" type="Bool">
+          <label>Embed filmstrip effect</label>
+          <default>false</default>
+      </entry>
+      <entry name="useMetadataCovers" type="Bool">
+          <label>Use metadata embedded cover pictures</label>
+          <default>true</default>
+      </entry>
+      <entry name="useSmartSelection" type="Bool">
+          <label>Use smart (slower) frame selection</label>
+          <default>false</default>
+      </entry>
+    </group>
+</kcfg>

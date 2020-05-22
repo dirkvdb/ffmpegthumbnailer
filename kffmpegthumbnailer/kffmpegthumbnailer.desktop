@@ -7,5 +7,6 @@ MimeType=video/*;application/x-flash-video;application/vnd.ms-asf;application/vn
 X-KDE-Library=kffmpegthumbnailer
 ServiceTypes=ThumbCreator
 CacheThumbnail=true
-ThumbnailerVersion=1
+ThumbnailerVersion=2
 IgnoreMaximumSize=true
+Configurable=true

@@ -15,8 +15,12 @@
 //    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "kffmpegthumbnailer.h"
+#include "kffmpegthumbnailersettings5.h"
 
 #include <QImage>
+#include <QCheckBox>
+#include <QFormLayout>
+#include <QWidget>
 
 extern "C"
 {
@@ -29,7 +33,6 @@ extern "C"
 
 KFFMpegThumbnailer::KFFMpegThumbnailer()
 {
-    m_Thumbnailer.addFilter(&m_FilmStrip);
 }
 
 KFFMpegThumbnailer::~KFFMpegThumbnailer()
@@ -41,13 +44,24 @@ bool KFFMpegThumbnailer::create(const QString& path, int width, int /*height*/, 
     try
     {
         std::vector<uint8_t> pixelBuffer;
+        KFFMpegThumbnailerSettings* settings = KFFMpegThumbnailerSettings::self();
+        settings->load();
 
-        m_Thumbnailer.setThumbnailSize(width);
+        if (settings->addFilmstrip())
+        {
+            m_Thumbnailer.addFilter(&m_FilmStrip);
+        }
+        else 
+        {
+            m_Thumbnailer.clearFilters();
+        }
+
+        m_Thumbnailer.setPreferEmbeddedMetadata(settings->useMetadataCovers());
+        m_Thumbnailer.setSmartFrameSelection(settings->useSmartSelection());
         // 20% seek inside the video to generate the preview
         m_Thumbnailer.setSeekPercentage(20);
-        //Smart frame selection is very slow compared to the fixed detection
-        //TODO: Use smart detection if the image is single colored.
-        //m_Thumbnailer.setSmartFrameSelection(true);
+
+        m_Thumbnailer.setThumbnailSize(width);
         m_Thumbnailer.generateThumbnail(std::string(path.toUtf8()), Png, pixelBuffer);
 
         if (!img.loadFromData(&pixelBuffer.front(), pixelBuffer.size(), "PNG"))
@@ -68,3 +82,33 @@ ThumbCreator::Flags KFFMpegThumbnailer::flags() const
     return (Flags)(DrawFrame);
 }
 
+QWidget *KFFMpegThumbnailer::createConfigurationWidget()
+{
+    QWidget* widget = new QWidget();
+    QFormLayout* formLayout = new QFormLayout(widget);
+
+    m_addFilmStripCheckBox = new QCheckBox("Embed filmstrip effect");
+    m_addFilmStripCheckBox->setChecked(KFFMpegThumbnailerSettings::addFilmstrip());
+    formLayout->addRow(m_addFilmStripCheckBox);
+
+    m_useMetadataCheckBox = new QCheckBox("Use metadata embedded cover pictures");
+    m_useMetadataCheckBox->setChecked(KFFMpegThumbnailerSettings::useMetadataCovers());
+    formLayout->addRow(m_useMetadataCheckBox);
+
+    m_useSmartSelectionCheckBox = new QCheckBox("Use smart (slower) frame selection");
+    m_useSmartSelectionCheckBox->setChecked(KFFMpegThumbnailerSettings::useSmartSelection());
+    formLayout->addRow(m_useSmartSelectionCheckBox);
+
+    return widget;
+}
+
+void KFFMpegThumbnailer::writeConfiguration(const QWidget *configurationWidget)
+{
+    KFFMpegThumbnailerSettings* settings = KFFMpegThumbnailerSettings::self();
+
+    settings->setAddFilmstrip(m_addFilmStripCheckBox->isChecked());
+    settings->setUseMetadataCovers(m_useMetadataCheckBox->isChecked());
+    settings->setUseSmartSelection(m_useSmartSelectionCheckBox->isChecked());
+
+    settings->save();
+}

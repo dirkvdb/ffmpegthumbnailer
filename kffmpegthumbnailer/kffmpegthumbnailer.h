@@ -18,6 +18,7 @@
 #define KFFMPEG_THUMBNAILER_H
 
 #include <QObject>
+#include <QCheckBox>
 #include <kio/thumbcreator.h>
 
 #include <libffmpegthumbnailer/videothumbnailer.h>
@@ -31,10 +32,15 @@ public:
     virtual ~KFFMpegThumbnailer();
     virtual bool create(const QString& path, int width, int height, QImage& img) override;
     virtual Flags flags() const override;
+    virtual QWidget* createConfigurationWidget() override;
+    virtual void writeConfiguration(const QWidget* configurationWidget) override;
 
 private:
     ffmpegthumbnailer::VideoThumbnailer    m_Thumbnailer;
     ffmpegthumbnailer::FilmStripFilter     m_FilmStrip;
+    QCheckBox*                             m_addFilmStripCheckBox;
+    QCheckBox*                             m_useMetadataCheckBox;
+    QCheckBox*                             m_useSmartSelectionCheckBox;
 };
 
 #endif

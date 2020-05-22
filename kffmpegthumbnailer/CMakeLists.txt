@@ -36,8 +36,10 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR} ${QT_INCLUDES} ${FFMPEG_THUMBNAI
 set(kffmpegthumbnailer_SRCS kffmpegthumbnailer.cpp)
 string(REGEX REPLACE "-fno-exceptions " "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
 
+kconfig_add_kcfg_files(kffmpegthumbnailer_SRCS kffmpegthumbnailersettings5.kcfgc)
 add_library(kffmpegthumbnailer MODULE ${kffmpegthumbnailer_SRCS})
-target_link_libraries(kffmpegthumbnailer Qt5::Core Qt5::Gui KF5::KIOWidgets KF5::KIOCore ${FFMPEG_THUMBNAILER_LIBRARIES})
+target_link_libraries(kffmpegthumbnailer Qt5::Core Qt5::Gui KF5::KIOWidgets KF5::KIOCore KF5::ConfigCore KF5::ConfigGui ${FFMPEG_THUMBNAILER_LIBRARIES})
 
+install(FILES kffmpegthumbnailersettings5.kcfg DESTINATION ${KCFG_INSTALL_DIR})
 install(TARGETS kffmpegthumbnailer DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES kffmpegthumbnailer.desktop DESTINATION ${SERVICES_INSTALL_DIR})
