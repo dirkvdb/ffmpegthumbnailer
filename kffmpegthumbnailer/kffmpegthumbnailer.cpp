@@ -102,7 +102,7 @@ QWidget *KFFMpegThumbnailer::createConfigurationWidget()
     return widget;
 }
 
-void KFFMpegThumbnailer::writeConfiguration(const QWidget *configurationWidget)
+void KFFMpegThumbnailer::writeConfiguration(const QWidget* /*configurationWidget*/)
 {
     KFFMpegThumbnailerSettings* settings = KFFMpegThumbnailerSettings::self();
 
