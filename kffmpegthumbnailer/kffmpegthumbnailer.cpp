@@ -60,6 +60,6 @@ bool KFFMpegThumbnailer::create(const QString& path, int width, int /*heigth*/, 
 
 ThumbCreator::Flags KFFMpegThumbnailer::flags() const
 {
-    return (Flags)(DrawFrame);
+    return (Flags)(None);
 }
 
