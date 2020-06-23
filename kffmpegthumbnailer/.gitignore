@@ -1,0 +1,7 @@
+*.cmake
+*.so
+Makefile
+prefix.sh
+CMakeCache.txt
+CMakeFiles
+*_autogen
