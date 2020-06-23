@@ -20,7 +20,7 @@
 
 extern "C"
 {
-    KDE_EXPORT ThumbCreator* new_creator()
+    Q_DECL_EXPORT ThumbCreator *new_creator()
     {
         return new KFFMpegThumbnailer();
     }
@@ -41,10 +41,15 @@ bool KFFMpegThumbnailer::create(const QString& path, int width, int /*heigth*/, 
     try
     {
         std::vector<uint8_t> pixelBuffer;
-        
-        m_Thumbnailer.setThumbnailSize(width);    
+
+        m_Thumbnailer.setThumbnailSize(width);
+        // 20% seek inside the video to generate the preview
+        m_Thumbnailer.setSeekPercentage(20);
+        //Smart frame selection is very slow compared to the fixed detection
+        //TODO: Use smart detection if the image is single colored.
+        //m_Thumbnailer.setSmartFrameSelection(true);
         m_Thumbnailer.generateThumbnail(std::string(path.toUtf8()), Png, pixelBuffer);
-        
+
         if (!img.loadFromData(&pixelBuffer.front(), pixelBuffer.size(), "PNG"))
         {
             return false;
@@ -54,7 +59,7 @@ bool KFFMpegThumbnailer::create(const QString& path, int width, int /*heigth*/, 
     {
         return false;
     }
-    
+
     return true;
 }
 
