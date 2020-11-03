@@ -1,5 +1,11 @@
 KFFmpegThumbnailer
 
+version 1.2.0 (October 28, 2020)
+- Fixed builds for KDE 5
+- Added options menu, allowing to select preferred thumbnails
+- Added option to use cover pictures from media files
+- Removed deprecated frame generation code
+
 version 1.1.0 (January 06, 2010)
 - Updated to ffmpegthumbnailer 2.0.0 interface
 
