@@ -17,9 +17,12 @@
 #include "kffmpegthumbnailer.h"
 #include "kffmpegthumbnailersettings5.h"
 
+#include <limits>
+
 #include <QImage>
 #include <QCheckBox>
 #include <QFormLayout>
+#include <QRegExpValidator>
 #include <QWidget>
 
 extern "C"
@@ -33,6 +36,7 @@ extern "C"
 
 KFFMpegThumbnailer::KFFMpegThumbnailer()
 {
+    thumbCache.setMaxCost(KFFMpegThumbnailerSettings::cacheSize());
 }
 
 KFFMpegThumbnailer::~KFFMpegThumbnailer()
@@ -41,6 +45,21 @@ KFFMpegThumbnailer::~KFFMpegThumbnailer()
 
 bool KFFMpegThumbnailer::create(const QString& path, int width, int /*height*/, QImage& img)
 {
+    int seqIdx = (int) sequenceIndex();
+
+    const QList<int> seekPercentages = KFFMpegThumbnailerSettings::sequenceSeekPercentages();
+    const int numSeekPercentages = seekPercentages.size();
+
+    seqIdx %= numSeekPercentages;
+
+    const QString cacheKey = QString("%1$%2@%3").arg(path).arg(seqIdx).arg(width);
+
+    QImage* cachedImg = thumbCache[cacheKey];
+    if (cachedImg) {
+        img = *cachedImg;
+        return true;
+    }
+
     try
     {
         std::vector<uint8_t> pixelBuffer;
@@ -58,8 +77,7 @@ bool KFFMpegThumbnailer::create(const QString& path, int width, int /*height*/, 
 
         m_Thumbnailer.setPreferEmbeddedMetadata(settings->useMetadataCovers());
         m_Thumbnailer.setSmartFrameSelection(settings->useSmartSelection());
-        // 20% seek inside the video to generate the preview
-        m_Thumbnailer.setSeekPercentage(20);
+        m_Thumbnailer.setSeekPercentage(seekPercentages[seqIdx]);
 
         m_Thumbnailer.setThumbnailSize(width);
         m_Thumbnailer.generateThumbnail(std::string(path.toUtf8()), Png, pixelBuffer);
@@ -74,7 +92,15 @@ bool KFFMpegThumbnailer::create(const QString& path, int width, int /*height*/, 
         return false;
     }
 
+    const int cacheCost = (int) ((img.sizeInBytes()+1023) / 1024);
+    thumbCache.insert(cacheKey, new QImage(img), cacheCost);
+
     return true;
+}
+
+float KFFMpegThumbnailer::sequenceIndexWraparoundPoint() const
+{
+    return (float) KFFMpegThumbnailerSettings::sequenceSeekPercentages().size();
 }
 
 ThumbCreator::Flags KFFMpegThumbnailer::flags() const
@@ -99,6 +125,23 @@ QWidget *KFFMpegThumbnailer::createConfigurationWidget()
     m_useSmartSelectionCheckBox->setChecked(KFFMpegThumbnailerSettings::useSmartSelection());
     formLayout->addRow(m_useSmartSelectionCheckBox);
 
+    QString seekPercentagesStr;
+    for (const int sp : KFFMpegThumbnailerSettings::sequenceSeekPercentages()) {
+        if (!seekPercentagesStr.isEmpty()) {
+            seekPercentagesStr.append(' ');
+        }
+        seekPercentagesStr.append(QString().setNum(sp));
+    }
+
+    m_sequenceSeekPercentagesLineEdit = new QLineEdit();
+    m_sequenceSeekPercentagesLineEdit->setText(seekPercentagesStr);
+    formLayout->addRow("Sequence seek percentages", m_sequenceSeekPercentagesLineEdit);
+
+    m_thumbCacheSizeSpinBox = new QSpinBox();
+    m_thumbCacheSizeSpinBox->setRange(0, std::numeric_limits<int>::max());
+    m_thumbCacheSizeSpinBox->setValue(KFFMpegThumbnailerSettings::cacheSize());
+    formLayout->addRow("Cache size (KiB)", m_thumbCacheSizeSpinBox);
+
     return widget;
 }
 
@@ -109,6 +152,28 @@ void KFFMpegThumbnailer::writeConfiguration(const QWidget* /*configurationWidget
     settings->setAddFilmstrip(m_addFilmStripCheckBox->isChecked());
     settings->setUseMetadataCovers(m_useMetadataCheckBox->isChecked());
     settings->setUseSmartSelection(m_useSmartSelectionCheckBox->isChecked());
+
+    const QStringList seekPercentagesStrList = m_sequenceSeekPercentagesLineEdit->text()
+            .split(QRegExp("(\\s*,\\s*)|\\s+"), Qt::SkipEmptyParts);
+    QList<int> seekPercentages;
+    bool seekPercentagesValid = true;
+
+    for (const QString str : seekPercentagesStrList) {
+        const int sp = str.toInt(&seekPercentagesValid);
+
+        if (!seekPercentagesValid) {
+            break;
+        }
+
+        seekPercentages << sp;
+    }
+
+    if (seekPercentagesValid) {
+        settings->setSequenceSeekPercentages(seekPercentages);
+    }
+
+    settings->setCacheSize(m_thumbCacheSizeSpinBox->value());
+    thumbCache.setMaxCost(m_thumbCacheSizeSpinBox->value());
 
     settings->save();
 }
