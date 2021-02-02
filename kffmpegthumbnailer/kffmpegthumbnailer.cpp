@@ -45,7 +45,7 @@ KFFMpegThumbnailer::~KFFMpegThumbnailer()
 
 bool KFFMpegThumbnailer::create(const QString& path, int width, int /*height*/, QImage& img)
 {
-    int seqIdx = (int) sequenceIndex();
+    int seqIdx = static_cast<int>(sequenceIndex());
 
     const QList<int> seekPercentages = KFFMpegThumbnailerSettings::sequenceSeekPercentages();
     const int numSeekPercentages = seekPercentages.size();
@@ -92,7 +92,7 @@ bool KFFMpegThumbnailer::create(const QString& path, int width, int /*height*/, 
         return false;
     }
 
-    const int cacheCost = (int) ((img.sizeInBytes()+1023) / 1024);
+    const int cacheCost = static_cast<int>((img.sizeInBytes()+1023) / 1024);
     thumbCache.insert(cacheKey, new QImage(img), cacheCost);
 
     return true;
@@ -100,12 +100,12 @@ bool KFFMpegThumbnailer::create(const QString& path, int width, int /*height*/, 
 
 float KFFMpegThumbnailer::sequenceIndexWraparoundPoint() const
 {
-    return (float) KFFMpegThumbnailerSettings::sequenceSeekPercentages().size();
+    return static_cast<float>(KFFMpegThumbnailerSettings::sequenceSeekPercentages().size());
 }
 
 ThumbCreator::Flags KFFMpegThumbnailer::flags() const
 {
-    return (Flags)(None);
+    return static_cast<Flags>(None);
 }
 
 QWidget *KFFMpegThumbnailer::createConfigurationWidget()
