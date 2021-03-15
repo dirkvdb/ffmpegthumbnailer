@@ -570,8 +570,6 @@ bool MovieDecoder::getVideoPacket()
     bool framesAvailable = true;
     bool frameDecoded = false;
 
-    int attempts = 0;
-
     if (m_pPacket)
     {
         av_packet_unref(m_pPacket);
