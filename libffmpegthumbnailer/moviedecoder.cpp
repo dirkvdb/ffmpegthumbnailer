@@ -379,11 +379,6 @@ std::string MovieDecoder::createScaleString(const std::string& sizeString, bool 
 
 void MovieDecoder::initializeFilterGraph(const AVRational& timeBase, const std::string& size, bool maintainAspectRatio)
 {
-    static const AVPixelFormat pixelFormats[] = { AV_PIX_FMT_RGB24, AV_PIX_FMT_NONE };
-
-    auto del = [] (AVBufferSinkParams* p) { av_freep(p); };
-    std::unique_ptr<AVBufferSinkParams, decltype(del)> buffersinkParams(av_buffersink_params_alloc(), del);
-
     m_pFilterGraph = avfilter_graph_alloc();
     assert(m_pFilterGraph);
 
@@ -395,10 +390,8 @@ void MovieDecoder::initializeFilterGraph(const AVRational& timeBase, const std::
 
     checkRc(avfilter_graph_create_filter(&m_pFilterSource, avfilter_get_by_name("buffer"), "thumb_buffer", ss.str().c_str(), nullptr, m_pFilterGraph),
             "Failed to create filter source");
-    buffersinkParams->pixel_fmts = pixelFormats;
-    checkRc(avfilter_graph_create_filter(&m_pFilterSink, avfilter_get_by_name("buffersink"), "thumb_buffersink", nullptr, buffersinkParams.get(), m_pFilterGraph),
+    checkRc(avfilter_graph_create_filter(&m_pFilterSink, avfilter_get_by_name("buffersink"), "thumb_buffersink", nullptr, nullptr, m_pFilterGraph),
             "Failed to create filter sink");
-    buffersinkParams.release();
 
     AVFilterContext* yadifFilter = nullptr;
     if (m_pFrame->interlaced_frame != 0)
