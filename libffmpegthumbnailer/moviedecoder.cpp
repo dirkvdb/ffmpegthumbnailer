@@ -503,12 +503,12 @@ void MovieDecoder::seek(int timeInSeconds)
     avcodec_flush_buffers(m_pFormatContext->streams[m_VideoStream]->codec);
 
     int keyFrameAttempts = 0;
-    bool gotFrame = 0;
+    bool gotFrame;
 
     do
     {
         int count = 0;
-        gotFrame = 0;
+        gotFrame = false;
 
         while (!gotFrame && count < 20)
         {
