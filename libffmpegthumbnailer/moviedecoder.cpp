@@ -65,8 +65,6 @@ MovieDecoder::~MovieDecoder()
 
 void MovieDecoder::initialize(const string& filename, bool preferEmbeddedMetadata)
 {
-    av_register_all();
-    avcodec_register_all();
     avformat_network_init();
 
     string inputFile = filename == "-" ? "pipe:" : filename;
@@ -385,8 +383,6 @@ void MovieDecoder::initializeFilterGraph(const AVRational& timeBase, const std::
 
     auto del = [] (AVBufferSinkParams* p) { av_freep(p); };
     std::unique_ptr<AVBufferSinkParams, decltype(del)> buffersinkParams(av_buffersink_params_alloc(), del);
-
-    avfilter_register_all();
 
     m_pFilterGraph = avfilter_graph_alloc();
     assert(m_pFilterGraph);
