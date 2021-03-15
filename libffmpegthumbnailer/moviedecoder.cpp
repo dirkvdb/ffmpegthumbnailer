@@ -548,17 +548,33 @@ bool MovieDecoder::decodeVideoPacket()
         return false;
     }
 
-    av_frame_unref(m_pFrame);
-
-    int frameFinished;
-
-    int bytesDecoded = avcodec_decode_video2(m_pVideoCodecContext, m_pFrame, &frameFinished, m_pPacket);
-    if (bytesDecoded < 0)
+    int rc = avcodec_send_packet(m_pVideoCodecContext, m_pPacket);
+    if(rc == AVERROR(EAGAIN))
     {
-        throw logic_error("Failed to decode video frame: bytesDecoded < 0");
+        rc = 0;
     }
 
-    return frameFinished > 0;
+    if(rc == AVERROR_EOF)
+    {
+        return false;
+    }
+    else if(rc < 0)
+    {
+        throw logic_error("Failed to decode video frame: avcodec_send_packet() < 0");
+    }
+
+    rc = avcodec_receive_frame(m_pVideoCodecContext, m_pFrame);
+    switch(rc)
+    {
+        case 0:
+            return true;
+
+        case AVERROR(EAGAIN):
+            return false;
+
+        default:
+            throw logic_error("Failed to decode video frame: avcodec_receive_frame() < 0");
+    }
 }
 
 bool MovieDecoder::getVideoPacket()
@@ -573,6 +589,7 @@ bool MovieDecoder::getVideoPacket()
     }
 
     m_pPacket = new AVPacket();
+
 
     while (framesAvailable && !frameDecoded)
     {
