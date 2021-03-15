@@ -484,7 +484,7 @@ void MovieDecoder::seek(int timeInSeconds)
     }
 
     checkRc(av_seek_frame(m_pFormatContext, -1, timestamp, 0), "Seeking in video failed");
-    avcodec_flush_buffers(m_pFormatContext->streams[m_VideoStream]->codec);
+    avcodec_flush_buffers(m_pVideoCodecContext);
 
     int keyFrameAttempts = 0;
     bool gotFrame;
