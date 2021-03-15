@@ -90,8 +90,7 @@ void MovieDecoder::destroy()
 {
     if (m_pVideoCodecContext)
     {
-        avcodec_close(m_pVideoCodecContext);
-        m_pVideoCodecContext = nullptr;
+        avcodec_free_context(&m_pVideoCodecContext);
     }
 
     if ((!m_FormatContextWasGiven) && m_pFormatContext)
@@ -196,8 +195,7 @@ void MovieDecoder::initializeVideo(bool preferEmbeddedMetadata)
     }
 
     m_pVideoStream = m_pFormatContext->streams[m_VideoStream];
-    m_pVideoCodecContext = m_pVideoStream->codec;
-    m_pVideoCodec = avcodec_find_decoder(m_pVideoCodecContext->codec_id);
+    m_pVideoCodec = avcodec_find_decoder(m_pVideoStream->codecpar->codec_id);
 
     if (m_pVideoCodec == nullptr)
     {
@@ -205,6 +203,20 @@ void MovieDecoder::initializeVideo(bool preferEmbeddedMetadata)
         m_pVideoCodecContext = nullptr;
         destroy();
         throw logic_error("Video Codec not found");
+    }
+
+    m_pVideoCodecContext = avcodec_alloc_context3(m_pVideoCodec);
+
+    if (m_pVideoCodecContext == nullptr)
+    {
+        destroy();
+        throw logic_error("Could not allocate video codec context");
+    }
+
+    if (avcodec_parameters_to_context(m_pVideoCodecContext, m_pVideoStream->codecpar) < 0)
+    {
+        destroy();
+        throw logic_error("Could not configure video codec context");
     }
 
     m_pVideoCodecContext->workaround_bugs = 1;
