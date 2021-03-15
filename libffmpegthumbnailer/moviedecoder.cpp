@@ -41,11 +41,6 @@ using namespace std;
 namespace ffmpegthumbnailer
 {
 
-struct SilenceLogLevel
-{
-    SilenceLogLevel() { av_log_set_level(AV_LOG_QUIET); }
-};
-
 MovieDecoder::MovieDecoder(AVFormatContext* pavContext)
 : m_VideoStream(-1)
 , m_pFormatContext(pavContext)
