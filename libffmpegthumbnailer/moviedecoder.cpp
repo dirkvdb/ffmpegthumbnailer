@@ -195,7 +195,7 @@ void MovieDecoder::initializeVideo(bool preferEmbeddedMetadata)
     }
 
     m_pVideoStream = m_pFormatContext->streams[m_VideoStream];
-    m_pVideoCodec = avcodec_find_decoder(m_pVideoStream->codecpar->codec_id);
+    m_pVideoCodec = const_cast<AVCodec*>(avcodec_find_decoder(m_pVideoStream->codecpar->codec_id));
 
     if (m_pVideoCodec == nullptr)
     {
