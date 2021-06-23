@@ -78,7 +78,7 @@ private:
     int                     m_VideoStream;
     AVFormatContext*        m_pFormatContext;
     AVCodecContext*         m_pVideoCodecContext;
-    AVCodec*                m_pVideoCodec;
+    const AVCodec*          m_pVideoCodec;
     AVFilterGraph*          m_pFilterGraph;
     AVFilterContext*        m_pFilterSource;
     AVFilterContext*        m_pFilterSink;
