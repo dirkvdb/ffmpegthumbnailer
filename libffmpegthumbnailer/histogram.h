@@ -17,7 +17,7 @@
 #ifndef HISTOGRAM_H
 #define HISTOGRAM_H
 
-#include <string.h>
+#include <array>
 
 namespace ffmpegthumbnailer
 {
@@ -25,16 +25,9 @@ namespace ffmpegthumbnailer
 template <typename T>
 struct Histogram
 {
-    T r[256];
-    T g[256];
-    T b[256];
-
-    Histogram()
-    {
-        memset(r, 0, 256 * sizeof(T));
-        memset(g, 0, 256 * sizeof(T));
-        memset(b, 0, 256 * sizeof(T));
-    }
+    std::array<T, 256> r{};
+    std::array<T, 256> g{};
+    std::array<T, 256> b{};
 };
 
 }
