@@ -26,11 +26,10 @@ namespace ffmpegthumbnailer
 class ImageWriter
 {
 public:
-    ImageWriter() {}
-    virtual ~ImageWriter() {}
+   virtual ~ImageWriter() = default;
 
-	virtual void setText(const std::string& key, const std::string& value) = 0;
-	virtual void writeFrame(uint8_t** rgbData, int width, int height, int quality) = 0;
+   virtual void setText(const std::string& key, const std::string& value) = 0;
+   virtual void writeFrame(uint8_t** rgbData, int width, int height, int quality) = 0;
 };
 
 }
