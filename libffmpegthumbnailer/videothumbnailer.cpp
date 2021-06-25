@@ -378,13 +378,12 @@ void VideoThumbnailer::applyFilters(VideoFrame& frameData)
 int VideoThumbnailer::getBestThumbnailIndex(vector<VideoFrame>& videoFrames, const vector<Histogram<int> >& histograms)
 {
     Histogram<float> avgHistogram;
-    for (size_t i = 0; i < histograms.size(); ++i)
-    {
+    for (auto&& histogram : histograms) {
         for (int j = 0; j < 255; ++j)
         {
-            avgHistogram.r[j] += static_cast<float>(histograms[i].r[j]) / histograms.size();
-            avgHistogram.g[j] += static_cast<float>(histograms[i].g[j]) / histograms.size();
-            avgHistogram.b[j] += static_cast<float>(histograms[i].b[j]) / histograms.size();
+            avgHistogram.r[j] += static_cast<float>(histogram.r[j]) / histograms.size();
+            avgHistogram.g[j] += static_cast<float>(histogram.g[j]) / histograms.size();
+            avgHistogram.b[j] += static_cast<float>(histogram.b[j]) / histograms.size();
         }
     }
 
