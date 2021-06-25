@@ -42,19 +42,8 @@ namespace ffmpegthumbnailer
 {
 
 MovieDecoder::MovieDecoder(AVFormatContext* pavContext)
-: m_VideoStream(-1)
-, m_pFormatContext(pavContext)
-, m_pVideoCodecContext(nullptr)
-, m_pVideoCodec(nullptr)
-, m_pFilterGraph(nullptr)
-, m_pFilterSource(nullptr)
-, m_pFilterSink(nullptr)
-, m_pVideoStream(nullptr)
-, m_pFrame(nullptr)
-, m_pPacket(nullptr)
+: m_pFormatContext(pavContext)
 , m_FormatContextWasGiven(pavContext != nullptr)
-, m_AllowSeek(true)
-, m_UseEmbeddedData(false)
 {
 }
 
