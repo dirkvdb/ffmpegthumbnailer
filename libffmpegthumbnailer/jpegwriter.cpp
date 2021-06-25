@@ -40,9 +40,6 @@ static boolean jpegFlushWorkBuffer(j_compress_ptr pCompressionInfo);
 static void jpegDestroyDestination(j_compress_ptr pCompressionInfo);
 
 JpegWriter::JpegWriter(const string& outputFile)
-: ImageWriter()
-, m_pFile(nullptr)
-, m_pBufferWriter(nullptr)
 {
     init();
 	m_pFile = outputFile == "-" ? stdout : fopen(outputFile.c_str(), "wb");
@@ -56,9 +53,6 @@ JpegWriter::JpegWriter(const string& outputFile)
 }
 
 JpegWriter::JpegWriter(std::vector<uint8_t>& outputBuffer)
-: ImageWriter()
-, m_pFile(nullptr)
-, m_pBufferWriter(nullptr)
 {
     init();
 
