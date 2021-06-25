@@ -75,19 +75,19 @@ private:
     void checkRc(int ret, const std::string& message);
 
 private:
-    int                     m_VideoStream;
+    int                     m_VideoStream{-1};
     AVFormatContext*        m_pFormatContext;
-    AVCodecContext*         m_pVideoCodecContext;
-    const AVCodec*          m_pVideoCodec;
-    AVFilterGraph*          m_pFilterGraph;
-    AVFilterContext*        m_pFilterSource;
-    AVFilterContext*        m_pFilterSink;
-    AVStream*               m_pVideoStream;
-    AVFrame*                m_pFrame;
-    AVPacket*               m_pPacket;
+    AVCodecContext*         m_pVideoCodecContext{};
+    const AVCodec*          m_pVideoCodec{};
+    AVFilterGraph*          m_pFilterGraph{};
+    AVFilterContext*        m_pFilterSource{};
+    AVFilterContext*        m_pFilterSink{};
+    AVStream*               m_pVideoStream{};
+    AVFrame*                m_pFrame{};
+    AVPacket*               m_pPacket{};
     bool                    m_FormatContextWasGiven;
-    bool                    m_AllowSeek;
-    bool                    m_UseEmbeddedData;
+    bool                    m_AllowSeek{true};
+    bool                    m_UseEmbeddedData{};
 };
 
 }
