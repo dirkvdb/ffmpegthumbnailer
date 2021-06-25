@@ -27,10 +27,6 @@ namespace ffmpegthumbnailer
 static void writeDataCallback(png_structp png_ptr, png_bytep data, png_size_t length);
 
 PngWriter::PngWriter(const string& outputFile)
-: ImageWriter()
-, m_FilePtr(nullptr)
-, m_PngPtr(nullptr)
-, m_InfoPtr(nullptr)
 {
     init();
     m_FilePtr = outputFile == "-" ? stdout : fopen(outputFile.c_str(), "wb");
@@ -44,10 +40,6 @@ PngWriter::PngWriter(const string& outputFile)
 }
 
 PngWriter::PngWriter(std::vector<uint8_t>& outputBuffer)
-: ImageWriter()
-, m_FilePtr(nullptr)
-, m_PngPtr(nullptr)
-, m_InfoPtr(nullptr)
 {
     init();
     png_set_write_fn(m_PngPtr, (png_voidp)&outputBuffer, writeDataCallback, nullptr);

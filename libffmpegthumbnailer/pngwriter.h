@@ -40,9 +40,9 @@ private:
     void init();
 
 private:
-    FILE*                   m_FilePtr;
-    png_structp             m_PngPtr;
-    png_infop               m_InfoPtr;
+    FILE*                   m_FilePtr{};
+    png_structp             m_PngPtr{};
+    png_infop               m_InfoPtr{};
 };
 
 }
