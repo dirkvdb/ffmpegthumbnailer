@@ -28,9 +28,9 @@ static void writeDataCallback(png_structp png_ptr, png_bytep data, png_size_t le
 
 PngWriter::PngWriter(const string& outputFile)
 : ImageWriter()
-, m_FilePtr(NULL)
-, m_PngPtr(NULL)
-, m_InfoPtr(NULL)
+, m_FilePtr(nullptr)
+, m_PngPtr(nullptr)
+, m_InfoPtr(nullptr)
 {
     init();
     m_FilePtr = outputFile == "-" ? stdout : fopen(outputFile.c_str(), "wb");
@@ -45,12 +45,12 @@ PngWriter::PngWriter(const string& outputFile)
 
 PngWriter::PngWriter(std::vector<uint8_t>& outputBuffer)
 : ImageWriter()
-, m_FilePtr(NULL)
-, m_PngPtr(NULL)
-, m_InfoPtr(NULL)
+, m_FilePtr(nullptr)
+, m_PngPtr(nullptr)
+, m_InfoPtr(nullptr)
 {
     init();
-    png_set_write_fn(m_PngPtr, (png_voidp) &outputBuffer, writeDataCallback, NULL);
+    png_set_write_fn(m_PngPtr, (png_voidp)&outputBuffer, writeDataCallback, nullptr);
 }
 
 PngWriter::~PngWriter()
@@ -64,7 +64,7 @@ PngWriter::~PngWriter()
 
 void PngWriter::init()
 {
-    m_PngPtr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+    m_PngPtr = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
     if (!m_PngPtr)
     {
         throw logic_error("Failed to create png write structure");
@@ -73,7 +73,7 @@ void PngWriter::init()
     m_InfoPtr = png_create_info_struct(m_PngPtr);
     if (!m_InfoPtr)
     {
-        png_destroy_write_struct(&m_PngPtr, (png_infopp) NULL);
+        png_destroy_write_struct(&m_PngPtr, (png_infopp) nullptr);
         throw logic_error("Failed to create png info structure");
     }
 }
@@ -101,7 +101,7 @@ void PngWriter::writeFrame(uint8_t** rgbData, int width, int height, int /*quali
                  PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
 
     png_set_rows(m_PngPtr, m_InfoPtr, rgbData);
-    png_write_png(m_PngPtr, m_InfoPtr, 0, NULL);
+    png_write_png(m_PngPtr, m_InfoPtr, 0, nullptr);
 }
 
 void writeDataCallback(png_structp png_ptr, png_bytep data, png_size_t length)

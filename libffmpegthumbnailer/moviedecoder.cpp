@@ -655,7 +655,7 @@ void MovieDecoder::checkRc(int ret, const std::string& message)
 
 int32_t MovieDecoder::getStreamRotation()
 {
-    int32_t* matrix = reinterpret_cast<int32_t*>(av_stream_get_side_data(m_pVideoStream, AV_PKT_DATA_DISPLAYMATRIX, nullptr));
+    auto matrix = reinterpret_cast<int32_t*>(av_stream_get_side_data(m_pVideoStream, AV_PKT_DATA_DISPLAYMATRIX, nullptr));
     if (matrix)
     {
         auto angle = lround(av_display_rotation_get(matrix));
