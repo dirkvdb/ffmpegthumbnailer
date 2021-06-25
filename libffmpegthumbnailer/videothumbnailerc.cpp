@@ -40,7 +40,7 @@ static void trace_message(video_thumbnailer* thumbnailer, ThumbnailerLogLevel lv
 
 extern "C" video_thumbnailer* video_thumbnailer_create(void)
 {
-    video_thumbnailer* thumbnailer = new video_thumbnailer_struct();
+    auto thumbnailer = new video_thumbnailer_struct();
 
     thumbnailer->thumbnail_size             = 128;
     thumbnailer->seek_percentage            = 10;
@@ -65,9 +65,9 @@ extern "C" void video_thumbnailer_destroy(video_thumbnailer* thumbnailer)
 
 extern "C" image_data* video_thumbnailer_create_image_data(void)
 {
-    image_data* data        = new image_data();
+    auto data               = new image_data();
 
-    data->image_data_ptr    = 0;
+    data->image_data_ptr    = nullptr;
     data->image_data_size   = 0;
     data->image_data_width  = 0;
     data->image_data_height = 0;
@@ -78,14 +78,14 @@ extern "C" image_data* video_thumbnailer_create_image_data(void)
 
 extern "C" void video_thumbnailer_destroy_image_data(image_data* data)
 {
-    data->image_data_ptr    = 0;
+    data->image_data_ptr    = nullptr;
     data->image_data_size   = 0;
     data->image_data_width  = 0;
     data->image_data_height = 0;
 
-    std::vector<uint8_t>* dataVector = reinterpret_cast<std::vector<uint8_t>* >(data->internal_data);
+    auto dataVector = reinterpret_cast<std::vector<uint8_t>*>(data->internal_data);
     delete dataVector;
-    data->internal_data     = 0;
+    data->internal_data     = nullptr;
 
     delete data;
 }
