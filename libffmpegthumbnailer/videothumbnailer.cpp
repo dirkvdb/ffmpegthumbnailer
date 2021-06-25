@@ -204,6 +204,7 @@ VideoFrameInfo VideoThumbnailer::generateThumbnail(const string& videoFile, Imag
     applyFilters(videoFrame);
 
     vector<uint8_t*> rowPointers;
+    rowPointers.reserve(videoFrame.height);
     for (int i = 0; i < videoFrame.height; ++i)
     {
         rowPointers.push_back(&(videoFrame.frameData[i * videoFrame.lineSize]));
