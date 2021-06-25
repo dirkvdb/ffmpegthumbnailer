@@ -84,13 +84,13 @@ private:
 
 private:
     std::string                                     m_ThumbnailSize;
-    uint16_t                                        m_SeekPercentage;
-    bool                                            m_OverlayFilmStrip;
+    uint16_t                                        m_SeekPercentage{10};
+    bool                                            m_OverlayFilmStrip{};
     bool                                            m_WorkAroundIssues;
     int                                             m_ImageQuality;
     bool                                            m_MaintainAspectRatio;
     bool                                            m_SmartFrameSelection;
-    bool                                            m_PreferEmbeddedMetadata;
+    bool                                            m_PreferEmbeddedMetadata{};
     std::string                                     m_SeekTime;
     std::vector<IFilter*>                           m_Filters;
 

@@ -46,25 +46,19 @@ static const int SMART_FRAME_ATTEMPTS = 25;
 
 VideoThumbnailer::VideoThumbnailer()
 : m_ThumbnailSize("128")
-, m_SeekPercentage(10)
-, m_OverlayFilmStrip(false)
 , m_WorkAroundIssues(false)
 , m_ImageQuality(8)
 , m_MaintainAspectRatio(true)
 , m_SmartFrameSelection(false)
-, m_PreferEmbeddedMetadata(false)
 {
 }
 
 VideoThumbnailer::VideoThumbnailer(int thumbnailSize, bool workaroundIssues, bool maintainAspectRatio, int imageQuality, bool smartFrameSelection)
 : m_ThumbnailSize(std::to_string(thumbnailSize))
-, m_SeekPercentage(10)
-, m_OverlayFilmStrip(false)
 , m_WorkAroundIssues(workaroundIssues)
 , m_ImageQuality(imageQuality)
 , m_MaintainAspectRatio(maintainAspectRatio)
 , m_SmartFrameSelection(smartFrameSelection)
-, m_PreferEmbeddedMetadata(false)
 {
 }
 
