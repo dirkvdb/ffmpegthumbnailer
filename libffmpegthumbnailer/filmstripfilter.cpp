@@ -26,7 +26,7 @@ static const uint8_t* determineFilmStrip(uint32_t videoWidth, uint32_t& filmStri
 {
     if (videoWidth <= SMALLEST_FILM_STRIP_WIDTH * 2)
     {
-        return NULL;
+        return nullptr;
     }
     
     if (videoWidth <= 96)

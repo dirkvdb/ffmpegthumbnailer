@@ -46,25 +46,19 @@ static const int SMART_FRAME_ATTEMPTS = 25;
 
 VideoThumbnailer::VideoThumbnailer()
 : m_ThumbnailSize("128")
-, m_SeekPercentage(10)
-, m_OverlayFilmStrip(false)
 , m_WorkAroundIssues(false)
 , m_ImageQuality(8)
 , m_MaintainAspectRatio(true)
 , m_SmartFrameSelection(false)
-, m_PreferEmbeddedMetadata(false)
 {
 }
 
 VideoThumbnailer::VideoThumbnailer(int thumbnailSize, bool workaroundIssues, bool maintainAspectRatio, int imageQuality, bool smartFrameSelection)
 : m_ThumbnailSize(std::to_string(thumbnailSize))
-, m_SeekPercentage(10)
-, m_OverlayFilmStrip(false)
 , m_WorkAroundIssues(workaroundIssues)
 , m_ImageQuality(imageQuality)
 , m_MaintainAspectRatio(maintainAspectRatio)
 , m_SmartFrameSelection(smartFrameSelection)
-, m_PreferEmbeddedMetadata(false)
 {
 }
 
@@ -204,6 +198,7 @@ VideoFrameInfo VideoThumbnailer::generateThumbnail(const string& videoFile, Imag
     applyFilters(videoFrame);
 
     vector<uint8_t*> rowPointers;
+    rowPointers.reserve(videoFrame.height);
     for (int i = 0; i < videoFrame.height; ++i)
     {
         rowPointers.push_back(&(videoFrame.frameData[i * videoFrame.lineSize]));
@@ -378,13 +373,12 @@ void VideoThumbnailer::applyFilters(VideoFrame& frameData)
 int VideoThumbnailer::getBestThumbnailIndex(vector<VideoFrame>& videoFrames, const vector<Histogram<int> >& histograms)
 {
     Histogram<float> avgHistogram;
-    for (size_t i = 0; i < histograms.size(); ++i)
-    {
+    for (auto&& histogram : histograms) {
         for (int j = 0; j < 255; ++j)
         {
-            avgHistogram.r[j] += static_cast<float>(histograms[i].r[j]) / histograms.size();
-            avgHistogram.g[j] += static_cast<float>(histograms[i].g[j]) / histograms.size();
-            avgHistogram.b[j] += static_cast<float>(histograms[i].b[j]) / histograms.size();
+            avgHistogram.r[j] += static_cast<float>(histogram.r[j]) / histograms.size();
+            avgHistogram.g[j] += static_cast<float>(histogram.g[j]) / histograms.size();
+            avgHistogram.b[j] += static_cast<float>(histogram.b[j]) / histograms.size();
         }
     }
 

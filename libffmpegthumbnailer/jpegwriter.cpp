@@ -40,9 +40,6 @@ static boolean jpegFlushWorkBuffer(j_compress_ptr pCompressionInfo);
 static void jpegDestroyDestination(j_compress_ptr pCompressionInfo);
 
 JpegWriter::JpegWriter(const string& outputFile)
-: ImageWriter()
-, m_pFile(NULL)
-, m_pBufferWriter(NULL)
 {
     init();
 	m_pFile = outputFile == "-" ? stdout : fopen(outputFile.c_str(), "wb");
@@ -56,9 +53,6 @@ JpegWriter::JpegWriter(const string& outputFile)
 }
 
 JpegWriter::JpegWriter(std::vector<uint8_t>& outputBuffer)
-: ImageWriter()
-, m_pFile(NULL)
-, m_pBufferWriter(NULL)
 {
     init();
 
@@ -115,7 +109,7 @@ void JpegWriter::writeFrame(uint8_t** rgbData, int width, int height, int qualit
 
 void jpegInitDestination(j_compress_ptr pCompressionInfo)
 {
-    BufferWriter* bufWriter = reinterpret_cast<BufferWriter*>(pCompressionInfo->dest);
+    auto bufWriter = reinterpret_cast<BufferWriter*>(pCompressionInfo->dest);
 
     bufWriter->m_pDataBuffer = (uint8_t*)(*pCompressionInfo->mem->alloc_small) ((j_common_ptr) pCompressionInfo, JPOOL_IMAGE, JPEG_WORK_BUFFER_SIZE);
     bufWriter->m_DestMgr.next_output_byte = bufWriter->m_pDataBuffer;
@@ -124,7 +118,7 @@ void jpegInitDestination(j_compress_ptr pCompressionInfo)
 
 boolean jpegFlushWorkBuffer(j_compress_ptr pCompressionInfo)
 {
-    BufferWriter* bufWriter = reinterpret_cast<BufferWriter*>(pCompressionInfo->dest);
+    auto bufWriter = reinterpret_cast<BufferWriter*>(pCompressionInfo->dest);
 
     size_t prevSize = bufWriter->m_pDataSink->size();
     bufWriter->m_pDataSink->resize(prevSize + JPEG_WORK_BUFFER_SIZE);
@@ -139,7 +133,7 @@ boolean jpegFlushWorkBuffer(j_compress_ptr pCompressionInfo)
 
 void jpegDestroyDestination(j_compress_ptr pCompressionInfo)
 {
-    BufferWriter* bufWriter = reinterpret_cast<BufferWriter*>(pCompressionInfo->dest);
+    auto bufWriter = reinterpret_cast<BufferWriter*>(pCompressionInfo->dest);
     size_t datacount = JPEG_WORK_BUFFER_SIZE - bufWriter->m_DestMgr.free_in_buffer;
 
     size_t prevSize = bufWriter->m_pDataSink->size();

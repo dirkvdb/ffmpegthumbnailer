@@ -42,19 +42,8 @@ namespace ffmpegthumbnailer
 {
 
 MovieDecoder::MovieDecoder(AVFormatContext* pavContext)
-: m_VideoStream(-1)
-, m_pFormatContext(pavContext)
-, m_pVideoCodecContext(nullptr)
-, m_pVideoCodec(nullptr)
-, m_pFilterGraph(nullptr)
-, m_pFilterSource(nullptr)
-, m_pFilterSink(nullptr)
-, m_pVideoStream(nullptr)
-, m_pFrame(nullptr)
-, m_pPacket(nullptr)
+: m_pFormatContext(pavContext)
 , m_FormatContextWasGiven(pavContext != nullptr)
-, m_AllowSeek(true)
-, m_UseEmbeddedData(false)
 {
 }
 
@@ -655,7 +644,7 @@ void MovieDecoder::checkRc(int ret, const std::string& message)
 
 int32_t MovieDecoder::getStreamRotation()
 {
-    int32_t* matrix = reinterpret_cast<int32_t*>(av_stream_get_side_data(m_pVideoStream, AV_PKT_DATA_DISPLAYMATRIX, nullptr));
+    auto matrix = reinterpret_cast<int32_t*>(av_stream_get_side_data(m_pVideoStream, AV_PKT_DATA_DISPLAYMATRIX, nullptr));
     if (matrix)
     {
         auto angle = lround(av_display_rotation_get(matrix));
