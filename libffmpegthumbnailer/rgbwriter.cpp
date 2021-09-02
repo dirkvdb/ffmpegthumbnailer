@@ -57,7 +57,7 @@ void RgbWriter::setText(const string& /*key*/, const string& /*value*/)
 
 void RgbWriter::writeFrame(uint8_t** rgbData, int width, int height, int /*quality*/)
 {
-    const size_t lineSize = static_cast<size_t>(width * 3);
+    const auto lineSize = static_cast<size_t>(width * 3);
 
     if (m_FilePtr)
     {
