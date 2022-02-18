@@ -32,6 +32,7 @@
 #include <stdexcept>
 #include <cassert>
 #include <cerrno>
+#include <cstring>
 #include <memory>
 #include <regex>
 #include <algorithm>
