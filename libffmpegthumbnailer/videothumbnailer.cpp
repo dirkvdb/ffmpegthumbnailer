@@ -290,42 +290,39 @@ string VideoThumbnailer::getMimeType(const string& videoFile)
     {
         return "video/x-msvideo";
     }
-    else if (extension == "mpeg" || extension == "mpg" || extension == "mpe" || extension == "vob")
+    if (extension == "mpeg" || extension == "mpg" || extension == "mpe" || extension == "vob")
     {
         return "video/mpeg";
     }
-    else if (extension == "qt" || extension == "mov")
+    if (extension == "qt" || extension == "mov")
     {
         return "video/quicktime";
     }
-    else if (extension == "asf" || extension == "asx")
+    if (extension == "asf" || extension == "asx")
     {
         return "video/x-ms-asf";
     }
-    else if (extension == "wm")
+    if (extension == "wm")
     {
         return "video/x-ms-wm";
     }
-    else if (extension == "wmv")
+    if (extension == "wmv")
     {
         return "video/x-ms-wmv";
     }
-    else if (extension == "mp4")
+    if (extension == "mp4")
     {
         return "video/mp4";
     }
-    else if (extension == "webm")
+    if (extension == "webm")
     {
         return "video/webm";
     }
-    else if (extension == "flv")
+    if (extension == "flv")
     {
         return "video/x-flv";
     }
-    else
-    {
-        return "";
-    }
+    return "";
 }
 
 string VideoThumbnailer::getExtension(const string& videoFilename)

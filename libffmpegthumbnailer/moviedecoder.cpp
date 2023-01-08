@@ -165,7 +165,7 @@ int32_t MovieDecoder::findPreferedVideoStream(bool preferEmbeddedMetadata)
         m_UseEmbeddedData = true;
         return embeddedDataStream.front();
     }
-    else if (!videoStreams.empty())
+    if (!videoStreams.empty())
     {
         return videoStreams.front();
     }
@@ -547,7 +547,7 @@ bool MovieDecoder::decodeVideoPacket()
     {
         return false;
     }
-    else if(rc < 0)
+    if(rc < 0)
     {
         throw logic_error("Failed to decode video frame: avcodec_send_packet() < 0");
     }
@@ -652,11 +652,11 @@ int32_t MovieDecoder::getStreamRotation()
         {
             return 3;
         }
-        else if (angle > 45 && angle < 135)
+        if (angle > 45 && angle < 135)
         {
             return 2;
         }
-        else if (angle < -45 && angle > -135)
+        if (angle < -45 && angle > -135)
         {
             return 1;
         }
