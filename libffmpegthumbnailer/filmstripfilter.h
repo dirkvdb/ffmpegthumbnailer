@@ -28,6 +28,6 @@ public:
     void process(VideoFrame& videoFrame) override;
 };
 
-}
+} // namespace ffmpegthumbnailer
 
 #endif

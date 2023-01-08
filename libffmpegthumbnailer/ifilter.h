@@ -29,6 +29,6 @@ public:
     virtual void process(VideoFrame& frameData) = 0;
 };
 
-}
+} // namespace ffmpegthumbnailer
 
 #endif

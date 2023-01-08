@@ -90,7 +90,7 @@ private:
     bool                    m_UseEmbeddedData{};
 };
 
-}
+} // namespace ffmpegthumbnailer
 
 #endif
 

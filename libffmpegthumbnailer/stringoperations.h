@@ -53,6 +53,6 @@ private:
     };
 };
 
-}
+} // namespace ffmpegthumbnailer
 
 #endif

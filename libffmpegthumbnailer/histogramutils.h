@@ -38,5 +38,5 @@ inline void generateHistogram(const VideoFrame& videoFrame, Histogram<int>& hist
     }
 }
 
-}
-}
+} // namespace utils
+} // namespace ffmpegthumbnailer

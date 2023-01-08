@@ -104,4 +104,4 @@ void writeDataCallback(png_structp png_ptr, png_bytep data, png_size_t length)
     memcpy(&outputBuffer[prevBufSize], data, length);
 }
 
-}
+} // namespace ffmpegthumbnailer

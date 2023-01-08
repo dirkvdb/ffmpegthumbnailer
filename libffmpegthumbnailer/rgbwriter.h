@@ -41,6 +41,6 @@ private:
     std::vector<uint8_t>*   m_OutputBuffer;
 };
 
-}
+} // namespace ffmpegthumbnailer
 
 #endif

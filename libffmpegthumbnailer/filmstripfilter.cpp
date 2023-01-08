@@ -91,4 +91,4 @@ void FilmStripFilter::process(VideoFrame& videoFrame)
     }
 }
 
-}
+} // namespace ffmpegthumbnailer

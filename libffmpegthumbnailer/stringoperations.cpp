@@ -71,4 +71,4 @@ vector<string> StringOperations::tokenize(const string& str, const string& delim
     return tokens;
 }
 
-}
+} // namespace ffmpegthumbnailer

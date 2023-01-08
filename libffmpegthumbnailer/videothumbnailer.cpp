@@ -430,5 +430,5 @@ void VideoThumbnailer::TraceMessage(ThumbnailerLogLevel lvl, const std::string& 
     }
 }
 
-}
+} // namespace ffmpegthumbnailer
 

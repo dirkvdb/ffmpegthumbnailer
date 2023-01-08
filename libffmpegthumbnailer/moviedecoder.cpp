@@ -665,5 +665,5 @@ int32_t MovieDecoder::getStreamRotation()
     return -1;
 }
 
-}
+} // namespace ffmpegthumbnailer
 

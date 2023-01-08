@@ -97,6 +97,6 @@ private:
     std::function<void(ThumbnailerLogLevel, const std::string&)> m_LogCb;
 };
 
-}
+} // namespace ffmpegthumbnailer
 
 #endif

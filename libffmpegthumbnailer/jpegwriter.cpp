@@ -141,4 +141,4 @@ void jpegDestroyDestination(j_compress_ptr pCompressionInfo)
     memcpy((&bufWriter->m_pDataSink->front()) + prevSize, bufWriter->m_pDataBuffer, datacount);
 }
 
-}
+} // namespace ffmpegthumbnailer

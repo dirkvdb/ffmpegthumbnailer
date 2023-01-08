@@ -41,6 +41,6 @@ struct VideoFrame
     ThumbnailerImageSource imageSource;
 };
 
-}
+} // namespace ffmpegthumbnailer
 
 #endif

@@ -51,6 +51,6 @@ private:
     BufferWriter*           m_pBufferWriter{};
 };
 
-}
+} // namespace ffmpegthumbnailer
 
 #endif

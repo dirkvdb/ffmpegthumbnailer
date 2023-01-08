@@ -45,6 +45,6 @@ private:
     png_infop               m_InfoPtr{};
 };
 
-}
+} // namespace ffmpegthumbnailer
 
 #endif
