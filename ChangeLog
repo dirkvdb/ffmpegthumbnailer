@@ -24,7 +24,7 @@ FFmpegThumbnailer 2.1.2
 - Take rotation metadata into account when generating thumbnails
 
 FFmpegThumbnailer 2.1.1
-- Buildable agains latest ffmpeg (currently breaks deinterlacing)
+- Buildable against latest ffmpeg (currently breaks deinterlacing)
 - Fallback when smart frame detection fails (thanks to johnnydeez)
 - Add MPEG-TS (MTS) support (thanks to marcinn)
 
@@ -67,11 +67,11 @@ version 2.0.4
 version 2.0.3
 - Writing to stdout is now supported
 - Support for gnome-vfs uris added. New configure flag (--enable-gnome-vfs),
-this puts a runtime dependancy on libgnome-vfs-2.0
+this puts a runtime dependency on libgnome-vfs-2.0
 
 version 2.0.2
 - Fixed compilation error against latest ffmpeg
-- Size of the filmstrip overlay is dependant on thumbnail size
+- Size of the filmstrip overlay is dependent on thumbnail size
 
 version 2.0.1
 - Setting the thumbnail size to 0 will use the original video size (thanks to John Fremlin)

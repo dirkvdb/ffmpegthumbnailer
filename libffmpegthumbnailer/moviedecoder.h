@@ -62,7 +62,7 @@ public:
     bool embeddedMetaDataIsAvailable();
 
 private:
-    int32_t findPreferedVideoStream(bool preferEmbeddedMetadata);
+    int32_t findPreferredVideoStream(bool preferEmbeddedMetadata);
 
     void initializeVideo(bool preferEmbeddedMetadata);
     void initializeFilterGraph(const AVRational& timeBase, const std::string& size, bool maintainAspectRatio);

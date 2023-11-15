@@ -136,7 +136,7 @@ static bool isStillImageCodec(AVCodecID codecId)
             || codecId == AV_CODEC_ID_PNG;
 }
 
-int32_t MovieDecoder::findPreferedVideoStream(bool preferEmbeddedMetadata)
+int32_t MovieDecoder::findPreferredVideoStream(bool preferEmbeddedMetadata)
 {
     std::vector<int32_t> videoStreams;
     std::vector<int32_t> embeddedDataStream;
@@ -186,7 +186,7 @@ int32_t MovieDecoder::findPreferedVideoStream(bool preferEmbeddedMetadata)
 
 void MovieDecoder::initializeVideo(bool preferEmbeddedMetadata)
 {
-    m_VideoStream = findPreferedVideoStream(preferEmbeddedMetadata);
+    m_VideoStream = findPreferredVideoStream(preferEmbeddedMetadata);
 
     if (m_VideoStream < 0)
     {
