@@ -321,7 +321,8 @@ ThumbnailerImageType determineImageTypeFromFilename(const std::string& filename)
     StringOperations::lowercase(lowercaseFilename);
 
     size_t size = lowercaseFilename.size();
-    if ((lowercaseFilename.substr(size - 5, size) == ".jpeg") || (lowercaseFilename.substr(size - 4, size) == ".jpg"))
+    if ((size >= 5 && lowercaseFilename.substr(size - 5, size) == ".jpeg") ||
+        (size >= 4 && lowercaseFilename.substr(size - 4, size) == ".jpg"))
     {
         return Jpeg;
     }
