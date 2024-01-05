@@ -31,10 +31,10 @@ class PngWriter : public ImageWriter
 public:
     PngWriter(const std::string& outputFile);
     PngWriter(std::vector<uint8_t>& outputBuffer);
-    ~PngWriter();
+    ~PngWriter() override;
 
-    void setText(const std::string& key, const std::string& value);
-    void writeFrame(uint8_t** rgbData, int width, int height, int quality);
+    void setText(const std::string& key, const std::string& value) override;
+    void writeFrame(uint8_t** rgbData, int width, int height, int quality) override;
 
 private:
     void init();
