@@ -45,10 +45,10 @@ private:
     void init();
     
 private:
-    FILE*                   m_pFile;
+    FILE*                   m_pFile{};
     jpeg_compress_struct    m_Compression;
     jpeg_error_mgr          m_ErrorHandler;
-    BufferWriter*           m_pBufferWriter;
+    BufferWriter*           m_pBufferWriter{};
 };
 
 }
