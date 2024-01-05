@@ -47,25 +47,19 @@ static const int SMART_FRAME_ATTEMPTS = 25;
 
 VideoThumbnailer::VideoThumbnailer()
 : m_ThumbnailSize("128")
-, m_SeekPercentage(10)
-, m_OverlayFilmStrip(false)
 , m_WorkAroundIssues(false)
 , m_ImageQuality(8)
 , m_MaintainAspectRatio(true)
 , m_SmartFrameSelection(false)
-, m_PreferEmbeddedMetadata(false)
 {
 }
 
 VideoThumbnailer::VideoThumbnailer(int thumbnailSize, bool workaroundIssues, bool maintainAspectRatio, int imageQuality, bool smartFrameSelection)
 : m_ThumbnailSize(std::to_string(thumbnailSize))
-, m_SeekPercentage(10)
-, m_OverlayFilmStrip(false)
 , m_WorkAroundIssues(workaroundIssues)
 , m_ImageQuality(imageQuality)
 , m_MaintainAspectRatio(maintainAspectRatio)
 , m_SmartFrameSelection(smartFrameSelection)
-, m_PreferEmbeddedMetadata(false)
 {
 }
 
@@ -296,42 +290,39 @@ string VideoThumbnailer::getMimeType(const string& videoFile)
     {
         return "video/x-msvideo";
     }
-    else if (extension == "mpeg" || extension == "mpg" || extension == "mpe" || extension == "vob")
+    if (extension == "mpeg" || extension == "mpg" || extension == "mpe" || extension == "vob")
     {
         return "video/mpeg";
     }
-    else if (extension == "qt" || extension == "mov")
+    if (extension == "qt" || extension == "mov")
     {
         return "video/quicktime";
     }
-    else if (extension == "asf" || extension == "asx")
+    if (extension == "asf" || extension == "asx")
     {
         return "video/x-ms-asf";
     }
-    else if (extension == "wm")
+    if (extension == "wm")
     {
         return "video/x-ms-wm";
     }
-    else if (extension == "wmv")
+    if (extension == "wmv")
     {
         return "video/x-ms-wmv";
     }
-    else if (extension == "mp4")
+    if (extension == "mp4")
     {
         return "video/mp4";
     }
-    else if (extension == "webm")
+    if (extension == "webm")
     {
         return "video/webm";
     }
-    else if (extension == "flv")
+    if (extension == "flv")
     {
         return "video/x-flv";
     }
-    else
-    {
-        return "";
-    }
+    return "";
 }
 
 string VideoThumbnailer::getExtension(const string& videoFilename)
@@ -366,7 +357,7 @@ void VideoThumbnailer::clearFilters()
 
 void VideoThumbnailer::setLogCallback(std::function<void(ThumbnailerLogLevel, const std::string&)> cb)
 {
-    m_LogCb = cb;
+    m_LogCb = std::move(cb);
 }
 
 void VideoThumbnailer::applyFilters(VideoFrame& frameData)
@@ -436,5 +427,5 @@ void VideoThumbnailer::TraceMessage(ThumbnailerLogLevel lvl, const std::string& 
     }
 }
 
-}
+} // namespace ffmpegthumbnailer
 

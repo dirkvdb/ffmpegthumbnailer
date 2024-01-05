@@ -77,4 +77,4 @@ void RgbWriter::writeFrame(uint8_t** rgbData, int width, int height, int /*quali
     }
 }
 
-}
+} // namespace ffmpegthumbnailer

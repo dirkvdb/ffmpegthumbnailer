@@ -30,6 +30,6 @@ struct Histogram
     std::array<T, 256> b{};
 };
 
-}
+} // namespace ffmpegthumbnailer
 
 #endif

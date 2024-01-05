@@ -32,6 +32,6 @@ public:
    virtual void writeFrame(uint8_t** rgbData, int width, int height, int quality) = 0;
 };
 
-}
+} // namespace ffmpegthumbnailer
 
 #endif
