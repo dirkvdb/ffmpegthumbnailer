@@ -20,7 +20,7 @@ jobs:
           submodules: true
       - name: Install linux dependencies
         if: ${{ matrix.cfg.os == 'ubuntu-latest' }}
-        run: sudo apt-get install build-essential ninja-build libavcodec-dev libavformat-dev libavutil-dev libswscale-dev
+        run: sudo apt-get install build-essential ninja-build libavcodec-dev libavfilter-dev libavformat-dev libavutil-dev libswscale-dev
       - name: Install osx dependencies
         if: ${{ matrix.cfg.os == 'macos-latest' }}
         run: brew install ninja cmake ffmpeg
