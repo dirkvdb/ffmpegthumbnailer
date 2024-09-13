@@ -1,0 +1,31 @@
+name: Build
+
+on: [push]
+
+jobs:
+  build:
+    name: ${{ matrix.cfg.os }}
+    runs-on: ${{ matrix.cfg.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        cfg:
+          - { os: ubuntu-latest, triplet: x64-linux }
+          - { os: macos-latest, triplet: x64-osx }
+
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Install linux dependencies
+        if: ${{ matrix.cfg.os == 'ubuntu-latest' }}
+        run: sudo apt-get install build-essential ninja-build libavcodec-dev libavformat-dev libavutil-dev libswscale-dev
+      - name: Install osx dependencies
+        if: ${{ matrix.cfg.os == 'macos-latest' }}
+        run: brew install ninja cmake ffmpeg
+      - name: Build the code
+        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release && cmake --build build
+      - name: Run the tests
+        run: ctest --output-on-failure --test-dir build/
+
