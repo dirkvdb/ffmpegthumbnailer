@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <string>
 #include <unistd.h>
+#include <memory>
 
 #ifdef ENABLE_GIO
 #include <dlfcn.h>
