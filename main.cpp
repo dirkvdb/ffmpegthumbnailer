@@ -1,4 +1,4 @@
-//    Copyright (C) 2010 Dirk Vanden Boer <dirk.vdb@gmail.com>
+//    Copyright (C) 2024 Dirk Vanden Boer <dirk.vdb@gmail.com>
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <stdlib.h>
-#include <thread>
+#include <string>
 #include <unistd.h>
 
 #ifdef ENABLE_GIO
@@ -92,14 +92,24 @@ int main(int argc, char** argv)
             }
             else
             {
-                seekPercentage = std::atoi(optarg);
+                try {
+                    seekPercentage = std::stoi(optarg);
+                } catch (std::invalid_argument&) {
+                    std::cerr << "Invalid seek percentage: " << optarg << std::endl;
+                    return EXIT_FAILURE;
+                }
             }
             break;
         case 'w':
             workaroundIssues = true;
             break;
         case 'q':
-            imageQuality = std::atoi(optarg);
+            try {
+                imageQuality = std::stoi(optarg);
+            } catch (std::invalid_argument&) {
+                std::cerr << "Invalid image quality: " << optarg << std::endl;
+                return EXIT_FAILURE;
+            }
             break;
         case 'c':
             imageFormat = optarg;
@@ -157,6 +167,7 @@ int main(int argc, char** argv)
 
         if (!seekTime.empty())
         {
+            std::cout << "Seeking to time: " << seekTime << std::endl;
             videoThumbnailer.setSeekTime(seekTime);
         }
         else
