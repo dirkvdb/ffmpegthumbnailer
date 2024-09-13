@@ -23,13 +23,9 @@ jobs:
         run: sudo apt-get install build-essential ninja-build libavcodec-dev libavfilter-dev libavformat-dev libavutil-dev libswscale-dev
       - name: Install osx dependencies
         if: ${{ matrix.cfg.os == 'macos-latest' }}
-        run: brew install ninja cmake ffmpeg
+        run: brew install ninja ffmpeg
       - name: Build the code
-        if: ${{ matrix.cfg.os == 'macos-latest' }}
-        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DPNG_LIBRARY_RELEASE=/opt/homebrew/lib/libpng.a && cmake --build build
-      - name: Build the code
-        if: ${{ matrix.cfg.os == 'ubuntu-latest' }}
-        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release && cmake --build build
+        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_FIND_FRAMEWORK=NEVER && cmake --build build
       - name: Run the tests
         run: ctest --output-on-failure --test-dir build/
 

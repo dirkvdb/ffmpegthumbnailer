@@ -1,7 +1,4 @@
-[![Build Status](https://travis-ci.org/dirkvdb/ffmpegthumbnailer.svg?branch=master)](https://travis-ci.org/dirkvdb/ffmpegthumbnailer)<a href="https://scan.coverity.com/projects/5008">
-  <img alt="Coverity Scan Build Status"
-       src="https://scan.coverity.com/projects/5008/badge.svg"/>
-</a>
+[![Build](https://github.com/dirkvdb/ffmpegthumbnailer/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/dirkvdb/ffmpegthumbnailer/actions/workflows/build.yml)
 
 FFmpegthumbnailer is a lightweight video thumbnailer that can be used by file
 managers to create thumbnails for your video files. The thumbnailer uses ffmpeg
