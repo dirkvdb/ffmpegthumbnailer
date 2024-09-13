@@ -1,3 +1,11 @@
+FFmpegThumbnailer 2.2.3
+- Fix build against latest ffmpeg
+- Fix build with recent compiler versions
+- Perform error checking for integer command line arguments
+- Update MimeTypes in .desktop file
+- Fix string out of range error
+
+
 FFmpegThumbnailer 2.2.2
 - Removed unstable continuous thumbnail creation
 
