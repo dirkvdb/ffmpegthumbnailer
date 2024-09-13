@@ -31,7 +31,7 @@ class RgbWriter : public ImageWriter
 public:
     RgbWriter(const std::string& outputFile);
     RgbWriter(std::vector<uint8_t>& outputBuffer);
-    ~RgbWriter();
+    ~RgbWriter() override;
 
     void setText(const std::string& key, const std::string& value) override;
     void writeFrame(uint8_t** rgbData, int width, int height, int quality) override;

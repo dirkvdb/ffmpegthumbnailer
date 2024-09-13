@@ -36,11 +36,11 @@ class JpegWriter : public ImageWriter
 public:
     JpegWriter(const std::string& outputFile);
     JpegWriter(std::vector<uint8_t>& outputBuffer);
-    ~JpegWriter();
-    
-    void setText(const std::string& key, const std::string& value);
-    void writeFrame(uint8_t** rgbData, int width, int height, int quality);
-    
+    ~JpegWriter() override;
+
+    void setText(const std::string& key, const std::string& value) override;
+    void writeFrame(uint8_t** rgbData, int width, int height, int quality) override;
+
 private:
     void init();
     

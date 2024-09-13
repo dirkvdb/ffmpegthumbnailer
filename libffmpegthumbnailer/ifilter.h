@@ -25,7 +25,7 @@ namespace ffmpegthumbnailer
 class IFilter
 {
 public:
-	virtual ~IFilter() {}
+    virtual ~IFilter() = default;
     virtual void process(VideoFrame& frameData) = 0;
 };
 
