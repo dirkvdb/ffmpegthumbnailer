@@ -354,9 +354,9 @@ void VideoThumbnailer::addFilter(IFilter* pFilter)
 
 void VideoThumbnailer::removeFilter(IFilter* pFilter)
 {
-    std::remove_if(m_Filters.begin(), m_Filters.end(), [pFilter] (IFilter* fil) {
+    m_Filters.erase(std::remove_if(m_Filters.begin(), m_Filters.end(), [pFilter] (IFilter* fil) {
         return fil == pFilter;
-    });
+    }), m_Filters.end());
 }
 
 void VideoThumbnailer::clearFilters()
