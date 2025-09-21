@@ -19,8 +19,8 @@
 
 #include "config.h"
 
-#include "imagewriter.h"
 #include "imagetypes.h"
+#include "imagewriter.h"
 #include "rgbwriter.h"
 
 #ifdef HAVE_PNG
@@ -31,13 +31,11 @@
 #include "jpegwriter.h"
 #endif
 
-
-#include <string>
 #include <inttypes.h>
 #include <stdexcept>
+#include <string>
 
-namespace ffmpegthumbnailer
-{
+namespace ffmpegthumbnailer {
 
 template <typename T>
 class ImageWriterFactory
@@ -45,24 +43,23 @@ class ImageWriterFactory
 public:
     static ImageWriter* createImageWriter(ThumbnailerImageType imageType, T output)
     {
-        switch (imageType)
-        {
-            case Png:
+        switch (imageType) {
+        case Png:
 #ifdef HAVE_PNG
-                return new PngWriter(output);
+            return new PngWriter(output);
 #else
-                throw std::logic_error("ffmpegthumbnailer was not compiled with png support");
+            throw std::logic_error("ffmpegthumbnailer was not compiled with png support");
 #endif
-            case Jpeg:
+        case Jpeg:
 #ifdef HAVE_JPEG
-                return new JpegWriter(output);
+            return new JpegWriter(output);
 #else
-                throw std::logic_error("ffmpegthumbnailer was not compiled with jpeg support");
+            throw std::logic_error("ffmpegthumbnailer was not compiled with jpeg support");
 #endif
-            case Rgb:
-                return new RgbWriter(output);
-            default:
-                throw std::logic_error("ImageWriterFactory::createImageWriter: Invalid image type specified");
+        case Rgb:
+            return new RgbWriter(output);
+        default:
+            throw std::logic_error("ImageWriterFactory::createImageWriter: Invalid image type specified");
         }
     }
 };

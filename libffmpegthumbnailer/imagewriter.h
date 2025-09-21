@@ -17,19 +17,18 @@
 #ifndef IMAGE_WRITER_H
 #define IMAGE_WRITER_H
 
-#include <string>
 #include <cinttypes>
+#include <string>
 
-namespace ffmpegthumbnailer
-{
+namespace ffmpegthumbnailer {
 
 class ImageWriter
 {
 public:
-   virtual ~ImageWriter() = default;
+    virtual ~ImageWriter() = default;
 
-   virtual void setText(const std::string& key, const std::string& value) = 0;
-   virtual void writeFrame(uint8_t** rgbData, int width, int height, int quality) = 0;
+    virtual void setText(const std::string& key, const std::string& value)         = 0;
+    virtual void writeFrame(uint8_t** rgbData, int width, int height, int quality) = 0;
 };
 
 }

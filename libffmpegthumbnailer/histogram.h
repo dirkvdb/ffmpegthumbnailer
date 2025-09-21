@@ -19,8 +19,7 @@
 
 #include <array>
 
-namespace ffmpegthumbnailer
-{
+namespace ffmpegthumbnailer {
 
 template <typename T>
 struct Histogram

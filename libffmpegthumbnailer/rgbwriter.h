@@ -17,14 +17,13 @@
 #ifndef RGB_WRITER_H
 #define RGB_WRITER_H
 
+#include <fstream>
 #include <string>
 #include <vector>
-#include <fstream>
 
 #include "imagewriter.h"
 
-namespace ffmpegthumbnailer
-{
+namespace ffmpegthumbnailer {
 
 class RgbWriter : public ImageWriter
 {
@@ -37,8 +36,8 @@ public:
     void writeFrame(uint8_t** rgbData, int width, int height, int quality) override;
 
 private:
-    FILE*                   m_FilePtr;
-    std::vector<uint8_t>*   m_OutputBuffer;
+    FILE* m_FilePtr;
+    std::vector<uint8_t>* m_OutputBuffer;
 };
 
 }

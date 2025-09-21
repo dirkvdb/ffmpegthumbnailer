@@ -1,32 +1,44 @@
 ---
 # BasedOnStyle:  LLVM
 AccessModifierOffset: -4
-ConstructorInitializerIndentWidth: 0
-AlignAfterOpenBracket: DontAlign
-AlignEscapedNewlinesLeft: false
+AlignAfterOpenBracket: Align
+AlignEscapedNewlines: Left
 AlignOperands: true
 AlignTrailingComments: true
 AlignConsecutiveAssignments : true
-AlignConsecutiveDeclarations : true
-AllowAllParametersOfDeclarationOnNextLine: true
+AlignConsecutiveDeclarations : false
+AllowAllParametersOfDeclarationOnNextLine: false
 AllowShortIfStatementsOnASingleLine: true
 AllowShortCaseLabelsOnASingleLine: true
 AllowShortLoopsOnASingleLine: false
 AllowShortBlocksOnASingleLine: true
+AllowShortFunctionsOnASingleLine: None
 AlwaysBreakTemplateDeclarations: false
 AlwaysBreakBeforeMultilineStrings: false
+BraceWrapping:
+    AfterControlStatement: false
+    AfterFunction: true
+    AfterEnum: true
+    AfterClass: true
+    AfterStruct: true
+    AfterNamespace: false
+BreakBeforeBraces: Custom
 BreakBeforeBinaryOperators: false
 BreakBeforeTernaryOperators: true
 BreakConstructorInitializersBeforeComma: true
-BinPackParameters: false
-BinPackArguments: false
+BinPackParameters: true
+BinPackArguments: true
 ColumnLimit: 0
-ConstructorInitializerAllOnOneLineOrOnePerLine: false
+CompactNamespaces: false
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+ConstructorInitializerIndentWidth: 0
 ContinuationIndentWidth: 4
 Cpp11BracedListStyle: true
 DerivePointerBinding: false
 ExperimentalAutoDetectBinPacking: false
+FixNamespaceComments: false
 IndentCaseLabels: false
+KeepEmptyLinesAtTheStartOfBlocks: false
 Language: Cpp
 MaxEmptyLinesToKeep: 1
 NamespaceIndentation: None
@@ -38,17 +50,19 @@ PenaltyExcessCharacter: 1000000
 PenaltyReturnTypeOnItsOwnLine: 60
 PointerAlignment: Left
 PointerBindsToType: true
+SpaceBeforeParens: ControlStatements
+SpacesInAngles: false
+SpacesInContainerLiterals: false
+SpacesInCStyleCastParentheses: false
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+SpaceInEmptyParentheses: false
 SpacesBeforeTrailingComments: 1
 Standard: Cpp11
 IndentWidth: 4
 TabWidth: 4
 UseTab: Never
-BreakBeforeBraces: Allman
 IndentFunctionDeclarationAfterType: false
-SpacesInParentheses: false
-SpacesInAngles: false
-SpaceInEmptyParentheses: false
-SpacesInCStyleCastParentheses: false
 SpaceAfterControlStatementKeyword: true
 SpaceBeforeAssignmentOperators: true
 SortIncludes: true

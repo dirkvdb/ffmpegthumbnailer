@@ -22,17 +22,20 @@
 #include <cinttypes>
 #include <vector>
 
-namespace ffmpegthumbnailer
-{
+namespace ffmpegthumbnailer {
 
 struct VideoFrame
 {
     VideoFrame()
-    : width(0), height(0), lineSize(0) {}
-    
+    : width(0), height(0), lineSize(0)
+    {
+    }
+
     VideoFrame(int width, int height, int lineSize, ThumbnailerImageSource source)
-    : width(width), height(height), lineSize(lineSize), imageSource(source) {}
-    
+    : width(width), height(height), lineSize(lineSize), imageSource(source)
+    {
+    }
+
     int width;
     int height;
     int lineSize;

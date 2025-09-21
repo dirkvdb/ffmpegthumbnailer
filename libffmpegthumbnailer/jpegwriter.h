@@ -21,13 +21,12 @@
 #include <vector>
 
 extern "C" {
-    #include <jpeglib.h>
+#include <jpeglib.h>
 }
 
 #include "imagewriter.h"
 
-namespace ffmpegthumbnailer
-{
+namespace ffmpegthumbnailer {
 
 struct BufferWriter;
 
@@ -43,12 +42,12 @@ public:
 
 private:
     void init();
-    
+
 private:
-    FILE*                   m_pFile;
-    jpeg_compress_struct    m_Compression;
-    jpeg_error_mgr          m_ErrorHandler;
-    BufferWriter*           m_pBufferWriter;
+    FILE* m_pFile;
+    jpeg_compress_struct m_Compression;
+    jpeg_error_mgr m_ErrorHandler;
+    BufferWriter* m_pBufferWriter;
 };
 
 }

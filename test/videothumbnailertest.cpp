@@ -1,31 +1,30 @@
 ﻿#include <algorithm>
 
-#include <vector>
+#include <catch.hpp>
 #include <fstream>
 #include <iostream>
-#include <catch.hpp>
+#include <vector>
 
-#include "libffmpegthumbnailer/videothumbnailer.h"
-#include "libffmpegthumbnailer/imagetypes.h"
 #include "libffmpegthumbnailer/histogram.h"
 #include "libffmpegthumbnailer/histogramutils.h"
+#include "libffmpegthumbnailer/imagetypes.h"
+#include "libffmpegthumbnailer/videothumbnailer.h"
 
-namespace ffmpegthumbnailer
-{
+namespace ffmpegthumbnailer {
 
 TEST_CASE("C++ API Usage")
 {
     Histogram<int> histogram;
 
     VideoFrame frame;
-    frame.width = 10;
-    frame.height = 10;
+    frame.width    = 10;
+    frame.height   = 10;
     frame.lineSize = 30;
     frame.frameData.resize(300);
 
     VideoThumbnailer videoThumbnailer;
 
-    videoThumbnailer.setLogCallback([] (ThumbnailerLogLevel, const std::string& msg) {
+    videoThumbnailer.setLogCallback([](ThumbnailerLogLevel, const std::string& msg) {
         std::cout << msg << std::endl;
     });
 
@@ -111,8 +110,7 @@ TEST_CASE("C++ API Usage")
         CHECK(100 == histogram.g[0]);
         CHECK(100 == histogram.b[0]);
 
-        for (int i = 1; i < 255; ++i)
-        {
+        for (int i = 1; i < 255; ++i) {
             CHECK(0 == histogram.r[i]);
             CHECK(0 == histogram.g[i]);
             CHECK(0 == histogram.b[i]);
@@ -128,8 +126,7 @@ TEST_CASE("C++ API Usage")
         CHECK(100 == histogram.g[255]);
         CHECK(100 == histogram.b[255]);
 
-        for (int i = 0; i < 254; ++i)
-        {
+        for (int i = 0; i < 254; ++i) {
             CHECK(0 == histogram.r[i]);
             CHECK(0 == histogram.g[i]);
             CHECK(0 == histogram.b[i]);

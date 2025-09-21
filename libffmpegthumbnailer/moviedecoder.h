@@ -18,11 +18,11 @@
 #define MOVIEDECODER_H
 
 #include <cinttypes>
-#include <string>
-#include <vector>
-#include <mutex>
-#include <unordered_map>
 #include <functional>
+#include <mutex>
+#include <string>
+#include <unordered_map>
+#include <vector>
 
 #include "ffmpegthumbnailertypes.h"
 
@@ -36,8 +36,7 @@ struct AVFrame;
 struct AVPacket;
 struct AVRational;
 
-namespace ffmpegthumbnailer
-{
+namespace ffmpegthumbnailer {
 
 struct VideoFrame;
 
@@ -75,22 +74,21 @@ private:
     void checkRc(int ret, const std::string& message);
 
 private:
-    int                     m_VideoStream;
-    AVFormatContext*        m_pFormatContext;
-    AVCodecContext*         m_pVideoCodecContext;
-    const AVCodec*          m_pVideoCodec;
-    AVFilterGraph*          m_pFilterGraph;
-    AVFilterContext*        m_pFilterSource;
-    AVFilterContext*        m_pFilterSink;
-    AVStream*               m_pVideoStream;
-    AVFrame*                m_pFrame;
-    AVPacket*               m_pPacket;
-    bool                    m_FormatContextWasGiven;
-    bool                    m_AllowSeek;
-    bool                    m_UseEmbeddedData;
+    int m_VideoStream;
+    AVFormatContext* m_pFormatContext;
+    AVCodecContext* m_pVideoCodecContext;
+    const AVCodec* m_pVideoCodec;
+    AVFilterGraph* m_pFilterGraph;
+    AVFilterContext* m_pFilterSource;
+    AVFilterContext* m_pFilterSink;
+    AVStream* m_pVideoStream;
+    AVFrame* m_pFrame;
+    AVPacket* m_pPacket;
+    bool m_FormatContextWasGiven;
+    bool m_AllowSeek;
+    bool m_UseEmbeddedData;
 };
 
 }
 
 #endif
-

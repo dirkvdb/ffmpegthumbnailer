@@ -19,8 +19,7 @@
 
 #include "ifilter.h"
 
-namespace ffmpegthumbnailer
-{
+namespace ffmpegthumbnailer {
 
 class FilmStripFilter : public IFilter
 {

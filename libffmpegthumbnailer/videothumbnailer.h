@@ -17,19 +17,18 @@
 #ifndef VIDEO_THUMBNAILER_H
 #define VIDEO_THUMBNAILER_H
 
-#include <string>
-#include <vector>
-#include <map>
 #include <cinttypes>
 #include <functional>
+#include <map>
+#include <string>
+#include <vector>
 
-#include "ifilter.h"
 #include "ffmpegthumbnailertypes.h"
+#include "ifilter.h"
 
 struct AVFormatContext;
 
-namespace ffmpegthumbnailer
-{
+namespace ffmpegthumbnailer {
 
 struct VideoFrame;
 class ImageWriter;
@@ -39,8 +38,8 @@ struct Histogram;
 
 struct VideoFrameInfo
 {
-    int width = 0;
-    int height = 0;
+    int width                     = 0;
+    int height                    = 0;
     ThumbnailerImageSource source = ThumbnailerImageSourceVideoStream;
 };
 
@@ -77,21 +76,21 @@ private:
     std::string getMimeType(const std::string& videoFile);
     std::string getExtension(const std::string& videoFilename);
 
-    int getBestThumbnailIndex(std::vector<VideoFrame>& videoFrames, const std::vector<Histogram<int> >& histograms);
+    int getBestThumbnailIndex(std::vector<VideoFrame>& videoFrames, const std::vector<Histogram<int>>& histograms);
     void applyFilters(VideoFrame& frameData);
 
     void TraceMessage(ThumbnailerLogLevel lvl, const std::string& msg);
 
 private:
-    std::string                                     m_ThumbnailSize;
-    uint16_t                                        m_SeekPercentage;
-    bool                                            m_WorkAroundIssues;
-    int                                             m_ImageQuality;
-    bool                                            m_MaintainAspectRatio;
-    bool                                            m_SmartFrameSelection;
-    bool                                            m_PreferEmbeddedMetadata;
-    std::string                                     m_SeekTime;
-    std::vector<IFilter*>                           m_Filters;
+    std::string m_ThumbnailSize;
+    uint16_t m_SeekPercentage;
+    bool m_WorkAroundIssues;
+    int m_ImageQuality;
+    bool m_MaintainAspectRatio;
+    bool m_SmartFrameSelection;
+    bool m_PreferEmbeddedMetadata;
+    std::string m_SeekTime;
+    std::vector<IFilter*> m_Filters;
 
     std::function<void(ThumbnailerLogLevel, const std::string&)> m_LogCb;
 };

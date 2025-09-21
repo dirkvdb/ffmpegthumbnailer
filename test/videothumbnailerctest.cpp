@@ -1,29 +1,27 @@
-#include "config.h"
 #include "libffmpegthumbnailer/videothumbnailerc.h"
+#include "config.h"
 
 #include <algorithm>
-#include <vector>
-#include <fstream>
-#include <string.h>
 #include <catch.hpp>
+#include <fstream>
 #include <iostream>
+#include <string.h>
+#include <vector>
 
 using namespace std;
 
-namespace ffmpegthumbnailer
-{
+namespace ffmpegthumbnailer {
 
 TEST_CASE("C API Usage")
 {
     auto* thumbnailer = video_thumbnailer_create();
-    auto* imageData = video_thumbnailer_create_image_data();
+    auto* imageData   = video_thumbnailer_create_image_data();
 
-    thumbnailer->seek_percentage        = 15;
-    thumbnailer->overlay_film_strip     = 1;
+    thumbnailer->seek_percentage    = 15;
+    thumbnailer->overlay_film_strip = 1;
 
-    video_thumbnailer_set_log_callback(thumbnailer, [] (ThumbnailerLogLevel lvl, const char* msg) {
-        if (lvl == ThumbnailerLogLevelError)
-        {
+    video_thumbnailer_set_log_callback(thumbnailer, [](ThumbnailerLogLevel lvl, const char* msg) {
+        if (lvl == ThumbnailerLogLevelError) {
             std::cerr << msg << "\n";
         }
     });
@@ -31,9 +29,8 @@ TEST_CASE("C API Usage")
 #ifdef HAVE_JPEG
     SECTION("CreateThumbJpeg")
     {
-
-        thumbnailer->thumbnail_image_type   = Jpeg;
-        std::string input = std::string(TEST_DATADIR) + "/test_sample.flv";
+        thumbnailer->thumbnail_image_type = Jpeg;
+        std::string input                 = std::string(TEST_DATADIR) + "/test_sample.flv";
         REQUIRE(0 == video_thumbnailer_generate_thumbnail_to_buffer(thumbnailer, input.c_str(), imageData));
 
         CHECK(0 != imageData->image_data_size);
@@ -86,7 +83,7 @@ TEST_CASE("C API Usage")
         video_thumbnailer_set_size(thumbnailer, 0, 0);
 
         std::string input = std::string(TEST_DATADIR) + "/test_sample.flv";
-        auto rc = video_thumbnailer_generate_thumbnail_to_buffer(thumbnailer, input.c_str(), imageData);
+        auto rc           = video_thumbnailer_generate_thumbnail_to_buffer(thumbnailer, input.c_str(), imageData);
         REQUIRE(0 == rc);
 
         CHECK(9 != imageData->image_data_size);
@@ -98,7 +95,7 @@ TEST_CASE("C API Usage")
 
     SECTION("CreateThumbRgbSetSizeBothWidthHeightMaintainAspect")
     {
-        thumbnailer->thumbnail_image_type = Rgb;
+        thumbnailer->thumbnail_image_type  = Rgb;
         thumbnailer->maintain_aspect_ratio = 1;
         video_thumbnailer_set_size(thumbnailer, 200, 234);
 
@@ -114,7 +111,7 @@ TEST_CASE("C API Usage")
 
     SECTION("CreateThumbRgbSetSizeBothWidthHeightDoNotMaintainAspect")
     {
-        thumbnailer->thumbnail_image_type = Rgb;
+        thumbnailer->thumbnail_image_type  = Rgb;
         thumbnailer->maintain_aspect_ratio = 0;
         video_thumbnailer_set_size(thumbnailer, 200, 234);
 
@@ -130,7 +127,7 @@ TEST_CASE("C API Usage")
 
     SECTION("CreateThumbInvalidFile")
     {
-        video_thumbnailer_set_log_callback(thumbnailer, [] (ThumbnailerLogLevel, const char* msg) {
+        video_thumbnailer_set_log_callback(thumbnailer, [](ThumbnailerLogLevel, const char* msg) {
             CHECK(0 == strcmp("Could not open input file: invalidfile.mpg", msg));
         });
 

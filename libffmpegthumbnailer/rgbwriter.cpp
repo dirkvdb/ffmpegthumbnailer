@@ -15,14 +15,13 @@
 //    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "rgbwriter.h"
-#include <stdexcept>
 #include <cassert>
 #include <cstring>
+#include <stdexcept>
 
 using namespace std;
 
-namespace ffmpegthumbnailer
-{
+namespace ffmpegthumbnailer {
 
 RgbWriter::RgbWriter(const string& outputFile)
 : ImageWriter()
@@ -30,9 +29,8 @@ RgbWriter::RgbWriter(const string& outputFile)
 {
     m_FilePtr = outputFile == "-" ? stdout : fopen(outputFile.c_str(), "wb");
 
-    if (!m_FilePtr)
-    {
-       throw logic_error(string("Failed to open output file: ") + outputFile);
+    if (!m_FilePtr) {
+        throw logic_error(string("Failed to open output file: ") + outputFile);
     }
 }
 
@@ -45,8 +43,7 @@ RgbWriter::RgbWriter(std::vector<uint8_t>& outputBuffer)
 
 RgbWriter::~RgbWriter()
 {
-    if (m_FilePtr)
-    {
+    if (m_FilePtr) {
         fclose(m_FilePtr);
     }
 }
@@ -59,19 +56,14 @@ void RgbWriter::writeFrame(uint8_t** rgbData, int width, int height, int /*quali
 {
     const auto lineSize = static_cast<size_t>(width * 3);
 
-    if (m_FilePtr)
-    {
-        for (int i = 0; i < height; ++i)
-        {
+    if (m_FilePtr) {
+        for (int i = 0; i < height; ++i) {
             fwrite(rgbData[i], sizeof(uint8_t), lineSize, m_FilePtr);
         }
-    }
-    else 
-    {
+    } else {
         m_OutputBuffer->resize(width * height * 3);
 
-        for (int i = 0; i < height; ++i)
-        {
+        for (int i = 0; i < height; ++i) {
             memcpy(m_OutputBuffer->data() + (lineSize * i), rgbData[i], lineSize);
         }
     }

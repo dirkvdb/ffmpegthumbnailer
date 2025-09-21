@@ -19,13 +19,12 @@
 
 #include "videoframe.h"
 
-namespace ffmpegthumbnailer
-{
+namespace ffmpegthumbnailer {
 
 class IFilter
 {
 public:
-    virtual ~IFilter() = default;
+    virtual ~IFilter()                          = default;
     virtual void process(VideoFrame& frameData) = 0;
 };
 

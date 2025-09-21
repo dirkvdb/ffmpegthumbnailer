@@ -17,14 +17,13 @@
 #ifndef PNG_WRITER_H
 #define PNG_WRITER_H
 
+#include <png.h>
 #include <string>
 #include <vector>
-#include <png.h>
 
 #include "imagewriter.h"
 
-namespace ffmpegthumbnailer
-{
+namespace ffmpegthumbnailer {
 
 class PngWriter : public ImageWriter
 {
@@ -40,9 +39,9 @@ private:
     void init();
 
 private:
-    FILE*                   m_FilePtr;
-    png_structp             m_PngPtr;
-    png_infop               m_InfoPtr;
+    FILE* m_FilePtr;
+    png_structp m_PngPtr;
+    png_infop m_InfoPtr;
 };
 
 }

@@ -19,20 +19,18 @@
 
 #include <limits>
 
-#include <QImage>
 #include <QCheckBox>
 #include <QFormLayout>
+#include <QImage>
 #include <QRegExpValidator>
 #include <QWidget>
 
-extern "C"
+extern "C" {
+Q_DECL_EXPORT ThumbCreator* new_creator()
 {
-    Q_DECL_EXPORT ThumbCreator *new_creator()
-    {
-        return new KFFMpegThumbnailer();
-    }
+    return new KFFMpegThumbnailer();
 }
-
+}
 
 KFFMpegThumbnailer::KFFMpegThumbnailer()
 {
@@ -48,7 +46,7 @@ bool KFFMpegThumbnailer::create(const QString& path, int width, int /*height*/, 
     int seqIdx = static_cast<int>(sequenceIndex());
 
     const QList<int> seekPercentages = KFFMpegThumbnailerSettings::sequenceSeekPercentages();
-    const int numSeekPercentages = seekPercentages.size();
+    const int numSeekPercentages     = seekPercentages.size();
 
     seqIdx %= numSeekPercentages;
 
@@ -60,18 +58,14 @@ bool KFFMpegThumbnailer::create(const QString& path, int width, int /*height*/, 
         return true;
     }
 
-    try
-    {
+    try {
         std::vector<uint8_t> pixelBuffer;
         KFFMpegThumbnailerSettings* settings = KFFMpegThumbnailerSettings::self();
         settings->load();
 
-        if (settings->addFilmstrip())
-        {
+        if (settings->addFilmstrip()) {
             m_Thumbnailer.addFilter(&m_FilmStrip);
-        }
-        else 
-        {
+        } else {
             m_Thumbnailer.clearFilters();
         }
 
@@ -82,17 +76,14 @@ bool KFFMpegThumbnailer::create(const QString& path, int width, int /*height*/, 
         m_Thumbnailer.setThumbnailSize(width);
         m_Thumbnailer.generateThumbnail(std::string(path.toUtf8()), Png, pixelBuffer);
 
-        if (!img.loadFromData(&pixelBuffer.front(), pixelBuffer.size(), "PNG"))
-        {
+        if (!img.loadFromData(&pixelBuffer.front(), pixelBuffer.size(), "PNG")) {
             return false;
         }
-    }
-    catch (std::exception& e)
-    {
+    } catch (std::exception& e) {
         return false;
     }
 
-    const int cacheCost = static_cast<int>((img.sizeInBytes()+1023) / 1024);
+    const int cacheCost = static_cast<int>((img.sizeInBytes() + 1023) / 1024);
     thumbCache.insert(cacheKey, new QImage(img), cacheCost);
 
     return true;
@@ -108,9 +99,9 @@ ThumbCreator::Flags KFFMpegThumbnailer::flags() const
     return static_cast<Flags>(None);
 }
 
-QWidget *KFFMpegThumbnailer::createConfigurationWidget()
+QWidget* KFFMpegThumbnailer::createConfigurationWidget()
 {
-    QWidget* widget = new QWidget();
+    QWidget* widget         = new QWidget();
     QFormLayout* formLayout = new QFormLayout(widget);
 
     m_addFilmStripCheckBox = new QCheckBox("Embed filmstrip effect");
@@ -154,7 +145,7 @@ void KFFMpegThumbnailer::writeConfiguration(const QWidget* /*configurationWidget
     settings->setUseSmartSelection(m_useSmartSelectionCheckBox->isChecked());
 
     const QStringList seekPercentagesStrList = m_sequenceSeekPercentagesLineEdit->text()
-            .split(QRegExp("(\\s*,\\s*)|\\s+"), Qt::SkipEmptyParts);
+                                                   .split(QRegExp("(\\s*,\\s*)|\\s+"), Qt::SkipEmptyParts);
     QList<int> seekPercentages;
     bool seekPercentagesValid = true;
 

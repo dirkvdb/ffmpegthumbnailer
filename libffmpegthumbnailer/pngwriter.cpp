@@ -15,14 +15,13 @@
 //    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "pngwriter.h"
-#include <stdexcept>
 #include <cassert>
 #include <cstring>
+#include <stdexcept>
 
 using namespace std;
 
-namespace ffmpegthumbnailer
-{
+namespace ffmpegthumbnailer {
 
 static void writeDataCallback(png_structp png_ptr, png_bytep data, png_size_t length);
 
@@ -35,9 +34,8 @@ PngWriter::PngWriter(const string& outputFile)
     init();
     m_FilePtr = outputFile == "-" ? stdout : fopen(outputFile.c_str(), "wb");
 
-    if (!m_FilePtr)
-    {
-       throw logic_error(string("Failed to open output file: ") + outputFile);
+    if (!m_FilePtr) {
+        throw logic_error(string("Failed to open output file: ") + outputFile);
     }
 
     png_init_io(m_PngPtr, m_FilePtr);
@@ -55,8 +53,7 @@ PngWriter::PngWriter(std::vector<uint8_t>& outputBuffer)
 
 PngWriter::~PngWriter()
 {
-    if (m_FilePtr)
-    {
+    if (m_FilePtr) {
         fclose(m_FilePtr);
     }
     png_destroy_write_struct(&m_PngPtr, &m_InfoPtr);
@@ -65,14 +62,12 @@ PngWriter::~PngWriter()
 void PngWriter::init()
 {
     m_PngPtr = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
-    if (!m_PngPtr)
-    {
+    if (!m_PngPtr) {
         throw logic_error("Failed to create png write structure");
     }
 
     m_InfoPtr = png_create_info_struct(m_PngPtr);
-    if (!m_InfoPtr)
-    {
+    if (!m_InfoPtr) {
         png_destroy_write_struct(&m_PngPtr, (png_infopp) nullptr);
         throw logic_error("Failed to create png info structure");
     }
@@ -83,16 +78,15 @@ void PngWriter::setText(const string& key, const string& value)
     png_text pngText;
 
     pngText.compression = -1;
-    pngText.key = const_cast<char*>(key.c_str());
-    pngText.text = const_cast<char*>(value.c_str());
+    pngText.key         = const_cast<char*>(key.c_str());
+    pngText.text        = const_cast<char*>(value.c_str());
 
     png_set_text(m_PngPtr, m_InfoPtr, &pngText, 1);
 }
 
 void PngWriter::writeFrame(uint8_t** rgbData, int width, int height, int /*quality*/)
 {
-    if (setjmp(png_jmpbuf(m_PngPtr)))
-    {
+    if (setjmp(png_jmpbuf(m_PngPtr))) {
         throw logic_error("Writing png file failed");
     }
 
@@ -106,8 +100,8 @@ void PngWriter::writeFrame(uint8_t** rgbData, int width, int height, int /*quali
 
 void writeDataCallback(png_structp png_ptr, png_bytep data, png_size_t length)
 {
-    vector<uint8_t>& outputBuffer = *(reinterpret_cast<vector<uint8_t>* >(png_get_io_ptr(png_ptr)));
-    int prevBufSize = outputBuffer.size();
+    vector<uint8_t>& outputBuffer = *(reinterpret_cast<vector<uint8_t>*>(png_get_io_ptr(png_ptr)));
+    int prevBufSize               = outputBuffer.size();
     outputBuffer.resize(outputBuffer.size() + length);
     memcpy(&outputBuffer[prevBufSize], data, length);
 }

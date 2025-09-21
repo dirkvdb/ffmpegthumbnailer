@@ -18,11 +18,11 @@
 
 #include <clocale>
 #include <iostream>
+#include <memory>
 #include <stdexcept>
 #include <stdlib.h>
 #include <string>
 #include <unistd.h>
-#include <memory>
 
 #ifdef ENABLE_GIO
 #include <dlfcn.h>
@@ -34,37 +34,34 @@
 
 using namespace ffmpegthumbnailer;
 
-void                 printVersion();
-void                 printUsage();
-void                 tryUriConvert(std::string& filename);
+void printVersion();
+void printUsage();
+void tryUriConvert(std::string& filename);
 ThumbnailerImageType determineImageTypeFromString(const std::string& filename);
 ThumbnailerImageType determineImageTypeFromFilename(const std::string& filename);
 
 int main(int argc, char** argv)
 {
-    int         option;
-    int         seekPercentage = 10;
+    int option;
+    int seekPercentage = 10;
     std::string seekTime;
-    std::string thumbnailSize          = "128";
-    int         imageQuality           = 8;
-    bool        filmStripOverlay       = false;
-    bool        workaroundIssues       = false;
-    bool        maintainAspectRatio    = true;
-    bool        smartFrameSelection    = false;
-    bool        preferEmbeddedMetadata = false;
+    std::string thumbnailSize   = "128";
+    int imageQuality            = 8;
+    bool filmStripOverlay       = false;
+    bool workaroundIssues       = false;
+    bool maintainAspectRatio    = true;
+    bool smartFrameSelection    = false;
+    bool preferEmbeddedMetadata = false;
     std::string inputFile;
     std::string outputFile;
     std::string imageFormat;
 
-    if (!std::setlocale(LC_CTYPE, ""))
-    {
+    if (!std::setlocale(LC_CTYPE, "")) {
         std::cerr << "Failed to set locale" << std::endl;
     }
 
-    while ((option = getopt(argc, argv, "i:o:s:t:q:c:r:afwhvpm")) != -1)
-    {
-        switch (option)
-        {
+    while ((option = getopt(argc, argv, "i:o:s:t:q:c:r:afwhvpm")) != -1) {
+        switch (option) {
         case 'a':
             maintainAspectRatio = false;
             break;
@@ -87,12 +84,9 @@ int main(int argc, char** argv)
             preferEmbeddedMetadata = true;
             break;
         case 't':
-            if (std::string(optarg).find(':') != std::string::npos)
-            {
+            if (std::string(optarg).find(':') != std::string::npos) {
                 seekTime = optarg;
-            }
-            else
-            {
+            } else {
                 try {
                     seekPercentage = std::stoi(optarg);
                 } catch (std::invalid_argument&) {
@@ -129,21 +123,18 @@ int main(int argc, char** argv)
         }
     }
 
-    if (inputFile.empty() || outputFile.empty())
-    {
+    if (inputFile.empty() || outputFile.empty()) {
         std::cerr << "invalid arguments" << std::endl;
         printUsage();
         return 0;
     }
 
-    if (outputFile == "-" && imageFormat.empty())
-    {
+    if (outputFile == "-" && imageFormat.empty()) {
         std::cerr << "When writing to stdout the image format needs to be specified (e.g.: -c png)" << std::endl;
         return 0;
     }
 
-    try
-    {
+    try {
 #ifdef ENABLE_GIO
         tryUriConvert(inputFile);
 #endif
@@ -158,33 +149,25 @@ int main(int argc, char** argv)
 
         std::unique_ptr<FilmStripFilter> filmStripFilter;
 
-        if (filmStripOverlay)
-        {
+        if (filmStripOverlay) {
             filmStripFilter.reset(new FilmStripFilter());
             videoThumbnailer.addFilter(filmStripFilter.get());
         }
 
         videoThumbnailer.setPreferEmbeddedMetadata(preferEmbeddedMetadata);
 
-        if (!seekTime.empty())
-        {
+        if (!seekTime.empty()) {
             std::cout << "Seeking to time: " << seekTime << std::endl;
             videoThumbnailer.setSeekTime(seekTime);
-        }
-        else
-        {
+        } else {
             videoThumbnailer.setSeekPercentage(seekPercentage);
         }
 
         videoThumbnailer.generateThumbnail(inputFile, imageType, outputFile);
-    }
-    catch (std::exception& e)
-    {
+    } catch (std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;
         return -1;
-    }
-    catch (...)
-    {
+    } catch (...) {
         std::cerr << "Unexpected rror" << std::endl;
         return -1;
     }
@@ -221,18 +204,15 @@ ThumbnailerImageType determineImageTypeFromString(const std::string& type)
     std::string lowercaseType = type;
     StringOperations::lowercase(lowercaseType);
 
-    if (lowercaseType == "png")
-    {
+    if (lowercaseType == "png") {
         return Png;
     }
 
-    if (lowercaseType == "jpeg" || lowercaseType == "jpg")
-    {
+    if (lowercaseType == "jpeg" || lowercaseType == "jpg") {
         return Jpeg;
     }
 
-    if (lowercaseType == "raw" || lowercaseType == "rgb")
-    {
+    if (lowercaseType == "raw" || lowercaseType == "rgb") {
         return Rgb;
     }
 
@@ -261,8 +241,14 @@ public:
         if (m_pLib) dlclose(m_pLib);
     }
 
-    operator void*() const { return m_pLib; }
-    operator bool() const { return m_pLib != nullptr; }
+    operator void*() const
+    {
+        return m_pLib;
+    }
+    operator bool() const
+    {
+        return m_pLib != nullptr;
+    }
 
 private:
     void* m_pLib;
@@ -270,8 +256,7 @@ private:
 
 void tryUriConvert(std::string& filename)
 {
-    if (filename.find(":") == std::string::npos)
-    {
+    if (filename.find(":") == std::string::npos) {
         return;
     }
 
@@ -279,18 +264,16 @@ void tryUriConvert(std::string& filename)
     LibHandle gobjectLib("libgobject-2.0.so.0");
     LibHandle gioLib("libgio-2.0.so.0");
 
-    if (gioLib && gLib && gobjectLib)
-    {
+    if (gioLib && gLib && gobjectLib) {
         FileCreateFunc createUriFunc = (FileCreateFunc)dlsym(gioLib, "g_file_new_for_uri");
 
         IsNativeFunc nativeFunc = (IsNativeFunc)dlsym(gioLib, "g_file_is_native");
-        FileGetFunc  getFunc    = (FileGetFunc)dlsym(gioLib, "g_file_get_path");
-        InitFunc     initFunc   = (InitFunc)dlsym(gobjectLib, "g_type_init");
-        UnrefFunc    unrefFunc  = (UnrefFunc)dlsym(gobjectLib, "g_object_unref");
-        FreeFunc     freeFunc   = (FreeFunc)dlsym(gLib, "g_free");
+        FileGetFunc getFunc     = (FileGetFunc)dlsym(gioLib, "g_file_get_path");
+        InitFunc initFunc       = (InitFunc)dlsym(gobjectLib, "g_type_init");
+        UnrefFunc unrefFunc     = (UnrefFunc)dlsym(gobjectLib, "g_object_unref");
+        FreeFunc freeFunc       = (FreeFunc)dlsym(gLib, "g_free");
 
-        if (!(createUriFunc && nativeFunc && getFunc && freeFunc && initFunc && unrefFunc))
-        {
+        if (!(createUriFunc && nativeFunc && getFunc && freeFunc && initFunc && unrefFunc)) {
             std::cerr << "Failed to obtain functions from gio libraries" << std::endl;
             return;
         }
@@ -298,27 +281,22 @@ void tryUriConvert(std::string& filename)
         initFunc();
 
         void* pFile = createUriFunc(filename.c_str());
-        if (!pFile)
-        {
+        if (!pFile) {
             std::cerr << "Failed to create gio file: " << filename << std::endl;
             return;
         }
 
-        if (!nativeFunc(pFile))
-        {
+        if (!nativeFunc(pFile)) {
             unrefFunc(pFile);
             std::cerr << "Not a native file, thumbnailing will likely fail: " << filename << std::endl;
             return;
         }
 
         char* pPath = getFunc(pFile);
-        if (pPath)
-        {
+        if (pPath) {
             filename = pPath;
             freeFunc(pPath);
-        }
-        else
-        {
+        } else {
             std::cerr << "Failed to get path: " << filename << std::endl;
         }
 
@@ -334,8 +312,7 @@ ThumbnailerImageType determineImageTypeFromFilename(const std::string& filename)
 
     size_t size = lowercaseFilename.size();
     if ((size >= 5 && lowercaseFilename.substr(size - 5, size) == ".jpeg") ||
-        (size >= 4 && lowercaseFilename.substr(size - 4, size) == ".jpg"))
-    {
+        (size >= 4 && lowercaseFilename.substr(size - 4, size) == ".jpg")) {
         return Jpeg;
     }
 

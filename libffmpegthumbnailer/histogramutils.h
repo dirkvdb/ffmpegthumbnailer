@@ -16,21 +16,17 @@
 
 #pragma once
 
-#include "videoframe.h"
 #include "histogram.h"
+#include "videoframe.h"
 
-namespace ffmpegthumbnailer
-{
-namespace utils
-{
+namespace ffmpegthumbnailer {
+namespace utils {
 
 inline void generateHistogram(const VideoFrame& videoFrame, Histogram<int>& histogram)
 {
-    for (int i = 0; i < videoFrame.height; ++i)
-    {
+    for (int i = 0; i < videoFrame.height; ++i) {
         int pixelIndex = i * videoFrame.lineSize;
-        for (int j = 0; j < videoFrame.width * 3; j += 3)
-        {
+        for (int j = 0; j < videoFrame.width * 3; j += 3) {
             ++histogram.r[videoFrame.frameData[pixelIndex + j]];
             ++histogram.g[videoFrame.frameData[pixelIndex + j + 1]];
             ++histogram.b[videoFrame.frameData[pixelIndex + j + 2]];
