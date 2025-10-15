@@ -318,7 +318,7 @@ void VideoThumbnailer::clearFilters()
 
 void VideoThumbnailer::setLogCallback(std::function<void(ThumbnailerLogLevel, const std::string&)> cb)
 {
-    m_LogCb = cb;
+    m_LogCb = std::move(cb);
 }
 
 void VideoThumbnailer::applyFilters(VideoFrame& frameData)
