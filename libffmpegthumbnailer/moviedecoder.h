@@ -46,19 +46,19 @@ public:
     MovieDecoder(AVFormatContext* pavContext = nullptr);
     ~MovieDecoder();
 
-    std::string getCodec();
+    std::string getCodec() const;
     void seek(int timeInSeconds);
     void decodeVideoFrame();
     void getScaledVideoFrame(const std::string& scaledSize, bool maintainAspectRatio, VideoFrame& videoFrame);
 
-    int getWidth();
-    int getHeight();
-    int getDuration();
+    int getWidth() const;
+    int getHeight() const;
+    int getDuration() const;
 
     void initialize(const std::string& filename, bool preferEmbeddedMetadata);
     void destroy();
 
-    bool embeddedMetaDataIsAvailable();
+    bool embeddedMetaDataIsAvailable() const;
 
 private:
     int32_t findPreferredVideoStream(bool preferEmbeddedMetadata);
@@ -68,10 +68,10 @@ private:
 
     bool decodeVideoPacket();
     bool getVideoPacket();
-    int32_t getStreamRotation();
+    int32_t getStreamRotation() const;
     std::string createScaleString(const std::string& size, bool maintainAspectRatio);
 
-    void checkRc(int ret, const std::string& message);
+    void checkRc(int ret, const std::string& message) const;
 
 private:
     int m_VideoStream;
