@@ -29,7 +29,7 @@ include(CPack)
 include(GNUInstallDirs)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 option(ENABLE_SHARED "Build shared library" ON)
@@ -137,7 +137,7 @@ if (ENABLE_STATIC)
     target_include_directories(libffmpegthumbnailerstatic
         PUBLIC
             $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-    )   
+    )
     set (STATIC_LIB libffmpegthumbnailerstatic)
 endif ()
 
