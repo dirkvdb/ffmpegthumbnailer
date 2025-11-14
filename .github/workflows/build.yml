@@ -4,28 +4,26 @@ on: [push]
 
 jobs:
   build:
-    name: ${{ matrix.cfg.os }}
-    runs-on: ${{ matrix.cfg.os }}
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        cfg:
-          - { os: ubuntu-latest, triplet: x64-linux }
-          - { os: macos-latest, triplet: x64-osx }
+        os:
+          - ubuntu-latest
+          - macos-latest
 
     steps:
       - name: Clone repository
         uses: actions/checkout@v4
         with:
           submodules: true
-      - name: Install linux dependencies
-        if: ${{ matrix.cfg.os == 'ubuntu-latest' }}
-        run: sudo apt-get install build-essential ninja-build libavcodec-dev libavfilter-dev libavformat-dev libavutil-dev libswscale-dev
-      - name: Install osx dependencies
-        if: ${{ matrix.cfg.os == 'macos-latest' }}
-        run: brew install ninja ffmpeg
-      - name: Build the code
-        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_FIND_FRAMEWORK=NEVER && cmake --build build
-      - name: Run the tests
-        run: ctest --output-on-failure --test-dir build/
 
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+
+      - name: Build with Nix
+        run: nix build
+
+      - name: Run tests with Nix
+        run: nix flake check
