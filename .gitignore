@@ -1,8 +1,16 @@
+# Build directories
 out
-.idea
 build
-*.sublime-workspace
 xcode
+
+# Nix
+result
+result-*
+.direnv
+
+# IDEs
+.idea
+*.sublime-workspace
 .cmaketools.json
 launch.json
 .vscode/cquery_cached_index
