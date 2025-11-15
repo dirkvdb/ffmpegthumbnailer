@@ -1,0 +1,86 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    outputs:
+      tag_name: ${{ steps.tag.outputs.tag_name }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get tag name
+        id: tag
+        run: echo "tag_name=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        run: |
+          gh release create ${{ steps.tag.outputs.tag_name }} \
+            --title "Release ${{ steps.tag.outputs.tag_name }}" \
+            --generate-notes \
+            --draft=false \
+            --prerelease=false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-and-upload:
+    needs: create-release
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            artifact_name: linux-x86_64
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            artifact_name: macos-arm64
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+
+      - name: Enable Magic Nix Cache
+        uses: DeterminateSystems/magic-nix-cache-action@main
+
+      - name: Build
+        run: nix build .#static -o release
+
+      - name: Windows build
+        if: matrix.os == 'ubuntu-latest'
+        run: nix build .#windows -o release_win
+
+      - name: Create archives and upload (Unix)
+        run: |
+          # Create individual archives for each tool
+          for tool in ffmpegthumbnailer; do
+            mkdir -p ${tool}-temp
+            cp release/bin/${tool} ${tool}-temp/
+            tar -czf ${tool}-${{ matrix.artifact_name }}.tar.gz -C ${tool}-temp ${tool}
+            rm -rf ${tool}-temp
+            gh release upload ${{ needs.create-release.outputs.tag_name }} ${tool}-${{ matrix.artifact_name }}.tar.gz
+          done
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create and upload Windows cross compile
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          # Create individual archives for each tool
+          for tool in ffmpegthumbnailer; do
+            mkdir -p ${tool}-temp
+            cp release_win/bin/${tool}.exe ${tool}-temp/
+            tar -czf ${tool}-windows-mingw64.tar.gz -C ${tool}-temp ${tool}
+            rm -rf ${tool}-temp
+            gh release upload ${{ needs.create-release.outputs.tag_name }} ${tool}-windows-mingw64.tar.gz
+          done
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
