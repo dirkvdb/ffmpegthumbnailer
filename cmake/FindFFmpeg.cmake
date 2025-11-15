@@ -115,7 +115,12 @@ if(FFmpeg_FOUND AND NOT TARGET FFmpeg::avcodec)
 
         if(APPLE)
             set_property(TARGET FFmpeg::avcodec APPEND PROPERTY
-                INTERFACE_LINK_LIBRARIES "-framework CoreVideo" "-framework CoreImage" "-framework VideoToolbox")
+                INTERFACE_LINK_LIBRARIES
+                    "-framework CoreVideo"
+                    "-framework Security"
+                    "-framework CoreFoundation"
+                    "-framework VideoToolbox"
+                    "-framework AudioToolbox")
         endif()
     endif()
 endif()
@@ -135,6 +140,17 @@ if(FFmpeg_FOUND AND NOT TARGET FFmpeg::avfilter)
             INTERFACE_LINK_DIRECTORIES "${AVFILTER_STATIC_LIBRARY_DIRS}")
         set_property(TARGET FFmpeg::avfilter APPEND PROPERTY
             INTERFACE_LINK_LIBRARIES "${AVFILTER_STATIC_LIBRARIES}")
+
+        if(APPLE)
+            set_property(TARGET FFmpeg::avfilter APPEND PROPERTY
+                INTERFACE_LINK_LIBRARIES
+                    "-framework CoreImage"
+                    "-framework CoreGraphics"
+                    "-framework OpenGL"
+                    "-framework Foundation"
+                    "-framework AppKit"
+            )
+        endif()
     endif()
 endif()
 
