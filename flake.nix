@@ -125,6 +125,8 @@
                         withX265 = false;
                         withXvid = false;
                         withSvtav1 = false;
+                        # Disable dav1d for static macOS builds
+                        withDav1d = if (isStatic && stdenv.isDarwin) then false else true;
                       }).overrideAttrs
                         (old: {
                           doCheck = false;
