@@ -24,15 +24,28 @@
             pkgsStatic = import inputs.nixpkgs {
               inherit system;
             };
+            pkgsWindows = import inputs.nixpkgs {
+              inherit system;
+              crossSystem = {
+                config = "x86_64-w64-mingw32";
+              };
+              config = {
+                allowBroken = true;
+              };
+            };
           }
         );
     in
     {
       packages = forEachSupportedSystem (
-        { pkgs, pkgsStatic }:
+        {
+          pkgs,
+          pkgsStatic,
+          pkgsWindows,
+        }:
         let
           mkPackage =
-            pkgsForBuild: pkgsForHost: isStatic:
+            pkgsForBuild: pkgsForHost: isStatic: isWindows:
             pkgsForHost.stdenv.mkDerivation {
               pname = "ffmpegthumbnailer";
               version = "dev";
@@ -49,7 +62,7 @@
                 with pkgsForHost;
                 [
                   (
-                    if isStatic then
+                    if isStatic || isWindows then
                       (ffmpeg-headless.override {
                         withGPL = true;
                         buildAvdevice = false;
@@ -92,7 +105,8 @@
                         withVulkan = false;
                         withVaapi = false;
                         withVdpau = false;
-                        # Disable gnutls to avoid nettle linking issues in static builds
+                        # Disable gnutls to avoid gettext/libevent/unbound deps
+                        withGnutls = false;
                         withVmaf = false;
                         withVidStab = false;
                         withRist = false;
@@ -126,24 +140,33 @@
                   libjpeg
                   libpng
                 ]
+                ++ pkgsForHost.lib.optionals isWindows [
+                  # ffmpeg transitive dependencies needed for linking on Windows
+                  bzip2
+                  xz
+                ]
                 ++ pkgsForHost.lib.optionals (pkgsForHost.stdenv.isLinux && !isStatic) [
                   glib
                 ];
 
               cmakeFlags = [
                 "-DCMAKE_BUILD_TYPE=Release"
+              ]
+              ++ pkgsForHost.lib.optionals (!isWindows) [
                 "-DENABLE_THUMBNAILER=ON"
               ]
-              ++ pkgsForHost.lib.optionals (!isStatic) [
+              ++ pkgsForHost.lib.optionals (!isStatic && !isWindows) [
                 "-DBUILD_SHARED_LIBS=ON"
               ]
-              ++ pkgsForHost.lib.optionals isStatic [
+              ++ pkgsForHost.lib.optionals (isStatic || isWindows) [
                 "-DENABLE_TESTS=OFF"
                 "-DENABLE_SHARED=OFF"
                 "-DENABLE_STATIC=ON"
+              ]
+              ++ pkgsForHost.lib.optionals (isStatic && !isWindows) [
                 "-DCMAKE_EXE_LINKER_FLAGS=-static"
               ]
-              ++ pkgsForHost.lib.optionals (pkgsForHost.stdenv.isLinux && !isStatic) [
+              ++ pkgsForHost.lib.optionals (pkgsForHost.stdenv.isLinux && !isStatic && !isWindows) [
                 "-DENABLE_GIO=ON"
               ];
 
@@ -153,13 +176,14 @@
               meta = {
                 description = "Lightweight video thumbnailer";
                 homepage = "https://github.com/dirkvdb/ffmpegthumbnailer";
-                platforms = pkgsForHost.lib.platforms.unix;
+                platforms = pkgsForHost.lib.platforms.unix ++ pkgsForHost.lib.platforms.windows;
               };
             };
         in
         {
-          default = mkPackage pkgs pkgs false;
-          static = mkPackage pkgs pkgsStatic.pkgsStatic true;
+          default = mkPackage pkgs pkgs false false;
+          static = mkPackage pkgs pkgsStatic.pkgsStatic true false;
+          windows = mkPackage pkgs pkgsWindows true true;
         }
       );
 

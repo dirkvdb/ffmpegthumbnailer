@@ -23,7 +23,13 @@ jobs:
         uses: DeterminateSystems/nix-installer-action@main
 
       - name: Build with Nix
-        run: nix build
+        run: nix build .#default
+
+      - name: Static build
+        run: nix build .#static
+
+      - name: Windows build
+        run: nix build .#windows
 
       - name: Run tests with Nix
         run: nix flake check
