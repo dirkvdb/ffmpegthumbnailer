@@ -157,6 +157,10 @@ endif ()
 
 ADD_EXECUTABLE(ffmpegthumbnailer main.cpp)
 target_include_directories(ffmpegthumbnailer PRIVATE ${CMAKE_BINARY_DIR})
+target_link_options(ffmpegthumbnailer
+    PRIVATE
+        $<$<AND:$<BOOL:${ENABLE_FULL_STATIC}>,$<OR:$<PLATFORM_ID:Linux>,$<PLATFORM_ID:Windows>>>:-static>
+)
 
 if (ENABLE_GIO)
     find_path(DL_INCLUDE dlfcn.h)

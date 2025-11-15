@@ -15,24 +15,31 @@
         "x86_64-darwin"
         "aarch64-darwin"
       ];
+
       forEachSupportedSystem =
         f:
         inputs.nixpkgs.lib.genAttrs supportedSystems (
           system:
           f {
-            pkgs = import inputs.nixpkgs { inherit system; };
+            pkgs = import inputs.nixpkgs {
+              inherit system;
+            };
+
             pkgsStatic = import inputs.nixpkgs {
               inherit system;
             };
-            pkgsWindows = import inputs.nixpkgs {
-              inherit system;
-              crossSystem = {
-                config = "x86_64-w64-mingw32";
-              };
-              config = {
-                allowBroken = true;
-              };
-            };
+
+            pkgsWindows = (
+              import inputs.nixpkgs {
+                inherit system;
+                crossSystem = {
+                  config = "x86_64-w64-mingw32";
+                };
+                config = {
+                  allowBroken = true;
+                };
+              }
+            );
           }
         );
     in
@@ -46,7 +53,47 @@
         let
           mkPackage =
             pkgsForBuild: pkgsForHost: isStatic: isWindows:
-            pkgsForHost.stdenv.mkDerivation {
+            let
+              baseStdenv = pkgsForHost.stdenv;
+
+              # On Windows, use win32 threads to get a fully static binary
+              stdenv' =
+                if isWindows && baseStdenv.cc.isGNU && baseStdenv.targetPlatform.isWindows then
+                  let
+                    buildPkgs = pkgsForHost.buildPackages;
+                    gccWin32 = buildPkgs.wrapCC (
+                      buildPkgs.gcc-unwrapped.override {
+                        threadsCross = {
+                          model = "win32";
+                          package = null;
+                        };
+                      }
+                    );
+                  in
+                  pkgsForHost.overrideCC baseStdenv gccWin32
+                else
+                  baseStdenv;
+
+              # zlib-ng in zlib-compatible mode
+              zlibNgCompat = pkgsForHost.zlib-ng.override {
+                withZlibCompat = true;
+              };
+
+              # Use zlib-ng and force it to be static-only (we mainly care on Windows)
+              zlibNgStatic = zlibNgCompat.overrideAttrs (old: {
+                dontDisableStatic = true;
+                cmakeFlags = (old.cmakeFlags or [ ]) ++ [
+                  "-DBUILD_SHARED_LIBS=OFF"
+                ];
+              });
+
+              # libpng that uses zlib-ng instead of plain zlib
+              libpngWithZlibNg = pkgsForHost.libpng.override {
+                zlib = zlibNgStatic;
+              };
+
+            in
+            stdenv'.mkDerivation {
               pname = "ffmpegthumbnailer";
               version = "dev";
 
@@ -65,6 +112,14 @@
                     if isStatic || isWindows then
                       (ffmpeg-headless.override {
                         withGPL = true;
+                        withShared = false;
+                        withStatic = true;
+                        zlib = zlibNgStatic;
+
+                        # Disable CUDA/LLVM to avoid compiler-rt dependency
+                        withCuda = false;
+                        withCudaLLVM = false;
+                        withCudaNVCC = false;
                         buildAvdevice = false;
                         buildSwresample = false;
                         buildFfmpeg = false;
@@ -89,6 +144,7 @@
                         withSpeex = false;
                         withSoxr = false;
                         withAmf = false;
+                        withCelt = false;
                         # Disable X11 for headless
                         withXcb = false;
                         withFontconfig = false;
@@ -118,7 +174,7 @@
                         withDrm = false;
                         # only needed for dash demuxing
                         withXml2 = false;
-                        # These deps are only neede for encoding
+                        # These deps are only needed for encoding
                         withWebp = false;
                         withTheora = false;
                         withX264 = false;
@@ -126,7 +182,7 @@
                         withXvid = false;
                         withSvtav1 = false;
                         # Disable dav1d for static macOS builds
-                        withDav1d = if (isStatic && stdenv.isDarwin) then false else true;
+                        withDav1d = if (isStatic && stdenv'.isDarwin) then false else true;
                       }).overrideAttrs
                         (old: {
                           doCheck = false;
@@ -140,13 +196,61 @@
                     else
                       ffmpeg-headless
                   )
-                  libjpeg
-                  libpng
+                  # Use static versions of libpng and libjpeg for Windows
+                  (
+                    if isWindows then
+                      libjpeg.override {
+                        enableStatic = true;
+                        enableShared = false;
+                      }
+                    else
+                      libjpeg
+                  )
+                  (
+                    if isWindows then
+                      libpngWithZlibNg.overrideAttrs (old: {
+                        dontDisableStatic = true;
+                        configureFlags = (old.configureFlags or [ ]) ++ [
+                          "--enable-static"
+                          "--disable-shared"
+                        ];
+                      })
+                    else
+                      libpng
+                  )
+
                 ]
                 ++ pkgsForHost.lib.optionals isWindows [
                   # ffmpeg transitive dependencies needed for linking on Windows
-                  bzip2
-                  xz
+                  zlibNgStatic
+                  (xz.overrideAttrs (old: {
+                    dontDisableStatic = true;
+                    configureFlags = (old.configureFlags or [ ]) ++ [
+                      "--enable-static"
+                      "--disable-shared"
+                    ];
+                  }))
+                  (bzip2.overrideAttrs (old: {
+                    dontDisableStatic = true;
+                    configureFlags = (old.configureFlags or [ ]) ++ [
+                      "--enable-static"
+                      "--disable-shared"
+                    ];
+                  }))
+                  (libiconv.overrideAttrs (old: {
+                    dontDisableStatic = true;
+                    configureFlags = (old.configureFlags or [ ]) ++ [
+                      "--enable-static"
+                      "--disable-shared"
+                    ];
+                  }))
+                  (dav1d.overrideAttrs (old: {
+                    mesonFlags = (old.mesonFlags or [ ]) ++ [
+                      "-Ddefault_library=static"
+                      "-Denable_tools=false"
+                      "-Denable_tests=false"
+                    ];
+                  }))
                 ]
                 ++ pkgsForHost.lib.optionals (pkgsForHost.stdenv.isLinux && !isStatic) [
                   glib
