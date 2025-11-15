@@ -51,10 +51,7 @@ mark_as_advanced(
 )
 
 # Determine if we need static linking
-set(FFMPEG_USE_STATIC_LIBS OFF)
-if(NOT BUILD_SHARED_LIBS OR ENABLE_STATIC)
-    set(FFMPEG_USE_STATIC_LIBS ON)
-endif()
+set(FFMPEG_USE_STATIC_LIBS ${ENABLE_FULL_STATIC})
 
 message(STATUS "FFmpeg found: ${FFmpeg_FOUND}")
 message(STATUS "  avcodec:  ${AVCODEC_LIBRARY_PATH}")
@@ -115,6 +112,11 @@ if(FFmpeg_FOUND AND NOT TARGET FFmpeg::avcodec)
             INTERFACE_LINK_DIRECTORIES "${AVCODEC_STATIC_LIBRARY_DIRS}")
         set_property(TARGET FFmpeg::avcodec APPEND PROPERTY
             INTERFACE_LINK_LIBRARIES "${AVCODEC_STATIC_LIBRARIES}")
+
+        if(APPLE)
+            set_property(TARGET FFmpeg::avcodec APPEND PROPERTY
+                INTERFACE_LINK_LIBRARIES "-framework CoreVideo" "-framework CoreImage" "-framework VideoToolbox")
+        endif()
     endif()
 endif()
 

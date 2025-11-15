@@ -37,6 +37,7 @@ option(ENABLE_STATIC "Build static library" OFF)
 option(ENABLE_TESTS "Build unit tests" ON)
 option(ENABLE_GIO "Support for gio file uris" OFF)
 option(ENABLE_THUMBNAILER "Register ffmpegthumbnailer as thumbnailer" OFF)
+option(ENABLE_FULL_STATIC "Build fully static binary" OFF)
 option(SANITIZE_ADDRESS "Build with address sanitizer (detect invalid memory access and memory leaks)" OFF)
 
 if (SANITIZE_ADDRESS)

@@ -169,8 +169,8 @@
               ++ pkgsForHost.lib.optionals (isStatic && !isWindows && pkgsForHost.stdenv.isLinux) [
                 "-DCMAKE_EXE_LINKER_FLAGS=-static"
               ]
-              ++ pkgsForHost.lib.optionals (isStatic && pkgsForHost.stdenv.isDarwin) [
-                "-DCMAKE_EXE_LINKER_FLAGS=-framework CoreVideo;-framework VideoToolbox"
+              ++ pkgsForHost.lib.optionals isStatic [
+                "-DENABLE_FULL_STATIC=ON"
               ]
               ++ pkgsForHost.lib.optionals (pkgsForHost.stdenv.isLinux && !isStatic && !isWindows) [
                 "-DENABLE_GIO=ON"
