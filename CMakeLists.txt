@@ -45,13 +45,6 @@ if (SANITIZE_ADDRESS)
 endif ()
 
 find_package(FFmpeg REQUIRED)
-if (NOT FFmpeg_FOUND)
-    message(FATAL_ERROR "BAAM")
-endif ()
-if (NOT TARGET FFmpeg::avcodec)
-    message(FATAL_ERROR "BOOM")
-endif ()
-
 find_package(JPEG)
 if (TARGET JPEG::JPEG)
     set(HAVE_JPEG ON)
