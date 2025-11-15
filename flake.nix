@@ -166,7 +166,7 @@
                 "-DENABLE_SHARED=OFF"
                 "-DENABLE_STATIC=ON"
               ]
-              ++ pkgsForHost.lib.optionals (isStatic && !isWindows) [
+              ++ pkgsForHost.lib.optionals (isStatic && !isWindows && pkgsForHost.stdenv.isLinux) [
                 "-DCMAKE_EXE_LINKER_FLAGS=-static"
               ]
               ++ pkgsForHost.lib.optionals (pkgsForHost.stdenv.isLinux && !isStatic && !isWindows) [
