@@ -29,6 +29,7 @@ jobs:
         run: nix build .#static
 
       - name: Windows build
+        if: matrix.os == 'ubuntu-latest'
         run: nix build .#windows
 
       - name: Run tests with Nix

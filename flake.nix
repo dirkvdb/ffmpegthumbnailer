@@ -124,6 +124,7 @@
                         withX264 = false;
                         withX265 = false;
                         withXvid = false;
+                        withSvtav1 = false;
                       }).overrideAttrs
                         (old: {
                           doCheck = false;
