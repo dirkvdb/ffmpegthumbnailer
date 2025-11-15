@@ -78,7 +78,7 @@ jobs:
           for tool in ffmpegthumbnailer; do
             mkdir -p ${tool}-temp
             cp release_win/bin/${tool}.exe ${tool}-temp/
-            tar -czf ${tool}-windows-mingw64.tar.gz -C ${tool}-temp ${tool}
+            tar -czf ${tool}-windows-mingw64.tar.gz -C ${tool}-temp ${tool}.exe
             rm -rf ${tool}-temp
             gh release upload ${{ needs.create-release.outputs.tag_name }} ${tool}-windows-mingw64.tar.gz
           done
