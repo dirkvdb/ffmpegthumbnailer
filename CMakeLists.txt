@@ -36,7 +36,8 @@ option(ENABLE_SHARED "Build shared library" ON)
 option(ENABLE_STATIC "Build static library" OFF)
 option(ENABLE_TESTS "Build unit tests" ON)
 option(ENABLE_GIO "Support for gio file uris" OFF)
-option(ENABLE_THUMBNAILER "Register ffmpegthumbnailer as thumbnailer" OFF)
+option(ENABLE_THUMBNAILER "Register ffmpegthumbnailer as thumbnailer for video files" OFF)
+option(ENABLE_AUDIO_THUMBNAILER "Register ffmpegthumbnailer as thumbnailer for audio files" OFF)
 option(ENABLE_FULL_STATIC "Build fully static binary" OFF)
 option(SANITIZE_ADDRESS "Build with address sanitizer (detect invalid memory access and memory leaks)" OFF)
 
@@ -186,6 +187,10 @@ install(FILES ${CMAKE_BINARY_DIR}/libffmpegthumbnailer.pc DESTINATION ${CMAKE_IN
 
 if (ENABLE_THUMBNAILER)
     install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/dist/ffmpegthumbnailer.thumbnailer DESTINATION ${CMAKE_INSTALL_DATADIR}/thumbnailers)
+endif ()
+
+if (ENABLE_AUDIO_THUMBNAILER)
+    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/dist/ffmpegthumbnailer-audio.thumbnailer DESTINATION ${CMAKE_INSTALL_DATADIR}/thumbnailers)
 endif ()
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_BINARY_DIR}/config.h)
