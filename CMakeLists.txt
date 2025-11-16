@@ -185,7 +185,7 @@ install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/man/ffmpegthumbnailer.1 DESTINATION ${
 install(FILES ${CMAKE_BINARY_DIR}/libffmpegthumbnailer.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 
 if (ENABLE_THUMBNAILER)
-    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/dist/ffmpegthumbnailer.thumbnailer DESTINATION ${CMAKE_INSTALL_DATADIR}/thumbnailers)
+    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/dist/ffmpegthumbnailer.thumbnailer ${CMAKE_CURRENT_SOURCE_DIR}/dist/ffmpegthumbnailer-audio.thumbnailer DESTINATION ${CMAKE_INSTALL_DATADIR}/thumbnailers)
 endif ()
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_BINARY_DIR}/config.h)
