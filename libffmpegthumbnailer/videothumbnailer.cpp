@@ -201,7 +201,7 @@ VideoFrameInfo VideoThumbnailer::generateThumbnail(const string& videoFile, Imag
     return info;
 }
 
-void VideoThumbnailer::generateSmartThumbnail(MovieDecoder& movieDecoder, VideoFrame& videoFrame)
+void VideoThumbnailer::generateSmartThumbnail(MovieDecoder& movieDecoder, VideoFrame& videoFrame) const
 {
     vector<VideoFrame> videoFrames(SMART_FRAME_ATTEMPTS);
     vector<Histogram<int>> histograms(SMART_FRAME_ATTEMPTS);
@@ -262,7 +262,7 @@ void VideoThumbnailer::writeImage(const string& videoFile, ImageWriter& imageWri
     imageWriter.writeFrame(&(rowPointers.front()), videoFrame.width, videoFrame.height, m_ImageQuality);
 }
 
-string VideoThumbnailer::getMimeType(const string& videoFile)
+string VideoThumbnailer::getMimeType(const string& videoFile) const
 {
     string extension = getExtension(videoFile);
 
@@ -289,7 +289,7 @@ string VideoThumbnailer::getMimeType(const string& videoFile)
     }
 }
 
-string VideoThumbnailer::getExtension(const string& videoFilename)
+string VideoThumbnailer::getExtension(const string& videoFilename) const
 {
     string extension;
     auto pos = videoFilename.rfind('.');
@@ -328,7 +328,7 @@ void VideoThumbnailer::applyFilters(VideoFrame& frameData)
     }
 }
 
-int VideoThumbnailer::getBestThumbnailIndex(vector<VideoFrame>& videoFrames, const vector<Histogram<int>>& histograms)
+int VideoThumbnailer::getBestThumbnailIndex(vector<VideoFrame>& videoFrames, const vector<Histogram<int>>& histograms) const
 {
     Histogram<float> avgHistogram;
     for (auto&& histogram : histograms) {

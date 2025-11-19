@@ -70,13 +70,13 @@ public:
 
 private:
     VideoFrameInfo generateThumbnail(const std::string& videoFile, ImageWriter& imageWriter, AVFormatContext* pAvContext = nullptr);
-    void generateSmartThumbnail(MovieDecoder& movieDecoder, VideoFrame& videoFrame);
+    void generateSmartThumbnail(MovieDecoder& movieDecoder, VideoFrame& videoFrame) const;
     void writeImage(const std::string& videoFile, ImageWriter& imageWriter, const VideoFrame& videoFrame, int duration, std::vector<uint8_t*>& rowPointers);
 
-    std::string getMimeType(const std::string& videoFile);
-    std::string getExtension(const std::string& videoFilename);
+    std::string getMimeType(const std::string& videoFile) const;
+    std::string getExtension(const std::string& videoFilename) const;
 
-    int getBestThumbnailIndex(std::vector<VideoFrame>& videoFrames, const std::vector<Histogram<int>>& histograms);
+    int getBestThumbnailIndex(std::vector<VideoFrame>& videoFrames, const std::vector<Histogram<int>>& histograms) const;
     void applyFilters(VideoFrame& frameData);
 
     void TraceMessage(ThumbnailerLogLevel lvl, const std::string& msg);

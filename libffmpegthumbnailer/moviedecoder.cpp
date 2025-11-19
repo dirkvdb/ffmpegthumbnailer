@@ -106,12 +106,12 @@ void MovieDecoder::destroy()
     avformat_network_deinit();
 }
 
-bool MovieDecoder::embeddedMetaDataIsAvailable()
+bool MovieDecoder::embeddedMetaDataIsAvailable() const
 {
     return m_UseEmbeddedData;
 }
 
-string MovieDecoder::getCodec()
+string MovieDecoder::getCodec() const
 {
     if (m_pVideoCodec) {
         return m_pVideoCodec->name;
@@ -374,7 +374,7 @@ void MovieDecoder::initializeFilterGraph(const AVRational& timeBase, const std::
     checkRc(avfilter_graph_config(m_pFilterGraph, nullptr), "Failed to configure filter graph");
 }
 
-int MovieDecoder::getWidth()
+int MovieDecoder::getWidth() const
 {
     if (m_pVideoCodecContext) {
         return m_pVideoCodecContext->width;
@@ -383,7 +383,7 @@ int MovieDecoder::getWidth()
     return -1;
 }
 
-int MovieDecoder::getHeight()
+int MovieDecoder::getHeight() const
 {
     if (m_pVideoCodecContext) {
         return m_pVideoCodecContext->height;
@@ -392,7 +392,7 @@ int MovieDecoder::getHeight()
     return -1;
 }
 
-int MovieDecoder::getDuration()
+int MovieDecoder::getDuration() const
 {
     if (m_pFormatContext) {
         return static_cast<int>(m_pFormatContext->duration / AV_TIME_BASE);
@@ -540,7 +540,7 @@ void MovieDecoder::getScaledVideoFrame(const std::string& scaledSize, bool maint
     }
 }
 
-void MovieDecoder::checkRc(int ret, const std::string& message)
+void MovieDecoder::checkRc(int ret, const std::string& message) const
 {
     if (ret < 0) {
         char buf[256];
@@ -550,7 +550,7 @@ void MovieDecoder::checkRc(int ret, const std::string& message)
     }
 }
 
-int32_t MovieDecoder::getStreamRotation()
+int32_t MovieDecoder::getStreamRotation() const
 {
     if (!m_pVideoStream || !m_pVideoStream->codecpar) {
         return -1;
