@@ -318,7 +318,7 @@ std::string MovieDecoder::createScaleString(const std::string& sizeString, bool 
     return scale.str();
 }
 
-void MovieDecoder::initializeFilterGraph(const AVRational& timeBase, const std::string& size, bool maintainAspectRatio)
+void MovieDecoder::initializeFilterGraph(AVRational timeBase, const std::string& size, bool maintainAspectRatio)
 {
     m_pFilterGraph = avfilter_graph_alloc();
     assert(m_pFilterGraph);
