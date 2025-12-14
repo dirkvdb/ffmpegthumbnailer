@@ -1,3 +1,6 @@
+FFmpegThumbnailer 2.3.0
+- ENABLE_AUDIO_THUMBNAILER cmake option to enable audio thumbnailer
+
 FFmpegThumbnailer 2.2.4
 - Compile with c++14 standard
 - Fix build against latest ffmpeg
