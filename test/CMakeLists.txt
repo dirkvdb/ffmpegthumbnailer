@@ -1,3 +1,8 @@
+find_package(Catch2 CONFIG REQUIRED)
+
+include(CTest)
+include(Catch)
+
 add_executable(ffmpegthumbnailertest
     testrunner.cpp
     histogramtest.cpp
@@ -23,12 +28,20 @@ target_compile_definitions(ffmpegthumbnailertest PRIVATE TEST_DATADIR="${CMAKE_C
 target_compile_definitions(ffmpegthumbnailerctest PRIVATE TEST_DATADIR="${CMAKE_CURRENT_SOURCE_DIR}")
 
 if (ENABLE_SHARED)
-    target_link_libraries(ffmpegthumbnailertest libffmpegthumbnailer)
+    if (TARGET Catch2::Catch2WithMain)
+        target_link_libraries(ffmpegthumbnailertest libffmpegthumbnailer Catch2::Catch2WithMain)
+    else ()
+        target_link_libraries(ffmpegthumbnailertest libffmpegthumbnailer Catch2::Catch2)
+    endif ()
     target_link_libraries(ffmpegthumbnailerctest libffmpegthumbnailer)
 else ()
-    target_link_libraries(ffmpegthumbnailertest libffmpegthumbnailerstatic)
+    if (TARGET Catch2::Catch2WithMain)
+        target_link_libraries(ffmpegthumbnailertest libffmpegthumbnailerstatic Catch2::Catch2WithMain)
+    else ()
+        target_link_libraries(ffmpegthumbnailertest libffmpegthumbnailerstatic Catch2::Catch2)
+    endif ()
     target_link_libraries(ffmpegthumbnailerctest libffmpegthumbnailerstatic)
 endif ()
 
-add_test(NAME ffmpegthumbnailertest COMMAND ffmpegthumbnailertest)
+catch_discover_tests(ffmpegthumbnailertest)
 add_test(NAME ffmpegthumbnailerctest COMMAND ffmpegthumbnailerctest)

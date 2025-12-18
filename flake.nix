@@ -218,6 +218,9 @@
                     else
                       libpng
                   )
+		  (
+		    catch2
+		  )
 
                 ]
                 ++ pkgsForHost.lib.optionals isWindows [
