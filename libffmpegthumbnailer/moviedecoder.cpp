@@ -334,6 +334,30 @@ void MovieDecoder::initializeFilterGraph(const AVRational& timeBase, const std::
     checkRc(avfilter_graph_create_filter(&m_pFilterSink, avfilter_get_by_name("buffersink"), "thumb_buffersink", nullptr, nullptr, m_pFilterGraph),
             "Failed to create filter sink");
 
+    AVFilterContext* placeboFilter = nullptr;
+    if (avfilter_get_by_name("libplacebo"))
+    {
+        const AVPacketSideData* doviSideData = nullptr;
+        if (m_pVideoStream->codecpar) {
+            for (int i = 0; i < m_pVideoStream->codecpar->nb_coded_side_data; i++) {
+                if (m_pVideoStream->codecpar->coded_side_data[i].type == AV_PKT_DATA_DOVI_CONF) {
+                    doviSideData = &m_pVideoStream->codecpar->coded_side_data[i];
+                    break;
+                }
+            }
+        }
+        const bool isHdr = m_pVideoCodecContext->color_trc == AVCOL_TRC_SMPTE2084 ||
+                           m_pVideoCodecContext->color_trc == AVCOL_TRC_ARIB_STD_B67 ||
+                           m_pVideoCodecContext->colorspace == AVCOL_SPC_BT2020_NCL ||
+                           doviSideData != nullptr;
+
+        if (isHdr)
+        {
+            checkRc(avfilter_graph_create_filter(&placeboFilter, avfilter_get_by_name("libplacebo"), "thumb_placebo", "colorspace=bt709:color_primaries=bt709:color_trc=bt709", nullptr, m_pFilterGraph),
+                    "Failed to create libplacebo filter");
+        }
+    }
+
     AVFilterContext* yadifFilter = nullptr;
     if (m_pFrame->flags & AV_FRAME_FLAG_INTERLACED) {
         checkRc(avfilter_graph_create_filter(&yadifFilter, avfilter_get_by_name("yadif"), "thumb_deint", "deint=1", nullptr, m_pFilterGraph),
@@ -358,19 +382,32 @@ void MovieDecoder::initializeFilterGraph(const AVRational& timeBase, const std::
                 "Failed to create rotate filter");
     }
 
-    checkRc(avfilter_link(rotateFilter ? rotateFilter : formatFilter, 0, m_pFilterSink, 0), "Failed to link final filter");
-
-    if (rotateFilter) {
-        checkRc(avfilter_link(formatFilter, 0, rotateFilter, 0), "Failed to link format filter");
+    AVFilterContext* current = m_pFilterSink;
+    if (rotateFilter)
+    {
+        checkRc(avfilter_link(rotateFilter, 0, current, 0), "Failed to link rotate filter");
+        current = rotateFilter;
     }
 
-    checkRc(avfilter_link(scaleFilter, 0, formatFilter, 0), "Failed to link scale filter");
+    checkRc(avfilter_link(formatFilter, 0, current, 0), "Failed to link format filter");
+    current = formatFilter;
 
-    if (yadifFilter) {
-        checkRc(avfilter_link(yadifFilter, 0, scaleFilter, 0), "Failed to link yadif filter");
+    checkRc(avfilter_link(scaleFilter, 0, current, 0), "Failed to link scale filter");
+    current = scaleFilter;
+
+    if (yadifFilter)
+    {
+        checkRc(avfilter_link(yadifFilter, 0, current, 0), "Failed to link yadif filter");
+        current = yadifFilter;
     }
 
-    checkRc(avfilter_link(m_pFilterSource, 0, yadifFilter ? yadifFilter : scaleFilter, 0), "Failed to link source filter");
+    if (placeboFilter)
+    {
+        checkRc(avfilter_link(placeboFilter, 0, current, 0), "Failed to link placebo filters");
+        current = placeboFilter;
+    }
+    
+    checkRc(avfilter_link(m_pFilterSource, 0, current, 0), "Failed to link source filter");
     checkRc(avfilter_graph_config(m_pFilterGraph, nullptr), "Failed to configure filter graph");
 }
 
