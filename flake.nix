@@ -87,6 +87,15 @@
                 ];
               });
 
+              # Static gmp for Windows builds
+              gmpStatic = pkgsForHost.gmp.overrideAttrs (old: {
+                dontDisableStatic = true;
+                configureFlags = (old.configureFlags or [ ]) ++ [
+                  "--enable-static"
+                  "--disable-shared"
+                ];
+              });
+
               # libpng that uses zlib-ng instead of plain zlib
               libpngWithZlibNg = pkgsForHost.libpng.override {
                 zlib = zlibNgStatic;
@@ -115,6 +124,7 @@
                         withShared = false;
                         withStatic = true;
                         zlib = zlibNgStatic;
+                        gmp = gmpStatic;
 
                         # Disable CUDA/LLVM to avoid compiler-rt dependency
                         withCuda = false;
@@ -201,10 +211,19 @@
                   # Use static versions of libpng and libjpeg for Windows
                   (
                     if isWindows then
-                      libjpeg.override {
+                      (libjpeg.override {
                         enableStatic = true;
                         enableShared = false;
-                      }
+                      }).overrideAttrs
+                        (old: {
+                          cmakeFlags = (old.cmakeFlags or [ ]) ++ [
+                            "-DWITH_SIMD=0"
+                          ];
+                          # Fix the existing mingw-boolean patch which leaves an unterminated #ifndef
+                          postPatch = (old.postPatch or "") + ''
+                            sed -i '/#ifndef HAVE_BOOLEAN/d' src/jmorecfg.h
+                          '';
+                        })
                     else
                       libjpeg
                   )
@@ -253,6 +272,7 @@
                       "-Denable_tests=false"
                     ];
                   }))
+                  gmpStatic
                 ]
                 ++ pkgsForHost.lib.optionals (pkgsForHost.stdenv.isLinux && !isStatic) [
                   glib
