@@ -2,7 +2,7 @@
   description = "ffmpegthumbnailer";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
   };
 
   outputs =
@@ -181,6 +181,8 @@
                         withX265 = false;
                         withXvid = false;
                         withSvtav1 = false;
+                        # Some professional coedecs that we don't need
+                        withOpenapv = false;
                         # Disable dav1d for static macOS builds
                         withDav1d = if (isStatic && stdenv'.isDarwin) then false else true;
                       }).overrideAttrs
@@ -297,15 +299,15 @@
       checks = forEachSupportedSystem (
         { pkgs, ... }:
         {
-          default = self.packages.${pkgs.system}.default;
-          static = self.packages.${pkgs.system}.static;
+          default = self.packages.${pkgs.stdenv.hostPlatform.system}.default;
+          static = self.packages.${pkgs.stdenv.hostPlatform.system}.static;
         }
       );
 
       devShells = forEachSupportedSystem (
         { pkgs, ... }:
         let
-          pkg = self.packages.${pkgs.system}.default;
+          pkg = self.packages.${pkgs.stdenv.hostPlatform.system}.default;
         in
         {
           default =
@@ -316,13 +318,14 @@
               }
               {
                 inputsFrom = [ pkg ];
+                name = "dev";
                 packages =
                   with pkgs;
                   [
                     # development tools
                     clang-tools
                   ]
-                  ++ (if pkgs.system == "aarch64-darwin" then [ ] else [ gdb ]);
+                  ++ (if pkgs.stdenv.hostPlatform.system == "aarch64-darwin" then [ ] else [ gdb ]);
               };
         }
       );
