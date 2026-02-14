@@ -217,7 +217,7 @@
                       }).overrideAttrs
                         (old: {
                           cmakeFlags = (old.cmakeFlags or [ ]) ++ [
-                            "-DWITH_SIMD=0"
+                            "-DCMAKE_CROSSCOMPILING_EMULATOR=wine"
                           ];
                           # Fix the existing mingw-boolean patch which leaves an unterminated #ifndef
                           postPatch = (old.postPatch or "") + ''
