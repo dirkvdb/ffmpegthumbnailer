@@ -191,7 +191,7 @@
                         withX265 = false;
                         withXvid = false;
                         withSvtav1 = false;
-                        # Some professional coedecs that we don't need
+                        # Some professional codecs that we don't need
                         withOpenapv = false;
                         # Disable dav1d for static macOS builds
                         withDav1d = if (isStatic && stdenv'.isDarwin) then false else true;
