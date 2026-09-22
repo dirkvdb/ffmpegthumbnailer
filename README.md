@@ -1,9 +1,9 @@
 [![Build](https://github.com/dirkvdb/ffmpegthumbnailer/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/dirkvdb/ffmpegthumbnailer/actions/workflows/build.yml)
 
-FFmpegthumbnailer is a lightweight video thumbnailer that can be used by file
-managers to create thumbnails for your video files. The thumbnailer uses ffmpeg
-to decode frames from the video files, so supported videoformats depend on the
-configuration flags of ffmpeg.
+FFmpegthumbnailer is a lightweight thumbnailer that can be used by file
+managers to create thumbnails for videos. It uses ffmpeg to decode video
+frames, so supported formats depend on the configuration flags of ffmpeg. It can
+also extract embedded album art from audio files to create thumbnails.
 
 This thumbnailer was designed to be as fast and lightweight as possible. The
 only dependencies are ffmpeg and libpng/libjpeg.
