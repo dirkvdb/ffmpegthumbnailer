@@ -127,6 +127,8 @@
                   (
                     if isStatic || isWindows then
                       (ffmpeg-headless.override {
+                        # Keep FFmpeg's C++ threading runtime consistent with the final binary.
+                        stdenv = stdenv';
                         withGPL = true;
                         withShared = false;
                         withStatic = true;
@@ -226,10 +228,6 @@
                           cmakeFlags = (old.cmakeFlags or [ ]) ++ [
                             "-DCMAKE_CROSSCOMPILING_EMULATOR=wine"
                           ];
-                          # Fix the existing mingw-boolean patch which leaves an unterminated #ifndef
-                          postPatch = (old.postPatch or "") + ''
-                            sed -i '/#ifndef HAVE_BOOLEAN/d' src/jmorecfg.h
-                          '';
                         })
                     else
                       libjpeg
