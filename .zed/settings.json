@@ -1,0 +1,9 @@
+{
+  "lsp": {
+    "clangd": {
+      "initialization_options": {
+        "compilationDatabasePath": "build"
+      }
+    }
+  }
+}

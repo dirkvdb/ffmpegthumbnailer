@@ -1,7 +1,6 @@
 ﻿#include <algorithm>
 
 #include <catch.hpp>
-#include <fstream>
 #include <iostream>
 #include <vector>
 
@@ -56,6 +55,43 @@ TEST_CASE("C++ API Usage")
         std::vector<uint8_t> buffer;
         videoThumbnailer.generateThumbnail(input, Rgb, buffer);
         CHECK_FALSE(buffer.empty());
+    }
+
+    SECTION("RestrictInputProtocols")
+    {
+        const std::string input = std::string(TEST_DATADIR) + "/test_sample.flv";
+        std::vector<uint8_t> buffer;
+
+        videoThumbnailer.generateThumbnail("concat:" + input, Rgb, buffer);
+        CHECK_FALSE(buffer.empty());
+        videoThumbnailer.generateThumbnail("subfile:" + input, Rgb, buffer);
+        CHECK_FALSE(buffer.empty());
+
+        videoThumbnailer.setAllowedProtocols("file,pipe");
+        CHECK_THROWS_AS(videoThumbnailer.generateThumbnail("concat:" + input, Rgb, buffer), std::logic_error);
+        CHECK_THROWS_AS(videoThumbnailer.generateThumbnail("subfile:" + input, Rgb, buffer), std::logic_error);
+
+        videoThumbnailer.setAllowedProtocols("file,concat");
+        videoThumbnailer.generateThumbnail("concat:" + input, Rgb, buffer);
+        CHECK_FALSE(buffer.empty());
+
+        // Allowing the wrapper must not allow its underlying file protocol.
+        videoThumbnailer.setAllowedProtocols("concat");
+        CHECK_THROWS_AS(videoThumbnailer.generateThumbnail("concat:" + input, Rgb, buffer), std::logic_error);
+
+        videoThumbnailer.setAllowedProtocols("");
+        CHECK_THROWS_AS(videoThumbnailer.generateThumbnail(input, Rgb, buffer), std::logic_error);
+    }
+
+    SECTION("RestrictInputProtocolsWithParameterizedConstructor")
+    {
+        VideoThumbnailer thumbnailer(128, false, true, 8, false);
+        std::vector<uint8_t> buffer;
+        const std::string input = "concat:" + std::string(TEST_DATADIR) + "/test_sample.flv";
+        thumbnailer.generateThumbnail(input, Rgb, buffer);
+        CHECK_FALSE(buffer.empty());
+        thumbnailer.setAllowedProtocols("file,pipe");
+        CHECK_THROWS_AS(thumbnailer.generateThumbnail(input, Rgb, buffer), std::logic_error);
     }
 
     SECTION("SpecifyInvalidSize")

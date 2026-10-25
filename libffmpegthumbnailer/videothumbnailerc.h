@@ -18,7 +18,7 @@
 #define VIDEO_THUMBNAILERC_H
 
 #include "ffmpegthumbnailertypes.h"
-#include <inttypes.h>
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -78,6 +78,10 @@ void video_thumbnailer_set_log_callback(video_thumbnailer* thumbnailer, thumbnai
    Use a value of 0 or less to ignore the setting:
    e.g. Calling this function with 0 and 100 as arguments will set the width using the video aspect ratio */
 int video_thumbnailer_set_size(video_thumbnailer* thumbnailer, int width, int height);
+/* Set the FFmpeg protocol whitelist (default: ALL). The string is copied.
+   Empty denies all protocols; NULL is rejected. Returns 0 on success, -1 on error.
+   Does not restrict av_format_context supplied by the caller or filesystem paths. */
+int video_thumbnailer_set_allowed_protocols(video_thumbnailer* thumbnailer, const char* protocols);
 
 #ifdef __cplusplus
 }

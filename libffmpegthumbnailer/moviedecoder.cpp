@@ -38,6 +38,30 @@ using namespace std;
 
 namespace ffmpegthumbnailer {
 
+namespace {
+
+class AvDictionaryWrapper
+{
+public:
+    AvDictionaryWrapper() = default;
+    ~AvDictionaryWrapper() { av_dict_free(&m_Dictionary); }
+
+    AvDictionaryWrapper(const AvDictionaryWrapper&) = delete;
+    AvDictionaryWrapper& operator=(const AvDictionaryWrapper&) = delete;
+
+    int set(const char* key, const char* value)
+    {
+        return av_dict_set(&m_Dictionary, key, value, 0);
+    }
+
+    AVDictionary** address() { return &m_Dictionary; }
+
+private:
+    AVDictionary* m_Dictionary = nullptr;
+};
+
+}
+
 MovieDecoder::MovieDecoder(AVFormatContext* pavContext)
 : m_VideoStream(-1)
 , m_pFormatContext(pavContext)
@@ -60,6 +84,11 @@ MovieDecoder::~MovieDecoder()
     destroy();
 }
 
+void MovieDecoder::setAllowedProtocols(std::string_view protocols)
+{
+    m_AllowedProtocols = protocols;
+}
+
 void MovieDecoder::initialize(const string& filename, bool preferEmbeddedMetadata)
 {
     avformat_network_init();
@@ -67,9 +96,21 @@ void MovieDecoder::initialize(const string& filename, bool preferEmbeddedMetadat
     string inputFile = filename == "-" ? "pipe:" : filename;
     m_AllowSeek      = (filename != "-") && (filename.find("rtsp://") != 0) && (filename.find("udp://") != 0);
 
-    if ((!m_FormatContextWasGiven) && avformat_open_input(&m_pFormatContext, inputFile.c_str(), nullptr, nullptr) != 0) {
-        destroy();
-        throw logic_error(string("Could not open input file: ") + filename);
+    if (!m_FormatContextWasGiven) {
+        AvDictionaryWrapper options;
+        int ret = 0;
+        if (m_AllowedProtocols != "ALL") {
+            ret = options.set("protocol_whitelist", m_AllowedProtocols.c_str());
+        }
+
+        if (ret >= 0) {
+            ret = avformat_open_input(&m_pFormatContext, inputFile.c_str(), nullptr, options.address());
+        }
+
+        if (ret < 0) {
+            destroy();
+            throw logic_error(string("Could not open input file: ") + filename);
+        }
     }
 
     if (avformat_find_stream_info(m_pFormatContext, nullptr) < 0) {

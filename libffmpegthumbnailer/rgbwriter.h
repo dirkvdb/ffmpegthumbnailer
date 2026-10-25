@@ -17,7 +17,6 @@
 #ifndef RGB_WRITER_H
 #define RGB_WRITER_H
 
-#include <fstream>
 #include <string>
 #include <vector>
 

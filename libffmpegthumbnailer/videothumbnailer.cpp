@@ -14,11 +14,8 @@
 //    along with this program; if not, write to the Free Software
 //    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-#include "config.h"
-
 #include "videothumbnailer.h"
 
-#include "filmstripfilter.h"
 #include "histogram.h"
 #include "histogramutils.h"
 #include "imagewriterfactory.h"
@@ -31,7 +28,6 @@
 #include <cfloat>
 #include <cmath>
 #include <cstring>
-#include <iomanip>
 #include <memory>
 #include <regex>
 #include <sstream>
@@ -141,6 +137,11 @@ void VideoThumbnailer::setSmartFrameSelection(bool enabled)
     m_SmartFrameSelection = enabled;
 }
 
+void VideoThumbnailer::setAllowedProtocols(std::string_view protocols)
+{
+    m_AllowedProtocols = protocols;
+}
+
 int timeToSeconds(const std::string& time)
 {
     int hours, minutes, seconds;
@@ -152,6 +153,9 @@ int timeToSeconds(const std::string& time)
 VideoFrameInfo VideoThumbnailer::generateThumbnail(const string& videoFile, ImageWriter& imageWriter, AVFormatContext* pAvContext)
 {
     MovieDecoder movieDecoder(pAvContext);
+    if (m_AllowedProtocols != "ALL") {
+        movieDecoder.setAllowedProtocols(m_AllowedProtocols);
+    }
     movieDecoder.initialize(videoFile, m_PreferEmbeddedMetadata);
     movieDecoder.decodeVideoFrame(); // before seeking, a frame has to be decoded
 

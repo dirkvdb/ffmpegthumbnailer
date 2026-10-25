@@ -55,12 +55,14 @@ int main(int argc, char** argv)
     std::string inputFile;
     std::string outputFile;
     std::string imageFormat;
+    std::string allowedProtocols;
+    bool allowedProtocolsSpecified = false;
 
     if (!std::setlocale(LC_CTYPE, "")) {
         std::cerr << "Failed to set locale" << std::endl;
     }
 
-    while ((option = getopt(argc, argv, "i:o:s:t:q:c:r:afwhvpm")) != -1) {
+    while ((option = getopt(argc, argv, "i:o:s:t:q:c:r:P:afwhvpm")) != -1) {
         switch (option) {
         case 'a':
             maintainAspectRatio = false;
@@ -109,6 +111,10 @@ int main(int argc, char** argv)
         case 'c':
             imageFormat = optarg;
             break;
+        case 'P':
+            allowedProtocols = optarg;
+            allowedProtocolsSpecified = true;
+            break;
         case 'h':
             printUsage();
             return 0;
@@ -142,6 +148,9 @@ int main(int argc, char** argv)
                                                              : determineImageTypeFromString(imageFormat);
 
         VideoThumbnailer videoThumbnailer(0, workaroundIssues, maintainAspectRatio, imageQuality, smartFrameSelection);
+        if (allowedProtocolsSpecified) {
+            videoThumbnailer.setAllowedProtocols(allowedProtocols);
+        }
         videoThumbnailer.setThumbnailSize(thumbnailSize);
         videoThumbnailer.setLogCallback([](ThumbnailerLogLevel lvl, const std::string& msg) {
             std::cerr << msg << std::endl;
@@ -190,6 +199,7 @@ void printUsage()
               << "  -t<n|s> : time to seek to (percentage or absolute time hh:mm:ss) (default: 10%)\n"
               << "  -q<n>   : image quality (0 = bad, 10 = best) (default: 8)\n"
               << "  -c      : override image format (jpeg, png or rgb) (default: determined by filename)\n"
+              << "  -P<s>   : allowed input protocols, comma-separated (default: ALL; empty denies all)\n"
               << "  -a      : ignore aspect ratio and generate square thumbnail\n"
               << "  -f      : create a movie strip overlay\n"
               //<< "  -p      : use smarter frame selection (slower)\n"

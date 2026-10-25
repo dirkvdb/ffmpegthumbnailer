@@ -19,11 +19,33 @@ Available command line arguments:
   * -f: use this option to overlay a movie strip on the generated thumbnail
   * -q: image quality (0 = bad, 10 = best) (default: 8) only applies to jpeg output
   * -c: override image format (jpeg or png) (default: determined by filename)
+  * `-P <protocols>`: override the comma-separated input protocol allowlist (default: ALL); an empty string denies all protocols
   * -a: ignore aspect ratio and generate square thumbnail
   * -m: prefer embedded image metadata over video content
   * -w: workaround some issues in older versions of ffmpeg (only use if you experience problems like 100% cpu usage on certain files)
   * -v: print version number
   * -h: display the usage
+
+## Input protocols and security
+
+All protocols supported by the FFmpeg build are allowed by default (`ALL`).
+File managers and other callers can use `-P` to restrict the allowlist. For example,
+to allow only local files and pipes:
+
+```sh
+ffmpegthumbnailer -i video.mp4 -o thumbnail.png -P file,pipe
+```
+
+Omitting `-P` allows all protocols. Passing `-P ALL` also allows all protocols,
+while `-P ''` denies all input protocols.
+The allowlist also restricts nested protocols, such as those
+opened by playlists or used as transports by other protocols.
+
+Network access is enabled by default, so this default does not prevent SSRF. Applications accepting untrusted input should restrict the
+allowlist (for example, to `file,pipe`) and apply network isolation as needed.
+
+A caller-provided `AVFormatContext` is the caller's responsibility,
+including its I/O and protocol restrictions.
 
 ## Credits
 

@@ -17,10 +17,10 @@
 #ifndef VIDEO_THUMBNAILER_H
 #define VIDEO_THUMBNAILER_H
 
-#include <cinttypes>
+#include <cstdint>
 #include <functional>
-#include <map>
 #include <string>
+#include <string_view>
 #include <vector>
 
 #include "ffmpegthumbnailertypes.h"
@@ -62,6 +62,9 @@ public:
     void setMaintainAspectRatio(bool enabled);
     void setPreferEmbeddedMetadata(bool enabled);
     void setSmartFrameSelection(bool enabled);
+    // FFmpeg protocol whitelist (default: ALL). Empty denies all protocols.
+    // Does not restrict caller-supplied AVFormatContext instances or filesystem paths.
+    void setAllowedProtocols(std::string_view protocols);
     void addFilter(IFilter* pFilter);
     void removeFilter(IFilter* pFilter);
     void clearFilters();
@@ -93,6 +96,7 @@ private:
     std::vector<IFilter*> m_Filters;
 
     std::function<void(ThumbnailerLogLevel, const std::string&)> m_LogCb;
+    std::string m_AllowedProtocols = "ALL";
 };
 
 }

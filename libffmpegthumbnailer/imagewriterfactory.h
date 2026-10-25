@@ -31,9 +31,7 @@
 #include "jpegwriter.h"
 #endif
 
-#include <inttypes.h>
 #include <stdexcept>
-#include <string>
 
 namespace ffmpegthumbnailer {
 

@@ -17,7 +17,7 @@
 #ifndef IMAGE_WRITER_H
 #define IMAGE_WRITER_H
 
-#include <cinttypes>
+#include <cstdint>
 #include <string>
 
 namespace ffmpegthumbnailer {

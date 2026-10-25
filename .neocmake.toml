@@ -1,0 +1,2 @@
+# Effectively disable neocmakelsp's built-in line-length check.
+line_max_words = 200

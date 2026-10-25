@@ -17,14 +17,8 @@
 #ifndef MOVIEDECODER_H
 #define MOVIEDECODER_H
 
-#include <cinttypes>
-#include <functional>
-#include <mutex>
 #include <string>
-#include <unordered_map>
-#include <vector>
-
-#include "ffmpegthumbnailertypes.h"
+#include <string_view>
 
 struct AVFilterGraph;
 struct AVFilterContext;
@@ -55,6 +49,7 @@ public:
     int getHeight() const;
     int getDuration() const;
 
+    void setAllowedProtocols(std::string_view protocols);
     void initialize(const std::string& filename, bool preferEmbeddedMetadata);
     void destroy();
 
@@ -87,6 +82,7 @@ private:
     bool m_FormatContextWasGiven;
     bool m_AllowSeek;
     bool m_UseEmbeddedData;
+    std::string m_AllowedProtocols = "ALL";
 };
 
 }

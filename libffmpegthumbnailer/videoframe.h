@@ -19,7 +19,7 @@
 
 #include "ffmpegthumbnailertypes.h"
 
-#include <cinttypes>
+#include <cstdint>
 #include <vector>
 
 namespace ffmpegthumbnailer {

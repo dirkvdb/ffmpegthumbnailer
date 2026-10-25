@@ -18,7 +18,6 @@
 #include "filmstripfilter.h"
 #include "videothumbnailer.h"
 
-#include <stdexcept>
 #include <vector>
 
 using namespace ffmpegthumbnailer;
@@ -159,6 +158,21 @@ extern "C" void video_thumbnailer_set_log_callback(video_thumbnailer* thumbnaile
         videoThumbnailer.setLogCallback([=](ThumbnailerLogLevel lvl, const std::string& msg) {
             cb(lvl, msg.c_str());
         });
+    }
+}
+
+extern "C" int video_thumbnailer_set_allowed_protocols(video_thumbnailer* thumbnailer, const char* protocols)
+{
+    if (!thumbnailer || !protocols) {
+        return -1;
+    }
+
+    try {
+        thumbnailer->tdata->thumbnailer.setAllowedProtocols(protocols);
+        return 0;
+    } catch (const std::exception& e) {
+        trace_message(thumbnailer, ThumbnailerLogLevelError, e.what());
+        return -1;
     }
 }
 

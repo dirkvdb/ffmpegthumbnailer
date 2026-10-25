@@ -1,5 +1,6 @@
-FFmpegThumbnailer 2.3.2
-- Dependency version bumps for the static builds
+FFmpegThumbnailer 2.4.0
+- Add a protocol restriction option
+- Bump required C++ standard to 17
 
 FFmpegThumbnailer 2.3.1
 - Add additional Matroska MIME types

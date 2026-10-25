@@ -1,12 +1,9 @@
 #include "libffmpegthumbnailer/videothumbnailerc.h"
 #include "config.h"
 
-#include <algorithm>
 #include <catch.hpp>
-#include <fstream>
 #include <iostream>
 #include <string.h>
-#include <vector>
 
 using namespace std;
 
@@ -123,6 +120,27 @@ TEST_CASE("C API Usage")
         CHECK(200 == imageData->image_data_width);
         CHECK(nullptr != imageData->image_data_ptr);
         CHECK(ThumbnailerImageSourceVideoStream == imageData->image_data_source);
+    }
+
+    SECTION("RestrictInputProtocols")
+    {
+        thumbnailer->thumbnail_image_type = Rgb;
+        const std::string input = std::string(TEST_DATADIR) + "/test_sample.flv";
+        const std::string wrappedInput = "concat:" + input;
+        CHECK(0 == video_thumbnailer_generate_thumbnail_to_buffer(thumbnailer, wrappedInput.c_str(), imageData));
+        REQUIRE(0 == video_thumbnailer_set_allowed_protocols(thumbnailer, "file,pipe"));
+        CHECK(-1 == video_thumbnailer_generate_thumbnail_to_buffer(thumbnailer, wrappedInput.c_str(), imageData));
+
+        std::string protocols = "file,concat";
+        REQUIRE(0 == video_thumbnailer_set_allowed_protocols(thumbnailer, protocols.c_str()));
+        protocols.clear(); // The setter must copy the string.
+        CHECK(0 == video_thumbnailer_generate_thumbnail_to_buffer(thumbnailer, wrappedInput.c_str(), imageData));
+        CHECK(0 != imageData->image_data_size);
+
+        CHECK(-1 == video_thumbnailer_set_allowed_protocols(thumbnailer, nullptr));
+        CHECK(-1 == video_thumbnailer_set_allowed_protocols(nullptr, "file"));
+        REQUIRE(0 == video_thumbnailer_set_allowed_protocols(thumbnailer, ""));
+        CHECK(-1 == video_thumbnailer_generate_thumbnail_to_buffer(thumbnailer, input.c_str(), imageData));
     }
 
     SECTION("CreateThumbInvalidFile")

@@ -4,8 +4,8 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 set(PACKAGE "ffmpegthumbnailer")
 set(PACKAGE_VERSION_MAJOR 2)
-set(PACKAGE_VERSION_MINOR 3)
-set(PACKAGE_VERSION_PATCH 2)
+set(PACKAGE_VERSION_MINOR 4)
+set(PACKAGE_VERSION_PATCH 0)
 set(PACKAGE_VERSION ${PACKAGE_VERSION_MAJOR}.${PACKAGE_VERSION_MINOR}.${PACKAGE_VERSION_PATCH})
 
 set(CPACK_PACKAGE_NAME ${PACKAGE})
@@ -29,7 +29,8 @@ include(CPack)
 include(GNUInstallDirs)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 option(ENABLE_SHARED "Build shared library" ON)
@@ -115,9 +116,10 @@ if (HAVE_PNG)
     target_sources(libffmpegthumbnailerobj PRIVATE libffmpegthumbnailer/pngwriter.h libffmpegthumbnailer/pngwriter.cpp)
 endif ()
 
-set (FFMPEGTHUMBNAILER_SOVERSION_CURRENT 4)
-set (FFMPEGTHUMBNAILER_SOVERSION_REVISION 18)
-set (FFMPEGTHUMBNAILER_SOVERSION_AGE 1)
+# VideoThumbnailer's object layout changed with the protocol whitelist setting.
+set (FFMPEGTHUMBNAILER_SOVERSION_CURRENT 5)
+set (FFMPEGTHUMBNAILER_SOVERSION_REVISION 0)
+set (FFMPEGTHUMBNAILER_SOVERSION_AGE 0)
 
 if (ENABLE_STATIC)
     add_library(libffmpegthumbnailerstatic STATIC $<TARGET_OBJECTS:libffmpegthumbnailerobj>)
