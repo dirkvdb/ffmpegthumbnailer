@@ -187,7 +187,8 @@
                         withRist = false;
                         withZvbi = false;
                         withAom = false;
-                        withZimg = false;
+                        # CPU HDR-to-SDR tone mapping uses FFmpeg's zscale filter.
+                        withZimg = true;
                         withOpenjpeg = false;
                         withV4l2 = false;
                         withDrm = false;

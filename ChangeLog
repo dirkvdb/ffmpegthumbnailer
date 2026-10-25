@@ -1,4 +1,5 @@
 FFmpegThumbnailer 2.4.0
+- Properly decode HDR videos
 - Add a protocol restriction option
 - Avoid terminal esacpe sequences in the sterr output
 - Fix decoding of interlaced PNG

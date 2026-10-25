@@ -27,6 +27,28 @@ Available command line arguments:
   * -V: enable FFmpeg logging to stderr (disabled by default)
   * -h: display the usage
 
+## HDR thumbnails
+
+PQ (HDR10) and HLG frames are automatically tone-mapped to SDR sRGB before
+resizing and writing the thumbnail. This requires FFmpeg's `zscale` filter
+(built with `--enable-libzimg`) and `tonemap` filter. SDR videos retain the
+existing conversion path; 10-bit video or BT.2020 primaries alone do not
+trigger tone mapping.
+
+Dolby Vision frames with decoded Dolby Vision metadata use FFmpeg's
+`libplacebo` filter to apply reshaping and tone mapping. This requires FFmpeg
+6.1 or newer built with `--enable-libplacebo`, plus a working Vulkan device
+(hardware or software). A display server is not required. If this path fails,
+a base layer explicitly marked as HDR10-, HLG-, or SDR-compatible in the
+Dolby Vision configuration can still be used without Dolby Vision processing.
+
+Profile 5 has no compatible base layer: it cannot be corrected by ordinary
+HDR10 tone mapping. Missing required filters, missing Dolby Vision metadata,
+or an unavailable renderer produce an error rather than a known incorrectly
+colored thumbnail. If both Dolby Vision configuration and decoded metadata
+have been stripped from a file, its Dolby Vision encoding cannot be reliably
+detected.
+
 ## Input protocols and security
 
 All protocols supported by the FFmpeg build are allowed by default (`ALL`).

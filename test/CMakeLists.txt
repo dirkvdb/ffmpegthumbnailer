@@ -41,6 +41,18 @@ add_test(NAME clioutputtest
 
 find_program(FFMPEG_EXECUTABLE NAMES ffmpeg)
 if (FFMPEG_EXECUTABLE)
+    add_test(NAME hdrtest
+        COMMAND ${CMAKE_COMMAND}
+            "-DTHUMBNAILER=$<TARGET_FILE:ffmpegthumbnailer>"
+            "-DFFMPEG=${FFMPEG_EXECUTABLE}"
+            "-DTEST_WORKDIR=${CMAKE_CURRENT_BINARY_DIR}/hdrtest"
+            -P "${CMAKE_CURRENT_SOURCE_DIR}/hdrtest.cmake"
+    )
+    set_tests_properties(hdrtest PROPERTIES
+        TIMEOUT 90
+        SKIP_REGULAR_EXPRESSION "SKIP: HDR prerequisite .* is unavailable"
+    )
+
     foreach (encoder mpeg4 libx264 libx265)
         add_test(NAME seektest_${encoder}
             COMMAND ${CMAKE_COMMAND}

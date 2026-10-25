@@ -59,9 +59,24 @@ public:
 private:
     int32_t findPreferredVideoStream(bool preferEmbeddedMetadata);
 
+    enum class ToneMapping
+    {
+        None,
+        Cpu,
+        DolbyVision
+    };
+
     void initializeVideo(bool preferEmbeddedMetadata);
-    void initializeFilterGraph(const AVRational& timeBase, const std::string& size, bool maintainAspectRatio);
+    void initializeFilterGraph(const AVRational& timeBase, const std::string& size, bool maintainAspectRatio, ToneMapping toneMapping);
+    void filterVideoFrame(const std::string& size, bool maintainAspectRatio, VideoFrame& videoFrame, ToneMapping toneMapping);
+    AVFilterContext* appendFilter(AVFilterContext* previous, const char* filterName, const char* name, const std::string& args);
+    AVFilterContext* appendToneMappingFilters(AVFilterContext* previous, ToneMapping toneMapping);
     bool needsDeinterlacing() const;
+
+    bool tryFilterDolbyVisionFrame(const std::string& size, bool maintainAspectRatio, VideoFrame& videoFrame);
+    std::string createDolbyVisionSourceArgs() const;
+    AVFilterContext* appendDolbyVisionFilter(AVFilterContext* previous);
+    void drainDolbyVisionFilter();
 
     bool getVideoPacket();
     int32_t getStreamRotation() const;
@@ -83,6 +98,7 @@ private:
     bool m_FormatContextWasGiven;
     bool m_AllowSeek;
     bool m_UseEmbeddedData;
+    bool m_DolbyVisionFilterFailed = false;
     std::string m_AllowedProtocols = "ALL";
 };
 

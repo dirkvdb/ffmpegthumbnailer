@@ -2,7 +2,15 @@
 
 #include <catch.hpp>
 #include <iostream>
+#include <memory>
+#include <stdexcept>
 #include <vector>
+
+extern "C" {
+#include <libavcodec/packet.h>
+#include <libavformat/avformat.h>
+#include <libavutil/dovi_meta.h>
+}
 
 #include "libffmpegthumbnailer/histogram.h"
 #include "libffmpegthumbnailer/histogramutils.h"
@@ -42,6 +50,82 @@ TEST_CASE("Adam7 PNG and APNG thumbnails match non-interlaced thumbnails")
         CHECK(info.height == height);
         REQUIRE_FALSE(progressive.empty());
         CHECK(interlaced == progressive);
+    }
+}
+
+TEST_CASE("Dolby Vision stream configuration without decoded metadata")
+{
+    const std::string input = std::string(TEST_DATADIR) + "/test_sample.flv";
+    VideoThumbnailer thumbnailer;
+    thumbnailer.setThumbnailSize(32);
+    thumbnailer.setSeekPercentage(0);
+
+    auto openContext = [&](int profile, int compatibility) {
+        AVFormatContext* raw = nullptr;
+        const int result = avformat_open_input(&raw, input.c_str(), nullptr, nullptr);
+        auto close = [](AVFormatContext* context) { avformat_close_input(&context); };
+        std::unique_ptr<AVFormatContext, decltype(close)> context(raw, close);
+        REQUIRE(result >= 0);
+        // Discover the FLV video stream, leaving full stream-info probing to
+        // the thumbnailer so it receives a freshly opened context.
+        int video = -1;
+        while (video < 0) {
+            AVPacket packet{};
+            const int read = av_read_frame(context.get(), &packet);
+            if (read >= 0 && context->streams[packet.stream_index]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO) {
+                video = packet.stream_index;
+            }
+            av_packet_unref(&packet);
+            REQUIRE(read >= 0);
+        }
+        REQUIRE(av_seek_frame(context.get(), video, 0, AVSEEK_FLAG_BACKWARD) >= 0);
+        auto* parameters = context->streams[video]->codecpar;
+        auto* sideData = av_packet_side_data_new(&parameters->coded_side_data, &parameters->nb_coded_side_data,
+                                                AV_PKT_DATA_DOVI_CONF, sizeof(AVDOVIDecoderConfigurationRecord), 0);
+        REQUIRE(sideData != nullptr);
+        auto* config = reinterpret_cast<AVDOVIDecoderConfigurationRecord*>(sideData->data);
+        *config = {};
+        config->dv_version_major = 1;
+        config->dv_profile = profile;
+        config->dv_level = 6;
+        config->rpu_present_flag = 1;
+        config->bl_present_flag = 1;
+        config->dv_bl_signal_compatibility_id = compatibility;
+        return context;
+    };
+
+    SECTION("Incompatible base layers require decoded Dolby Vision metadata")
+    {
+        for (int profile : {5, 8}) {
+            for (int compatibility : {0, 1, 2, 4}) {
+                if (profile == 8 && compatibility != 0) {
+                    continue;
+                }
+                INFO("profile=" << profile << ", compatibility=" << compatibility);
+                auto context = openContext(profile, compatibility);
+                std::vector<uint8_t> buffer;
+                CHECK_THROWS_MATCHES(thumbnailer.generateThumbnail(input, Rgb, buffer, context.get()), std::logic_error,
+                    Catch::Matchers::Message("Dolby Vision input has no decoded Dolby Vision metadata; cannot render its colors correctly"));
+            }
+        }
+    }
+
+    SECTION("Profile 8 compatible base layers retain ordinary SDR output")
+    {
+        std::vector<uint8_t> reference;
+        const auto expected = thumbnailer.generateThumbnail(input, Rgb, reference);
+        REQUIRE_FALSE(reference.empty());
+        for (int compatibility : {1, 2, 4}) {
+            INFO("compatibility=" << compatibility);
+            auto context = openContext(8, compatibility);
+            // Only inject stream configuration: fake decoded DoVi metadata
+            // would send this SDR fixture into the renderer with invalid data.
+            std::vector<uint8_t> buffer;
+            const auto actual = thumbnailer.generateThumbnail(input, Rgb, buffer, context.get());
+            CHECK(actual.width == expected.width);
+            CHECK(actual.height == expected.height);
+            CHECK(buffer == reference);
+        }
     }
 }
 

@@ -30,6 +30,7 @@ extern "C" {
 #include <libavfilter/buffersrc.h>
 #include <libavformat/avformat.h>
 #include <libavutil/display.h>
+#include <libavutil/dovi_meta.h>
 #include <libavutil/imgutils.h>
 #include <libavutil/opt.h>
 }
@@ -124,6 +125,10 @@ void MovieDecoder::initialize(const string& filename, bool preferEmbeddedMetadat
 
 void MovieDecoder::destroy()
 {
+    avfilter_graph_free(&m_pFilterGraph);
+    m_pFilterSource = nullptr;
+    m_pFilterSink = nullptr;
+
     if (m_pVideoCodecContext) {
         avcodec_free_context(&m_pVideoCodecContext);
     }
@@ -366,60 +371,106 @@ bool MovieDecoder::needsDeinterlacing() const
            m_pVideoCodecContext->codec_id != AV_CODEC_ID_PNG && m_pVideoCodecContext->codec_id != AV_CODEC_ID_APNG;
 }
 
-void MovieDecoder::initializeFilterGraph(const AVRational& timeBase, const std::string& size, bool maintainAspectRatio)
+void MovieDecoder::initializeFilterGraph(const AVRational& timeBase, const std::string& size, bool maintainAspectRatio, ToneMapping toneMapping)
 {
+    avfilter_graph_free(&m_pFilterGraph);
+    m_pFilterSource = nullptr;
+    m_pFilterSink = nullptr;
     m_pFilterGraph = avfilter_graph_alloc();
-    assert(m_pFilterGraph);
+    if (!m_pFilterGraph) {
+        throw std::bad_alloc();
+    }
 
     std::stringstream ss;
-    ss << "video_size=" << m_pVideoCodecContext->width << "x" << m_pVideoCodecContext->height
-       << ":pix_fmt=" << m_pVideoCodecContext->pix_fmt
+    const auto aspect = m_pFrame->sample_aspect_ratio;
+    ss << "video_size=" << m_pFrame->width << "x" << m_pFrame->height
+       << ":pix_fmt=" << m_pFrame->format
        << ":time_base=" << timeBase.num << "/" << timeBase.den
-       << ":pixel_aspect=" << m_pVideoCodecContext->sample_aspect_ratio.num << "/" << FFMAX(m_pVideoCodecContext->sample_aspect_ratio.den, 1);
+       << ":pixel_aspect=" << aspect.num << "/" << FFMAX(aspect.den, 1);
+
+#if LIBAVFILTER_VERSION_INT >= AV_VERSION_INT(10, 1, 100)
+    if (toneMapping != ToneMapping::None) {
+        ss << ":colorspace=" << m_pFrame->colorspace << ":range=" << m_pFrame->color_range;
+    }
+#endif
+    if (toneMapping == ToneMapping::DolbyVision) {
+        ss << createDolbyVisionSourceArgs();
+    }
 
     checkRc(avfilter_graph_create_filter(&m_pFilterSource, avfilter_get_by_name("buffer"), "thumb_buffer", ss.str().c_str(), nullptr, m_pFilterGraph),
             "Failed to create filter source");
     checkRc(avfilter_graph_create_filter(&m_pFilterSink, avfilter_get_by_name("buffersink"), "thumb_buffersink", nullptr, nullptr, m_pFilterGraph),
             "Failed to create filter sink");
 
-    AVFilterContext* yadifFilter = nullptr;
+    AVFilterContext* previous = m_pFilterSource;
     if (needsDeinterlacing()) {
-        checkRc(avfilter_graph_create_filter(&yadifFilter, avfilter_get_by_name("yadif"), "thumb_deint", "deint=1", nullptr, m_pFilterGraph),
-                "Failed to create deinterlace filter");
+        previous = appendFilter(previous, "yadif", "thumb_deint", "deint=1");
     }
 
-    AVFilterContext* scaleFilter = nullptr;
-    checkRc(avfilter_graph_create_filter(&scaleFilter, avfilter_get_by_name("scale"), "thumb_scale", createScaleString(size, maintainAspectRatio).c_str(), nullptr, m_pFilterGraph),
-            "Failed to create scale filter");
+    previous = appendToneMappingFilters(previous, toneMapping);
+    previous = appendFilter(previous, "scale", "thumb_scale", createScaleString(size, maintainAspectRatio));
+    previous = appendFilter(previous, "format", "thumb_format", "pix_fmts=rgb24");
 
-    AVFilterContext* formatFilter = nullptr;
-    checkRc(avfilter_graph_create_filter(&formatFilter, avfilter_get_by_name("format"), "thumb_format", "pix_fmts=rgb24", nullptr, m_pFilterGraph),
-            "Failed to create format filter");
-
-    AVFilterContext* rotateFilter = nullptr;
-    auto rotation                 = getStreamRotation();
+    auto rotation = getStreamRotation();
     if (rotation == 3) {
-        checkRc(avfilter_graph_create_filter(&rotateFilter, avfilter_get_by_name("rotate"), "thumb_rotate", "PI", nullptr, m_pFilterGraph),
-                "Failed to create rotate filter");
+        previous = appendFilter(previous, "rotate", "thumb_rotate", "PI");
     } else if (rotation != -1) {
-        checkRc(avfilter_graph_create_filter(&rotateFilter, avfilter_get_by_name("transpose"), "thumb_transpose", std::to_string(rotation).c_str(), nullptr, m_pFilterGraph),
-                "Failed to create rotate filter");
+        previous = appendFilter(previous, "transpose", "thumb_transpose", std::to_string(rotation));
     }
 
-    checkRc(avfilter_link(rotateFilter ? rotateFilter : formatFilter, 0, m_pFilterSink, 0), "Failed to link final filter");
-
-    if (rotateFilter) {
-        checkRc(avfilter_link(formatFilter, 0, rotateFilter, 0), "Failed to link format filter");
-    }
-
-    checkRc(avfilter_link(scaleFilter, 0, formatFilter, 0), "Failed to link scale filter");
-
-    if (yadifFilter) {
-        checkRc(avfilter_link(yadifFilter, 0, scaleFilter, 0), "Failed to link yadif filter");
-    }
-
-    checkRc(avfilter_link(m_pFilterSource, 0, yadifFilter ? yadifFilter : scaleFilter, 0), "Failed to link source filter");
+    checkRc(avfilter_link(previous, 0, m_pFilterSink, 0), "Failed to link final filter");
     checkRc(avfilter_graph_config(m_pFilterGraph, nullptr), "Failed to configure filter graph");
+}
+
+AVFilterContext* MovieDecoder::appendFilter(AVFilterContext* previous, const char* filterName, const char* name, const std::string& args)
+{
+    const AVFilter* filter = avfilter_get_by_name(filterName);
+    if (!filter) {
+        throw logic_error(std::string("Required FFmpeg filter is unavailable: ") + filterName);
+    }
+    AVFilterContext* context = nullptr;
+    checkRc(avfilter_graph_create_filter(&context, filter, name, args.c_str(), nullptr, m_pFilterGraph),
+            std::string("Failed to create filter: ") + filterName);
+    checkRc(avfilter_link(previous, 0, context, 0), std::string("Failed to link filter: ") + filterName);
+    return context;
+}
+
+AVFilterContext* MovieDecoder::appendToneMappingFilters(AVFilterContext* previous, ToneMapping toneMapping)
+{
+    if (toneMapping == ToneMapping::DolbyVision) {
+        return appendDolbyVisionFilter(previous);
+    }
+    if (toneMapping == ToneMapping::Cpu) {
+        // Linearize and tone-map in floating point before quantizing to SDR sRGB.
+        // tonemap uses content-light/mastering metadata, or its 1000-nit fallback.
+        previous = appendFilter(previous, "zscale", "thumb_linear", "transfer=linear:npl=100");
+        previous = appendFilter(previous, "format", "thumb_float", "pix_fmts=gbrpf32le");
+        previous = appendFilter(previous, "zscale", "thumb_primaries", "primaries=bt709");
+        previous = appendFilter(previous, "tonemap", "thumb_tonemap", "tonemap=mobius:desat=0");
+        previous = appendFilter(previous, "zscale", "thumb_srgb", "transfer=iec61966-2-1:primaries=bt709:matrix=gbr:range=full:dither=error_diffusion");
+        previous = appendFilter(previous, "format", "thumb_planar", "pix_fmts=gbrp");
+    }
+    return previous;
+}
+
+std::string MovieDecoder::createDolbyVisionSourceArgs() const
+{
+    const auto frameRate = av_guess_frame_rate(m_pFormatContext, m_pVideoStream, nullptr);
+    if (frameRate.num <= 0 || frameRate.den <= 0) {
+        return {};
+    }
+    return ":frame_rate=" + std::to_string(frameRate.num) + "/" + std::to_string(frameRate.den);
+}
+
+AVFilterContext* MovieDecoder::appendDolbyVisionFilter(AVFilterContext* previous)
+{
+#if LIBAVFILTER_VERSION_INT >= AV_VERSION_INT(9, 12, 100)
+    // Keep the original YUV samples and DoVi side data intact until reshaping.
+    return appendFilter(previous, "libplacebo", "thumb_dovi",
+                        "apply_dolbyvision=1:colorspace=gbr:color_primaries=bt709:color_trc=iec61966-2-1:range=full:format=gbrp:peak_detect=0");
+#else
+    throw logic_error("Dolby Vision tone mapping requires FFmpeg 6.1 or newer with libplacebo support");
+#endif
 }
 
 int MovieDecoder::getWidth() const
@@ -531,16 +582,86 @@ bool MovieDecoder::getVideoPacket()
 
 void MovieDecoder::getScaledVideoFrame(const std::string& scaledSize, bool maintainAspectRatio, VideoFrame& videoFrame)
 {
-    initializeFilterGraph(m_pFormatContext->streams[m_VideoStream]->time_base, scaledSize, maintainAspectRatio);
+    // Prefer per-frame tags, which can differ from container/codec defaults.
+    if (m_pFrame->color_trc == AVCOL_TRC_UNSPECIFIED) {
+        m_pFrame->color_trc = m_pVideoCodecContext->color_trc;
+    }
+    if (m_pFrame->color_primaries == AVCOL_PRI_UNSPECIFIED) {
+        m_pFrame->color_primaries = m_pVideoCodecContext->color_primaries;
+    }
+    if (m_pFrame->colorspace == AVCOL_SPC_UNSPECIFIED) {
+        m_pFrame->colorspace = m_pVideoCodecContext->colorspace;
+    }
+    if (m_pFrame->color_range == AVCOL_RANGE_UNSPECIFIED) {
+        m_pFrame->color_range = m_pVideoCodecContext->color_range;
+    }
+
+    if (tryFilterDolbyVisionFrame(scaledSize, maintainAspectRatio, videoFrame)) {
+        return;
+    }
+
+    const auto transfer = m_pFrame->color_trc;
+    const auto baseMapping = (transfer == AVCOL_TRC_SMPTE2084 || transfer == AVCOL_TRC_ARIB_STD_B67)
+                                 ? ToneMapping::Cpu : ToneMapping::None;
+    filterVideoFrame(scaledSize, maintainAspectRatio, videoFrame, baseMapping);
+}
+
+bool MovieDecoder::tryFilterDolbyVisionFrame(const std::string& scaledSize, bool maintainAspectRatio, VideoFrame& videoFrame)
+{
+    const bool hasDoviMetadata = av_frame_get_side_data(m_pFrame, AV_FRAME_DATA_DOVI_METADATA) != nullptr;
+    const auto* sideData = av_packet_side_data_get(m_pVideoStream->codecpar->coded_side_data,
+                                                 m_pVideoStream->codecpar->nb_coded_side_data, AV_PKT_DATA_DOVI_CONF);
+    const auto* dovi = sideData && sideData->size >= sizeof(AVDOVIDecoderConfigurationRecord)
+                           ? reinterpret_cast<const AVDOVIDecoderConfigurationRecord*>(sideData->data) : nullptr;
+    // Profile 5 is not ordinary YUV/PQ. Only explicitly compatible base layers
+    // may fall back to generic HDR/SDR processing if DoVi rendering is unavailable.
+    const bool requiresDovi = (dovi && (dovi->dv_profile == 5 || dovi->dv_bl_signal_compatibility_id == 0)) ||
+                              (hasDoviMetadata && !dovi);
+    if (requiresDovi && !hasDoviMetadata) {
+        throw logic_error("Dolby Vision input has no decoded Dolby Vision metadata; cannot render its colors correctly");
+    }
+
+    if (hasDoviMetadata && !m_DolbyVisionFilterFailed) {
+        try {
+            filterVideoFrame(scaledSize, maintainAspectRatio, videoFrame, ToneMapping::DolbyVision);
+            return true;
+        } catch (const std::logic_error& e) {
+            m_DolbyVisionFilterFailed = true;
+            if (requiresDovi) {
+                throw logic_error(std::string("Dolby Vision tone mapping failed (FFmpeg libplacebo and a usable Vulkan device are required): ") + e.what());
+            }
+            av_log(nullptr, AV_LOG_WARNING, "Dolby Vision tone mapping failed; using compatible base layer: %s\n", e.what());
+        }
+    } else if (requiresDovi) {
+        throw logic_error("Dolby Vision tone mapping is unavailable; cannot render this input's colors correctly");
+    }
+
+    return false;
+}
+
+void MovieDecoder::drainDolbyVisionFilter()
+{
+    // libplacebo may queue the selected still. Drain it rather than decoding
+    // ahead, so a failed GPU render can retry the exact same base-layer frame.
+    const auto end = m_pFrame->pts == AV_NOPTS_VALUE ? AV_NOPTS_VALUE : m_pFrame->pts + FFMAX(m_pFrame->duration, 1);
+    checkRc(av_buffersrc_close(m_pFilterSource, end, 0), "Failed to drain Dolby Vision filter");
+}
+
+void MovieDecoder::filterVideoFrame(const std::string& scaledSize, bool maintainAspectRatio, VideoFrame& videoFrame, ToneMapping toneMapping)
+{
+    initializeFilterGraph(m_pFormatContext->streams[m_VideoStream]->time_base, scaledSize, maintainAspectRatio, toneMapping);
 
     auto del = [](AVFrame* f) { av_frame_free(&f); };
     std::unique_ptr<AVFrame, decltype(del)> res(av_frame_alloc(), del);
 
     checkRc(av_buffersrc_write_frame(m_pFilterSource, m_pFrame), "Failed to write frame to filter graph");
+    if (toneMapping == ToneMapping::DolbyVision) {
+        drainDolbyVisionFilter();
+    }
 
     int attempts = 0;
     int rc       = av_buffersink_get_frame(m_pFilterSink, res.get());
-    while (rc == AVERROR(EAGAIN) && attempts++ < 10) {
+    while (rc == AVERROR(EAGAIN) && toneMapping != ToneMapping::DolbyVision && attempts++ < 10) {
         decodeVideoFrame();
         checkRc(av_buffersrc_write_frame(m_pFilterSource, m_pFrame), "Failed to write frame to filter graph");
         rc = av_buffersink_get_frame(m_pFilterSink, res.get());
