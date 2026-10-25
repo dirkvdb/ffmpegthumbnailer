@@ -62,6 +62,27 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         run: nix build .#windows -o release_win
 
+      - name: Upload builds to Cloudsmith
+        env:
+          CLOUDSMITH_TOKEN: ${{ secrets.CLOUDSMITH_TOKEN }}
+        run: |
+          if [ -z "$CLOUDSMITH_TOKEN" ]; then
+            echo "Skipping cache upload: CLOUDSMITH_TOKEN is not configured."
+            exit 0
+          fi
+          umask 077
+          netrc="$RUNNER_TEMP/cloudsmith.netrc"
+          trap 'rm -f "$netrc"' EXIT
+          printf 'machine nix.cloudsmith.io\nlogin token\npassword %s\n' "$CLOUDSMITH_TOKEN" > "$netrc"
+          nix copy --option netrc-file "$netrc" --no-check-sigs \
+            --to 'https://nix.cloudsmith.io/open-source/ffmpegthumbnailer?compression=zstd' \
+            .#static
+          if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
+            nix copy --option netrc-file "$netrc" --no-check-sigs \
+              --to 'https://nix.cloudsmith.io/open-source/ffmpegthumbnailer?compression=zstd' \
+              .#windows
+          fi
+
       - name: Create archives and upload (Unix)
         run: |
           # Create individual archives for each tool

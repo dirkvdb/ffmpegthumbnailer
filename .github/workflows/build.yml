@@ -14,6 +14,7 @@ jobs:
       matrix:
         os:
           - ubuntu-latest
+          - ubuntu-24.04-arm
           - macos-latest
 
     steps:
@@ -57,7 +58,7 @@ jobs:
           nix copy --option netrc-file "$netrc" --no-check-sigs \
             --to 'https://nix.cloudsmith.io/open-source/ffmpegthumbnailer?compression=zstd' \
             .#default .#static
-          if [ "$RUNNER_OS" = "Linux" ]; then
+          if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
             nix copy --option netrc-file "$netrc" --no-check-sigs \
               --to 'https://nix.cloudsmith.io/open-source/ffmpegthumbnailer?compression=zstd' \
               .#windows
