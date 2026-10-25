@@ -17,12 +17,21 @@
 #include "config.h"
 
 #include <clocale>
+#include <cstdarg>
+#include <cstdio>
 #include <iostream>
 #include <memory>
+#include <mutex>
 #include <stdexcept>
 #include <stdlib.h>
 #include <string>
+#include <string_view>
 #include <unistd.h>
+#include <vector>
+
+extern "C" {
+#include <libavutil/log.h>
+}
 
 #ifdef ENABLE_GIO
 #include <dlfcn.h>
@@ -34,6 +43,72 @@
 
 using namespace ffmpegthumbnailer;
 
+namespace {
+
+std::string escapeForOutput(std::string_view text)
+{
+    std::string output;
+    output.reserve(text.size());
+    for (unsigned char byte : text) {
+        // Keep UTF-8 bytes intact; make controls visible, including embedded line breaks.
+        if (byte < 0x20 || byte == 0x7F) {
+            char escaped[5];
+            std::snprintf(escaped, sizeof(escaped), "\\x%02X", static_cast<unsigned>(byte));
+            output += escaped;
+        } else {
+            output += static_cast<char>(byte);
+        }
+    }
+    return output;
+}
+
+int formatFFmpegLogLine(void* context, int level, const char* format, va_list args,
+                       char* buffer, int bufferSize, int* printPrefix)
+{
+    va_list copy;
+    va_copy(copy, args);
+    int length = av_log_format_line2(context, level, format, copy, buffer, bufferSize, printPrefix);
+    va_end(copy);
+    return length;
+}
+
+void ffmpegLogCallback(void* context, int level, const char* format, va_list args)
+{
+    if (level > av_log_get_level()) {
+        return;
+    }
+
+    // FFmpeg can log from decoder threads; keep each formatted message together.
+    static std::mutex logMutex;
+    static thread_local int printPrefix = 1;
+
+    try {
+        std::lock_guard<std::mutex> lock(logMutex);
+        char buffer[1024];
+        int nextPrefix = printPrefix;
+        int length = formatFFmpegLogLine(context, level, format, args, buffer, sizeof(buffer), &nextPrefix);
+        if (length < 0) {
+            return;
+        }
+
+        std::vector<char> expanded;
+        const char* message = buffer;
+        if (static_cast<size_t>(length) >= sizeof(buffer)) {
+            expanded.resize(static_cast<size_t>(length) + 1);
+            nextPrefix = printPrefix;
+            formatFFmpegLogLine(context, level, format, args, expanded.data(), expanded.size(), &nextPrefix);
+            message = expanded.data();
+        }
+        printPrefix = nextPrefix;
+
+        std::fputs(message, stderr);
+    } catch (...) {
+        // Never propagate C++ exceptions through FFmpeg's C logging callback.
+    }
+}
+
+}
+
 void printVersion();
 void printUsage();
 void tryUriConvert(std::string& filename);
@@ -42,6 +117,8 @@ ThumbnailerImageType determineImageTypeFromFilename(const std::string& filename)
 
 int main(int argc, char** argv)
 {
+    av_log_set_callback([](void*, int, const char*, va_list) {});
+
     int option;
     int seekPercentage = 10;
     std::string seekTime;
@@ -62,7 +139,7 @@ int main(int argc, char** argv)
         std::cerr << "Failed to set locale" << std::endl;
     }
 
-    while ((option = getopt(argc, argv, "i:o:s:t:q:c:r:P:afwhvpm")) != -1) {
+    while ((option = getopt(argc, argv, "i:o:s:t:q:c:r:P:afwhvVpm")) != -1) {
         switch (option) {
         case 'a':
             maintainAspectRatio = false;
@@ -92,7 +169,7 @@ int main(int argc, char** argv)
                 try {
                     seekPercentage = std::stoi(optarg);
                 } catch (std::invalid_argument&) {
-                    std::cerr << "Invalid seek percentage: " << optarg << std::endl;
+                    std::cerr << "Invalid seek percentage: " << escapeForOutput(optarg) << std::endl;
                     return EXIT_FAILURE;
                 }
             }
@@ -104,7 +181,7 @@ int main(int argc, char** argv)
             try {
                 imageQuality = std::stoi(optarg);
             } catch (std::invalid_argument&) {
-                std::cerr << "Invalid image quality: " << optarg << std::endl;
+                std::cerr << "Invalid image quality: " << escapeForOutput(optarg) << std::endl;
                 return EXIT_FAILURE;
             }
             break;
@@ -118,6 +195,10 @@ int main(int argc, char** argv)
         case 'h':
             printUsage();
             return 0;
+        case 'V':
+            av_log_set_level(AV_LOG_VERBOSE);
+            av_log_set_callback(ffmpegLogCallback);
+            break;
         case 'v':
             printVersion();
             return 0;
@@ -153,7 +234,7 @@ int main(int argc, char** argv)
         }
         videoThumbnailer.setThumbnailSize(thumbnailSize);
         videoThumbnailer.setLogCallback([](ThumbnailerLogLevel lvl, const std::string& msg) {
-            std::cerr << msg << std::endl;
+            std::cerr << escapeForOutput(msg) << std::endl;
         });
 
         std::unique_ptr<FilmStripFilter> filmStripFilter;
@@ -166,7 +247,7 @@ int main(int argc, char** argv)
         videoThumbnailer.setPreferEmbeddedMetadata(preferEmbeddedMetadata);
 
         if (!seekTime.empty()) {
-            std::cout << "Seeking to time: " << seekTime << std::endl;
+            std::cout << "Seeking to time: " << escapeForOutput(seekTime) << std::endl;
             videoThumbnailer.setSeekTime(seekTime);
         } else {
             videoThumbnailer.setSeekPercentage(seekPercentage);
@@ -174,7 +255,7 @@ int main(int argc, char** argv)
 
         videoThumbnailer.generateThumbnail(inputFile, imageType, outputFile);
     } catch (std::exception& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
+        std::cerr << "Error: " << escapeForOutput(e.what()) << std::endl;
         return -1;
     } catch (...) {
         std::cerr << "Unexpected error" << std::endl;
@@ -206,6 +287,7 @@ void printUsage()
               << "  -m      : prefer embedded image metadata over video content\n"
               << "  -w      : workaround issues in old versions of ffmpeg\n"
               << "  -v      : print version number\n"
+              << "  -V      : enable verbose FFmpeg logging to stderr\n"
               << "  -h      : display this help\n";
 }
 
@@ -243,7 +325,7 @@ public:
     LibHandle(const std::string& libName)
     : m_pLib(dlopen(libName.c_str(), RTLD_LAZY))
     {
-        if (!m_pLib) std::cerr << dlerror() << std::endl;
+        if (!m_pLib) std::cerr << escapeForOutput(dlerror()) << std::endl;
     }
 
     ~LibHandle()
@@ -292,13 +374,13 @@ void tryUriConvert(std::string& filename)
 
         void* pFile = createUriFunc(filename.c_str());
         if (!pFile) {
-            std::cerr << "Failed to create gio file: " << filename << std::endl;
+            std::cerr << "Failed to create gio file: " << escapeForOutput(filename) << std::endl;
             return;
         }
 
         if (!nativeFunc(pFile)) {
             unrefFunc(pFile);
-            std::cerr << "Not a native file, thumbnailing will likely fail: " << filename << std::endl;
+            std::cerr << "Not a native file, thumbnailing will likely fail: " << escapeForOutput(filename) << std::endl;
             return;
         }
 
@@ -307,7 +389,7 @@ void tryUriConvert(std::string& filename)
             filename = pPath;
             freeFunc(pPath);
         } else {
-            std::cerr << "Failed to get path: " << filename << std::endl;
+            std::cerr << "Failed to get path: " << escapeForOutput(filename) << std::endl;
         }
 
         unrefFunc(pFile);

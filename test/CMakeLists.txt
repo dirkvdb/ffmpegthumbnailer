@@ -32,3 +32,9 @@ endif ()
 
 add_test(NAME ffmpegthumbnailertest COMMAND ffmpegthumbnailertest)
 add_test(NAME ffmpegthumbnailerctest COMMAND ffmpegthumbnailerctest)
+add_test(NAME clioutputtest
+    COMMAND ${CMAKE_COMMAND}
+        "-DTHUMBNAILER=$<TARGET_FILE:ffmpegthumbnailer>"
+        "-DTEST_WORKDIR=${CMAKE_CURRENT_BINARY_DIR}/clioutputtest"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/clioutputtest.cmake"
+)

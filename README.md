@@ -24,6 +24,7 @@ Available command line arguments:
   * -m: prefer embedded image metadata over video content
   * -w: workaround some issues in older versions of ffmpeg (only use if you experience problems like 100% cpu usage on certain files)
   * -v: print version number
+  * -V: enable FFmpeg logging to stderr (disabled by default)
   * -h: display the usage
 
 ## Input protocols and security
