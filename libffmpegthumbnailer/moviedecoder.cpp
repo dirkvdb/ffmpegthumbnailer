@@ -359,6 +359,13 @@ std::string MovieDecoder::createScaleString(const std::string& sizeString, bool 
     return scale.str();
 }
 
+bool MovieDecoder::needsDeinterlacing() const
+{
+    // PNG/APNG's Adam7 interlacing is spatial, not temporal; it must not go through yadif.
+    return (m_pFrame->flags & AV_FRAME_FLAG_INTERLACED) &&
+           m_pVideoCodecContext->codec_id != AV_CODEC_ID_PNG && m_pVideoCodecContext->codec_id != AV_CODEC_ID_APNG;
+}
+
 void MovieDecoder::initializeFilterGraph(const AVRational& timeBase, const std::string& size, bool maintainAspectRatio)
 {
     m_pFilterGraph = avfilter_graph_alloc();
@@ -376,7 +383,7 @@ void MovieDecoder::initializeFilterGraph(const AVRational& timeBase, const std::
             "Failed to create filter sink");
 
     AVFilterContext* yadifFilter = nullptr;
-    if (m_pFrame->flags & AV_FRAME_FLAG_INTERLACED) {
+    if (needsDeinterlacing()) {
         checkRc(avfilter_graph_create_filter(&yadifFilter, avfilter_get_by_name("yadif"), "thumb_deint", "deint=1", nullptr, m_pFilterGraph),
                 "Failed to create deinterlace filter");
     }

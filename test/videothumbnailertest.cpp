@@ -11,6 +11,40 @@
 
 namespace ffmpegthumbnailer {
 
+TEST_CASE("Adam7 PNG and APNG thumbnails match non-interlaced thumbnails")
+{
+    // Fixtures use ffmpeg's testsrc=size=32x24, with -flags +ildct for Adam7.
+    // APNG fixtures contain three frames at rate=2, encoded with -plays 1.
+    VideoThumbnailer thumbnailer;
+    int width = 32;
+    int height = 24;
+
+    SECTION("Original size")
+    {
+        thumbnailer.setThumbnailSize(0);
+    }
+
+    SECTION("Scaled")
+    {
+        thumbnailer.setThumbnailSize(16);
+        width = 16;
+        height = 12;
+    }
+
+    for (const auto* extension : {".png", ".apng"}) {
+        INFO(extension);
+        std::vector<uint8_t> progressive;
+        std::vector<uint8_t> interlaced;
+        thumbnailer.generateThumbnail(std::string(TEST_DATADIR) + "/test_progressive" + extension, Rgb, progressive);
+        const auto info = thumbnailer.generateThumbnail(std::string(TEST_DATADIR) + "/test_interlaced" + extension, Rgb, interlaced);
+
+        CHECK(info.width == width);
+        CHECK(info.height == height);
+        REQUIRE_FALSE(progressive.empty());
+        CHECK(interlaced == progressive);
+    }
+}
+
 TEST_CASE("C++ API Usage")
 {
     Histogram<int> histogram;

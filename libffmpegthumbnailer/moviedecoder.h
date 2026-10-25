@@ -61,6 +61,7 @@ private:
 
     void initializeVideo(bool preferEmbeddedMetadata);
     void initializeFilterGraph(const AVRational& timeBase, const std::string& size, bool maintainAspectRatio);
+    bool needsDeinterlacing() const;
 
     bool decodeVideoPacket();
     bool getVideoPacket();

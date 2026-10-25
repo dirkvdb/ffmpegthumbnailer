@@ -60,6 +60,20 @@ TEST_CASE("C API Usage")
         CHECK(ThumbnailerImageSourceVideoStream == imageData->image_data_source);
     }
 
+    SECTION("CreateThumbInterlacedPng")
+    {
+        thumbnailer->thumbnail_image_type = Rgb;
+        video_thumbnailer_set_size(thumbnailer, 0, 0);
+
+        const std::string input = std::string(TEST_DATADIR) + "/test_interlaced.png";
+        REQUIRE(0 == video_thumbnailer_generate_thumbnail_to_buffer(thumbnailer, input.c_str(), imageData));
+
+        CHECK(32 == imageData->image_data_width);
+        CHECK(24 == imageData->image_data_height);
+        CHECK(0 != imageData->image_data_size);
+        CHECK(nullptr != imageData->image_data_ptr);
+    }
+
     SECTION("CreateThumbRgbStringSizeHeightOnly")
     {
         thumbnailer->thumbnail_image_type = Rgb;
