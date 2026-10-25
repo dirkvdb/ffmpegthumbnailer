@@ -461,73 +461,38 @@ void MovieDecoder::seek(int timeInSeconds)
         timestamp = 0;
     }
 
-    checkRc(av_seek_frame(m_pFormatContext, -1, timestamp, 0), "Seeking in video failed");
+    if (m_pFormatContext->start_time != AV_NOPTS_VALUE) {
+        timestamp += m_pFormatContext->start_time;
+    }
+
+    // Start at an earlier keyframe so dependent frames can be decoded up to the requested time.
+    const int64_t seekTimestamp = av_rescale_q(timestamp, AV_TIME_BASE_Q, m_pVideoStream->time_base);
+    checkRc(av_seek_frame(m_pFormatContext, m_VideoStream, seekTimestamp, AVSEEK_FLAG_BACKWARD), "Seeking in video failed");
     avcodec_flush_buffers(m_pVideoCodecContext);
 
-    int keyFrameAttempts = 0;
-    bool gotFrame;
-
     do {
-        int count = 0;
-        gotFrame  = false;
-
-        while (!gotFrame && count < 20) {
-            getVideoPacket();
-            try {
-                gotFrame = decodeVideoPacket();
-            } catch (logic_error&) {
-            }
-            ++count;
-        }
-
-        ++keyFrameAttempts;
-    } while ((!gotFrame || !(m_pFrame->flags & AV_FRAME_FLAG_KEY)) && keyFrameAttempts < 200);
-
-    if (gotFrame == 0) {
-        throw logic_error("Seeking in video failed");
-    }
+        decodeVideoFrame();
+    } while (m_pFrame->best_effort_timestamp != AV_NOPTS_VALUE &&
+             av_compare_ts(m_pFrame->best_effort_timestamp, m_pVideoStream->time_base, timestamp, AV_TIME_BASE_Q) < 0);
 }
 
 void MovieDecoder::decodeVideoFrame()
 {
-    bool frameFinished = false;
+    while (true) {
+        const int rc = avcodec_receive_frame(m_pVideoCodecContext, m_pFrame);
+        if (rc == 0) {
+            return;
+        }
 
-    while (!frameFinished && getVideoPacket()) {
-        frameFinished = decodeVideoPacket();
-    }
+        if (rc != AVERROR(EAGAIN)) {
+            checkRc(rc, "Failed to decode video frame: avcodec_receive_frame()");
+        }
 
-    if (!frameFinished) {
-        throw logic_error("decodeVideoFrame() failed: frame not finished");
-    }
-}
-
-bool MovieDecoder::decodeVideoPacket()
-{
-    if (m_pPacket->stream_index != m_VideoStream) {
-        return false;
-    }
-
-    int rc = avcodec_send_packet(m_pVideoCodecContext, m_pPacket);
-    if (rc == AVERROR(EAGAIN)) {
-        rc = 0;
-    }
-
-    if (rc == AVERROR_EOF) {
-        return false;
-    } else if (rc < 0) {
-        throw logic_error("Failed to decode video frame: avcodec_send_packet() < 0");
-    }
-
-    rc = avcodec_receive_frame(m_pVideoCodecContext, m_pFrame);
-    switch (rc) {
-    case 0:
-        return true;
-
-    case AVERROR(EAGAIN):
-        return false;
-
-    default:
-        throw logic_error("Failed to decode video frame: avcodec_receive_frame() < 0");
+        // Receive all available frames before sending more input. A null packet at EOF
+        // drains delayed frames, including the final B-frames needed for accurate seeking.
+        const bool gotPacket = getVideoPacket();
+        checkRc(avcodec_send_packet(m_pVideoCodecContext, gotPacket ? m_pPacket : nullptr),
+                "Failed to decode video frame: avcodec_send_packet()");
     }
 }
 

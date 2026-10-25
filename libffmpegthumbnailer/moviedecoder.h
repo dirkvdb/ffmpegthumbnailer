@@ -63,7 +63,7 @@ private:
     void initializeFilterGraph(const AVRational& timeBase, const std::string& size, bool maintainAspectRatio);
     bool needsDeinterlacing() const;
 
-    bool decodeVideoPacket();
+
     bool getVideoPacket();
     int32_t getStreamRotation() const;
     std::string createScaleString(const std::string& size, bool maintainAspectRatio);

@@ -38,3 +38,21 @@ add_test(NAME clioutputtest
         "-DTEST_WORKDIR=${CMAKE_CURRENT_BINARY_DIR}/clioutputtest"
         -P "${CMAKE_CURRENT_SOURCE_DIR}/clioutputtest.cmake"
 )
+
+find_program(FFMPEG_EXECUTABLE NAMES ffmpeg)
+if (FFMPEG_EXECUTABLE)
+    foreach (encoder mpeg4 libx264 libx265)
+        add_test(NAME seektest_${encoder}
+            COMMAND ${CMAKE_COMMAND}
+                "-DTHUMBNAILER=$<TARGET_FILE:ffmpegthumbnailer>"
+                "-DFFMPEG=${FFMPEG_EXECUTABLE}"
+                "-DENCODER=${encoder}"
+                "-DTEST_WORKDIR=${CMAKE_CURRENT_BINARY_DIR}/seektest_${encoder}"
+                -P "${CMAKE_CURRENT_SOURCE_DIR}/seektest.cmake"
+        )
+        set_tests_properties(seektest_${encoder} PROPERTIES
+            TIMEOUT 180
+            SKIP_REGULAR_EXPRESSION "SKIP: encoder .* is unavailable"
+        )
+    endforeach ()
+endif ()

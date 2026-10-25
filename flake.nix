@@ -349,6 +349,7 @@
                   [
                     # development tools
                     clang-tools
+                    ffmpeg
                   ]
                   ++ (if pkgs.stdenv.hostPlatform.system == "aarch64-darwin" then [ ] else [ gdb ]);
               };
