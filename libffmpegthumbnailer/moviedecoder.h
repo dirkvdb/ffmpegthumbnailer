@@ -17,6 +17,7 @@
 #ifndef MOVIEDECODER_H
 #define MOVIEDECODER_H
 
+#include <cstdint>
 #include <string>
 #include <string_view>
 
