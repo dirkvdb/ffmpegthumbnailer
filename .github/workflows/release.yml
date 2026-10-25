@@ -47,6 +47,9 @@ jobs:
 
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@main
+        with:
+          extra-conf: |
+            accept-flake-config = true
 
       - name: Enable Magic Nix Cache
         uses: DeterminateSystems/magic-nix-cache-action@main

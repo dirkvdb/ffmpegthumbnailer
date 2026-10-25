@@ -24,6 +24,9 @@ jobs:
 
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@main
+        with:
+          extra-conf: |
+            accept-flake-config = true
 
       - name: Enable Magic Nix Cache
         uses: DeterminateSystems/magic-nix-cache-action@main
@@ -40,3 +43,24 @@ jobs:
 
       - name: Run tests with Nix
         run: nix flake check
+
+      - name: Upload builds to Cloudsmith
+        env:
+          CLOUDSMITH_TOKEN: ${{ secrets.CLOUDSMITH_TOKEN }}
+        run: |
+          if [ -z "$CLOUDSMITH_TOKEN" ]; then
+            echo "Skipping cache upload: CLOUDSMITH_TOKEN is not configured."
+            exit 0
+          fi
+          umask 077
+          netrc="$RUNNER_TEMP/cloudsmith.netrc"
+          trap 'rm -f "$netrc"' EXIT
+          printf 'machine nix.cloudsmith.io\nlogin token\npassword %s\n' "$CLOUDSMITH_TOKEN" > "$netrc"
+          nix copy --option netrc-file "$netrc" --no-check-sigs \
+            --to 'https://nix.cloudsmith.io/open-source/ffmpegthumbnailer?compression=zstd' \
+            .#default .#static
+          if [ "$RUNNER_OS" = "Linux" ]; then
+            nix copy --option netrc-file "$netrc" --no-check-sigs \
+              --to 'https://nix.cloudsmith.io/open-source/ffmpegthumbnailer?compression=zstd' \
+              .#windows
+          fi

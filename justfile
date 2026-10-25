@@ -6,3 +6,7 @@ build: configure
 
 test: build
     ctest --test-dir ./build
+
+cache output="default":
+    nix build --accept-flake-config --no-link '.#{{output}}'
+    nix copy --accept-flake-config --no-check-sigs --to 'https://nix.cloudsmith.io/open-source/ffmpegthumbnailer?compression=zstd' '.#{{output}}'

@@ -1,6 +1,13 @@
 {
   description = "ffmpegthumbnailer";
 
+  nixConfig = {
+    extra-substituters = [ "https://nix.cloudsmith.io/open-source/ffmpegthumbnailer" ];
+    extra-trusted-public-keys = [
+      "open-source-ffmpegthumbnailer-53154:zmOZB/Dc8nClDgQuckbcFy3gkfVNFZBVhazquIfMjwQ="
+    ];
+  };
+
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
   };
