@@ -42,7 +42,7 @@ public:
     ~MovieDecoder();
 
     std::string getCodec() const;
-    void seek(int timeInSeconds);
+    void seek(int timeInSeconds, bool accurate);
     void decodeVideoFrame();
     void getScaledVideoFrame(const std::string& scaledSize, bool maintainAspectRatio, VideoFrame& videoFrame);
 
@@ -62,7 +62,6 @@ private:
     void initializeVideo(bool preferEmbeddedMetadata);
     void initializeFilterGraph(const AVRational& timeBase, const std::string& size, bool maintainAspectRatio);
     bool needsDeinterlacing() const;
-
 
     bool getVideoPacket();
     int32_t getStreamRotation() const;

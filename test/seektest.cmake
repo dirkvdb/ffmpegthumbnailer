@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.12)
 
-# Issue #220: seek backward to a keyframe, then decode in presentation order.
+# Issue #220: explicit times seek accurately; percentages retain fast keyframe seeks.
 # Generate fixtures at test time; no encoder-specific binary fixtures are needed.
 execute_process(
     COMMAND "${FFMPEG}" -hide_banner -encoders
@@ -94,15 +94,46 @@ foreach(variant plain offset)
             message(FATAL_ERROR "Fixture must have distinct frames at the requested seek times")
         endif()
         list(APPEND reference_hashes "${reference_hash}")
+        if(second EQUAL 0)
+            set(first_frame_hash "${reference_hash}")
+        endif()
+
+        # Fast seeks select the next keyframe, not the accurate frame above.
+        # Decode sequentially here too, without depending on demuxer seeking.
+        set(keyframe_reference "${TEST_WORKDIR}/${variant}-${second}-keyframe-reference.rgb")
+        file(REMOVE "${keyframe_reference}")
+        run_checked("Extracting ${ENCODER}/${variant} keyframe reference at ${second}s"
+            "${FFMPEG}" -nostdin -hide_banner -loglevel error -y
+            -threads 1 -i "${video}" -an -filter_threads 1
+            -vf "setpts=PTS-STARTPTS,select=gte(t\\,${second})*key,scale=w=96:h=64,format=pix_fmts=rgb24"
+            -vsync 0 -frames:v 1 -threads 1 -f rawvideo "${keyframe_reference}"
+        )
+        file(READ "${keyframe_reference}" keyframe_rgb HEX)
+        string(LENGTH "${keyframe_rgb}" keyframe_length)
+        if(keyframe_length EQUAL 0)
+            # No upcoming keyframe near EOF: generateThumbnail falls back to
+            # the first frame instead of returning an accurate non-key frame.
+            set(keyframe_hash "${first_frame_hash}")
+        elseif(keyframe_length EQUAL 36864)
+            file(SHA256 "${keyframe_reference}" keyframe_hash)
+        else()
+            message(FATAL_ERROR "Expected zero or one 96x64 RGB keyframe reference at ${second}s")
+        endif()
+        if(second GREATER 0 AND keyframe_hash STREQUAL reference_hash)
+            message(FATAL_ERROR "Fixture must distinguish fast and accurate seeks at ${second}s")
+        endif()
 
         # Both fixtures span 20 seconds, so each second is five percent.
-        # Check both CLI seek modes against the same sequentially decoded frame.
         math(EXPR percentage "${second} * 5")
+        set(time_thumbnail_hash "")
+        set(percentage_thumbnail_hash "")
         foreach(seek_mode time percentage)
             if(seek_mode STREQUAL "time")
                 set(seek_argument "00:00:${second}")
+                set(expected_hash "${reference_hash}")
             else()
                 set(seek_argument "${percentage}")
+                set(expected_hash "${keyframe_hash}")
             endif()
             set(thumbnail "${TEST_WORKDIR}/${variant}-${second}-${seek_mode}-thumbnail.rgb")
             file(REMOVE "${thumbnail}")
@@ -122,16 +153,21 @@ foreach(variant plain offset)
                 list(APPEND failures "${case}: thumbnailing failed (${result}): ${stderr}")
             else()
                 file(SHA256 "${thumbnail}" thumbnail_hash)
-                if(NOT thumbnail_hash STREQUAL reference_hash)
+                set(${seek_mode}_thumbnail_hash "${thumbnail_hash}")
+                if(NOT thumbnail_hash STREQUAL expected_hash)
                     list(APPEND failures "${case}: RGB differs from FFmpeg reference (stderr: ${stderr})")
                 endif()
             endif()
         endforeach()
+        if(second GREATER 0 AND time_thumbnail_hash AND percentage_thumbnail_hash
+                AND time_thumbnail_hash STREQUAL percentage_thumbnail_hash)
+            list(APPEND failures "${variant}/${second}s: percentage and accurate time thumbnails must differ inside the GOP")
+        endif()
     endforeach()
 endforeach()
 
 if(failures)
     string(REPLACE ";" "\n  " details "${failures}")
-    message(FATAL_ERROR "${ENCODER} accurate-seeking regressions:\n  ${details}")
+    message(FATAL_ERROR "${ENCODER} accurate-time/fast-percentage seeking regressions:\n  ${details}")
 endif()
-message(STATUS "${ENCODER}: all 24 time/percentage seek comparisons matched FFmpeg")
+message(STATUS "${ENCODER}: all 24 accurate-time/fast-percentage comparisons matched FFmpeg; modes differed at all 10 nonzero targets")

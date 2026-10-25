@@ -449,7 +449,7 @@ int MovieDecoder::getDuration() const
     return 0;
 }
 
-void MovieDecoder::seek(int timeInSeconds)
+void MovieDecoder::seek(int timeInSeconds, bool accurate)
 {
     if (!m_AllowSeek) {
         return;
@@ -465,10 +465,18 @@ void MovieDecoder::seek(int timeInSeconds)
         timestamp += m_pFormatContext->start_time;
     }
 
-    // Start at an earlier keyframe so dependent frames can be decoded up to the requested time.
+    // Accurate seeking needs an earlier keyframe; fast seeking keeps the next-keyframe behavior.
     const int64_t seekTimestamp = av_rescale_q(timestamp, AV_TIME_BASE_Q, m_pVideoStream->time_base);
-    checkRc(av_seek_frame(m_pFormatContext, m_VideoStream, seekTimestamp, AVSEEK_FLAG_BACKWARD), "Seeking in video failed");
+    const int flags = accurate ? AVSEEK_FLAG_BACKWARD : 0;
+    checkRc(av_seek_frame(m_pFormatContext, m_VideoStream, seekTimestamp, flags), "Seeking in video failed");
     avcodec_flush_buffers(m_pVideoCodecContext);
+
+    if (!accurate) {
+        do {
+            decodeVideoFrame();
+        } while (!(m_pFrame->flags & AV_FRAME_FLAG_KEY));
+        return;
+    }
 
     do {
         decodeVideoFrame();

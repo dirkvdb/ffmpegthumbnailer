@@ -163,7 +163,7 @@ VideoFrameInfo VideoThumbnailer::generateThumbnail(const string& videoFile, Imag
         try {
             int secondToSeekTo = m_SeekTime.empty() ? movieDecoder.getDuration() * m_SeekPercentage / 100
                                                     : timeToSeconds(m_SeekTime);
-            movieDecoder.seek(secondToSeekTo);
+            movieDecoder.seek(secondToSeekTo, !m_SeekTime.empty());
         } catch (const exception& e) {
             TraceMessage(ThumbnailerLogLevelError, std::string(e.what()) + ", will use first frame.");
 
