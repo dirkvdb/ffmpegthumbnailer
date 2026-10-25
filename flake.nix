@@ -103,6 +103,15 @@
                 ];
               });
 
+              # FFmpeg's zscale filter needs a static zimg for the Windows binary.
+              zimgStatic = (pkgsForHost.zimg.override { stdenv = stdenv'; }).overrideAttrs (old: {
+                dontDisableStatic = true;
+                configureFlags = (old.configureFlags or [ ]) ++ [
+                  "--enable-static"
+                  "--disable-shared"
+                ];
+              });
+
               # libpng that uses zlib-ng instead of plain zlib
               libpngWithZlibNg = pkgsForHost.libpng.override {
                 zlib = zlibNgStatic;
@@ -134,6 +143,7 @@
                         withStatic = true;
                         zlib = zlibNgStatic;
                         gmp = gmpStatic;
+                        zimg = if isWindows then zimgStatic else pkgsForHost.zimg;
 
                         # Disable CUDA/LLVM to avoid compiler-rt dependency
                         withCuda = false;
@@ -208,12 +218,18 @@
                       }).overrideAttrs
                         (old: {
                           doCheck = false;
-                          configureFlags = old.configureFlags ++ [
-                            "--disable-encoders"
-                            "--disable-muxers"
-                            "--disable-devices"
-                            "--disable-hwaccels"
-                          ];
+                          configureFlags =
+                            old.configureFlags
+                            ++ [
+                              "--disable-encoders"
+                              "--disable-muxers"
+                              "--disable-devices"
+                              "--disable-hwaccels"
+                            ]
+                            ++ pkgsForHost.lib.optionals isWindows [
+                              # Include private dependencies when probing static libraries like zimg.
+                              "--pkg-config-flags=--static"
+                            ];
                         })
                     else
                       ffmpeg-headless
