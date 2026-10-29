@@ -1,3 +1,7 @@
+FFmpegThumbnailer 2.4.1
+- Add canonical audio MIME types
+- Fix unit tests with ffmpeg 9
+
 FFmpegThumbnailer 2.4.0
 - Properly decode HDR videos
 - Add a protocol restriction option
