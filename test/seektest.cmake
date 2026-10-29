@@ -82,7 +82,7 @@ foreach(variant plain offset)
             "${FFMPEG}" -nostdin -hide_banner -loglevel error -y
             -threads 1 -i "${video}" -an -filter_threads 1
             -vf "setpts=PTS-STARTPTS,select=gte(t\\,${second}),scale=w=96:h=64,format=pix_fmts=rgb24"
-            -vsync 0 -frames:v 1 -threads 1 -f rawvideo "${reference}"
+            -fps_mode passthrough -frames:v 1 -threads 1 -f rawvideo "${reference}"
         )
         file(READ "${reference}" reference_rgb HEX)
         string(LENGTH "${reference_rgb}" reference_length)
@@ -106,7 +106,7 @@ foreach(variant plain offset)
             "${FFMPEG}" -nostdin -hide_banner -loglevel error -y
             -threads 1 -i "${video}" -an -filter_threads 1
             -vf "setpts=PTS-STARTPTS,select=gte(t\\,${second})*key,scale=w=96:h=64,format=pix_fmts=rgb24"
-            -vsync 0 -frames:v 1 -threads 1 -f rawvideo "${keyframe_reference}"
+            -fps_mode passthrough -frames:v 1 -threads 1 -f rawvideo "${keyframe_reference}"
         )
         file(READ "${keyframe_reference}" keyframe_rgb HEX)
         string(LENGTH "${keyframe_rgb}" keyframe_length)
