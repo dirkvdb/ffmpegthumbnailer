@@ -502,7 +502,7 @@ int MovieDecoder::getDuration() const
 
 void MovieDecoder::seek(int timeInSeconds, bool accurate)
 {
-    if (!m_AllowSeek) {
+    if (!m_AllowSeek || (m_pVideoStream->disposition & AV_DISPOSITION_ATTACHED_PIC)) {
         return;
     }
 
