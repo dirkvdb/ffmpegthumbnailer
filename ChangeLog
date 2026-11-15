@@ -1,3 +1,6 @@
+FFmpegThumbnailer 2.4.2
+- Avoid failed seeks in static image content
+
 FFmpegThumbnailer 2.4.1
 - Add canonical audio MIME types
 - Fix unit tests with ffmpeg 9
